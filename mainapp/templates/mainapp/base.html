@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+        <!-- Jquery  -->
+        <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+        <!-- Chart js  -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <!-- d3 -->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <!-- Plotly -->
+        <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+
+  <title>SellFast</title>
+  <link rel="shortcut icon" href="http://xzshop.eu/wp-content/uploads/2023/03/sellfast-browser-icon-2.jpg">
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <style>
+
+
+    body {
+        background-color: #f3f3f3;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .navbar {
+        background-color: #000000;
+    }
+
+
+    .image-connect-store-container {
+      border-style: solid; 
+      border-color: rgb(201, 201, 201);
+      background-color:rgb(255, 255, 255); ;
+      border-width: 0px; 
+      border-radius: 10px; 
+      padding:1em;
+      margin-bottom: 1em;
+      margin-left: 1em;
+      margin-right: 1em;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 15px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .image-connect-store-container:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 25px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .navbar-brand {
+      color: #000000;
+      font-size: medium;
+    }
+
+    .dropdown-menu {
+      background-color: #000000 !important;
+    }
+
+    .dropdown-item {
+      color: rgb(231, 231, 231) !important;
+    }
+
+    .dropdown-item:hover {
+      color: #353a40 !important;
+      background-color: rgb(231, 231, 231) !important;
+    }
+
+    .sidebar-button {
+      border-style: solid; 
+      border-color: rgb(45, 45, 45); 
+      border-width: 2px; 
+      border-radius: 5px; 
+      padding:0.3em;
+      margin-bottom: 0.3em;
+      width: 50px;
+    }
+
+    .list-group .list-group-item-action {
+      color: rgb(255, 255, 255);
+      background-color: #026de0 !important;
+      border: none !important;
+    }
+    .list-group .list-group-item-action.active{
+      color: #026de0;
+      background-color: rgb(255, 255, 255) !important;
+      
+    }
+
+    .registration-section {
+        background-color: #121216;
+    }
+
+    .registration-button {
+      border-style: solid; 
+      border-color: #026de0;
+      background-color: #026de0;
+      color: #fefefe;
+      border-width: 2px; 
+      border-radius: 10px; 
+      width: fit-content;
+    }
+
+    .registration-button:hover {
+      border-color: #82b9f3;
+      background-color: #026de0;
+    }
+
+    .standard-button {
+      border-style: solid; 
+      border-color: #026de0;
+      background-color: #026de0;
+      color: #fefefe;
+      border-width: 2px; 
+      border-radius: 5px; 
+      padding:0.3em;
+      margin-bottom: 0.6em;
+      width: fit-content;
+      min-width: 100px;
+    }
+
+    .standard-button:hover {
+      border-color: #82b9f3;
+      background-color: #2b8af0;
+    }
+
+    .standard-button:disabled {
+      border-color: #b9b9b9;
+      background-color: #c2c2c2;
+    }
+
+    .simple-import-button {
+      border-style: solid; 
+      border-color: #026de0;
+      background-color: #026de0;
+      color: #fefefe;
+      border-width: 2px; 
+      border-radius: 2.5px; 
+      padding:0.3em;
+    }
+
+    .simple-import-button:hover {
+      border-color: #82b9f3;
+      background-color: #2b8af0;
+    }
+
+
+    .import-button {
+      border-style: solid; 
+      border-color: #5dda6c;
+      background-color: #5dda6c;
+      color: #fefefe;
+      border-width: 2px; 
+      border-radius: 10px; 
+      padding:0.3em;
+      margin-bottom: 0.6em;
+      width: fit-content;
+      min-width: 100px;
+    }
+
+    .import-button:hover {
+      border-color: #90f29c;
+      background-color: #5dda6c;
+    }
+
+    .csv-button {
+      border-style: solid; 
+      border-color: #a4a4a4;
+      background-color: #a4a4a4;
+      color: #fefefe;
+      border-width: 2px; 
+      padding:0.3em;
+      margin-bottom: 0.6em;
+      width: 100px;
+    }
+
+    .csv-button:hover {
+      border-style: solid; 
+      border-color: #2f2f2f;
+      background-color: #a4a4a4;
+    }
+
+    .sync-button {
+      border-style: solid; 
+      border-color: #d9d763;
+      background-color: #d9d763;
+      color: #fefefe;
+      border-width: 2px; 
+      border-radius: 10px; 
+      padding:0.3em;
+      margin-bottom: 0.6em;
+      width: 200px;
+    }
+
+    .sync-button:hover {
+      border-color: #f3f298;
+      background-color: #d9d763;
+    }
+
+    .results-table{
+      width: 50%;
+      padding-left: 5%;
+    }
+
+    .results-header {
+      text-align: center;
+      font-size: 19px;
+    }
+
+    .results-row {
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .social-instagram-button {
+      border-style: solid; 
+      border-color: rgb(221, 255, 50); 
+      border-width: 2px; 
+      border-radius: 10px; 
+      padding:0.3em;
+      width: 150px;
+    }
+
+    .social-facebook-button {
+      border-style: solid; 
+      border-color: rgb(0, 92, 172); 
+      border-width: 2px; 
+      border-radius: 10px; 
+      padding:0.3em;
+      width: 150px;
+    }
+
+    .standard-command-container {
+      border-style: solid; 
+      border-color: rgb(201, 201, 201);
+      background-color:rgb(255, 255, 255); ;
+      border-width: 0px; 
+      border-radius: 10px; 
+      padding:1em;
+      margin-bottom: 1em;
+      margin-left: 1em;
+      margin-right: 1em;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 15px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .standard-table {
+      margin-left: 2em;
+      margin-right: 2em;
+      width: 95%;
+
+    }
+
+    .inventory-table {
+      background-color: rgb(255, 255, 255);
+      margin-left: 1em;
+      margin-right: 1em;
+      width: 98%;
+      border-style: solid;
+      border-color: rgb(201, 201, 201);
+      border-width: 0px;
+
+    }
+
+    .tr-header {
+      font-size: 14px; 
+      max-width: 14em;
+      text-align: center;
+      border-bottom: 2px solid rgb(201, 201, 201);
+      
+    }
+
+    .tr-header th{
+      color:rgb(89, 89, 89);
+      padding-bottom: 0.75em;
+      padding-top: 0.75em;
+    }
+
+    .tr-standard {
+      font-size: 12px; 
+      
+      text-align: center;
+      border-bottom: 1px solid rgb(201, 201, 201);
+    } 
+
+    .tr-standard-clickable-row {
+      font-size: 12px; 
+      
+      text-align: center;
+      border-bottom: 1px solid rgb(172, 172, 172)
+    } 
+
+    .td-id {
+      padding: 0.5em;
+      border-right: 1px solid rgb(172, 172, 172);
+    }
+    .td-name {
+      max-width: 7em;
+    }
+
+    .td-standard {
+      max-width: 5em;
+    }
+
+
+    /* Modal (background) */
+    .modal-container {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    .modal-description {
+      margin-top:2em;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 60%;
+    }
+
+    .card-deck {
+      margin:1em;
+    }
+
+    .card {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .card-title {
+         word-wrap: break-word;
+    }
+
+    .card-info-container{
+      position: relative;
+    }
+
+    .card-info {
+        position: absolute;
+        bottom: 0;
+    }
+
+
+    .index-card {
+      background-color: #ffffff;
+    }
+
+    .index-card-body {
+      margin-top:30%; 
+      margin-bottom:2%;
+    }
+
+    .index-card-title {
+      color: #026de0; 
+      text-align:left; 
+      font-size:15px
+    }
+    
+    .index-card-text {
+      text-align:left;
+    }
+
+    .index-learn-more {
+      font-size:13px;
+      text-align: left !important;
+    }
+    
+    /* NAVBAR 3*/
+    .wrapper {
+      display: flex;
+      width: 100%;
+      align-items: stretch;
+  }
+  
+  #sidebar {
+      min-width: 250px;
+      max-width: 250px;
+      background: #fff;
+      color: #fff;
+      transition: all 0.3s;
+  }
+  
+  #sidebar.active {
+      margin-left: -250px;
+  }
+  
+  #sidebar .sidebar-header {
+      padding: 2px;
+      background: #fff;
+  }
+  
+  #sidebar .list-unstyled {
+    background: #fff;
+  }
+
+  #sidebar ul.components {
+      padding: 20px 0;
+      
+  }
+  
+  #sidebar ul p {
+      color: #fff;
+      padding: 10px;
+  }
+  
+  #sidebar ul li a {
+      padding: 10px;
+      font-size: 15px;
+      display: block;
+      color: #026de0;
+      background: #fff;
+      margin-left: 1px;
+      text-decoration:none;
+  }
+  
+  #sidebar ul li a:hover {
+      color: #fff;
+      background: #026de0;
+  }
+  
+  #sidebar ul li.active>a,
+  a[aria-expanded="true"] {
+      color: #fff;
+      background: #8e8e8e;
+  }
+  
+  a[data-toggle="collapse"] {
+      position: relative;
+  }
+  
+  .dropdown-toggle::after {
+      display: block;
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+  }
+  
+  ul ul a {
+      font-size: 0.9em !important;
+      padding-left: 30px !important;
+      background: #6d7fcc;
+  }
+  
+  ul.CTAs {
+      padding: 20px;
+  }
+  
+  ul.CTAs a {
+      text-align: center;
+      font-size: 0.9em !important;
+      display: block;
+      border-radius: 5px;
+      margin-bottom: 5px;
+  }
+  
+  a.download {
+      background: #fff;
+      color: #7386D5;
+  }
+  
+  a.article,
+  a.article:hover {
+      background: #026de0 !important;
+      color: #fff !important;
+  }
+
+  #content {
+    width: 100%;
+    padding: 10px;
+    min-height: 100vh;
+    transition: all 0.3s;
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
+}
+    
+  </style>
+</head>
+
+<body class='main' id="body">
+
+  <header>
+  </header>
+  
+  <div class="wrapper">
+
+      {% include 'mainapp/includes/sidebar.html' %}
+
+      <div id="content" class="main-panel">
+                {% include 'mainapp/includes/navbar.html' %}
+                {% include 'mainapp/includes/messaging.html' %}
+                {% block content %}
+                {% endblock content %}
+      </div>
+      
+
+    </div>
+    
+  </div>
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function () {
+      $('#sidebarCollapse').on('click', function () {
+          $('#sidebar').toggleClass('active');
+      });
+  });
+  </script>
+</body>
+</html>

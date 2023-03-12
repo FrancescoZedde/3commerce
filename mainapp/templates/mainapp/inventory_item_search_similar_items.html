@@ -1,0 +1,46 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+<div class="standard-command-container">
+        <h3>Ebay</h3> 
+        {% for item in items %}
+        <div class="row" style="border-bottom: solid 1px black; font-size:x-small;">
+            <div class="col-2">
+                <p><b>Title:</b> {{item.title}}</p>
+            </div>
+            <div class="col-1">
+                <p><b>Price:</b> {{item.price.value}}</p>$
+            </div>
+            <div class="col-3">
+                {% for category in item.categories %}
+                <p><b>Category:</b> {{category.categoryName}} <b>Category ID:</b> {{category.categoryId}} 
+                    <form action="inventory-item-set-ebay-category" method="post">
+                        {% csrf_token %}
+                        <div class="button" style="text-align: center; margin-top:4em;">
+                            <input class="standard-button" id='setebaycategory' type="submit" value="Set as Ebay category" name="set-ebay-category">
+                          </div>
+                          <input type="hidden" id="primarykey" name="primary-key" value="{{primary_key}}">
+                          <input type="hidden" id="categoryid" name="category-id" value="{{category.categoryId}}">
+                           
+                    </form>
+                </p>
+                {% endfor %}
+            </div>
+            <div class="col-4">
+                
+            </div>
+            <div class="col-1">
+                
+            </div>
+            <div class="col-1">
+                <img src={{item.image.imageUrl}} width="80" height="80" alt="">
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+{% endblock %}

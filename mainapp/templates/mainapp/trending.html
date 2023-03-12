@@ -1,0 +1,25 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<div class="standard-command-container">
+    <form action="trending" method="post" style="text-align: center;">
+        {% csrf_token %}
+        {{assistant_chat_form|crispy}}
+        <div class="button" style="text-align: center; margin-top:1em;">
+            <input class="standard-button" id='ask-button' type="submit" value="Go" name="ask-button">
+          </div>
+    </form> 
+</div>
+
+{% if answer  %}
+<div class="standard-command-container">
+    <p>{{question}}</p>
+    <p>{{answer|safe}}</p>
+</div>
+{% endif %}
+
+{% endblock %}

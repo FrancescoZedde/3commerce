@@ -1,0 +1,59 @@
+{% if user.is_authenticated %}
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fff;">
+    <div class="container-fluid">
+
+        <button type="button" id="sidebarCollapse" style="border:none; padding:0px; background-color: #fff;">
+            <img src="http://xzshop.eu/wp-content/uploads/2023/03/square.png" width="40px" height="40px">
+        </button>
+        <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-align-justify"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Account</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+              </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% else %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">
+                    <img src="http://xzshop.eu/wp-content/uploads/2023/03/sellfast-logo.png" style="max-width:100%; max-height:70px;">
+                </a>
+            </li>
+        </ul>
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" style="margin-right: 2em;">
+                    <a class="nav-link" href="{% url 'login' %}"><b>Become a Supplier</b></a>
+                </li>
+                <li class="nav-item" style="margin-right: 2em;">
+                    <a class="nav-link" href="{% url 'login' %}"><b>Pricing</b></a>
+                </li>
+                <li class="nav-item" style="margin-right: 2em;">
+                    <a class="nav-link" href="{% url 'login' %}"><b>Blog</b></a>
+                </li>
+                <li class="nav-item" style="margin-right: 2em;">
+                    <a class="nav-link" href="{% url 'login' %}"><b>Login</b></a>
+                </li>
+                <li class="nav-item">
+                    <button class="registration-button">
+                        <a class="nav-link" style="color: #fefefe;" href="{% url 'registration' %}"><b>Start for free</b></a>
+                    </button>
+              </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% endif %}

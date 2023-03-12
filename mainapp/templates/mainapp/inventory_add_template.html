@@ -1,0 +1,174 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main style="margin-top: 7%;">
+
+
+  <div class="standard-command-container">
+    <div class="row">
+      <div class="col-2">
+    </div>
+    <div class="col-2">
+    </div>
+    <div class="col-2">
+    </div>
+    <div class="col-2">
+    </div>
+    <div class="col-2">
+          <button id='select-all-button' class="standard-button" onclick="select_deselect_all_rows()" >Select all</button> 
+          <button hidden='hidden' id='deselect-all-button' class="standard-button" onclick="select_deselect_all_rows()" >Deselect all</button> 
+    </div>
+  </div>
+</div>
+
+
+
+  <div class="row" style="margin-top:7%">
+    <div class="col-1">
+
+    </div>
+    <div class="col-10">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="nav-temp-0-tab" data-bs-toggle="tab" data-bs-target="#temp-0" type="button" role="tab" aria-controls="temp-0" aria-selected="true">Template 0</button>
+              <button class="nav-link" id="nav-temp-1-tab" data-bs-toggle="tab" data-bs-target="#temp-1" type="button" role="tab" aria-controls="temp-1" aria-selected="false">Template 1</button>
+              <button class="nav-link" id="nav-temp-2-tab" data-bs-toggle="tab" data-bs-target="#temp-2" type="button" role="tab" aria-controls="temp-2" aria-selected="false">Template 2</button>
+              <button class="nav-link" id="nav-temp-3-tab" data-bs-toggle="tab" data-bs-target="#temp-3" type="button" role="tab" aria-controls="temp-3" aria-selected="false">Template 3</button>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent" style="margin-top: 2em">
+            <div class="tab-pane fade show active" id="temp-0" role="tabpanel" aria-labelledby="nav-temp-0-tab">
+                <form action="inventory-save-template" method="post">
+                    {% csrf_token %}
+                    custom input
+                    <div class="button" style="text-align: center;">
+                        <input id='savetemplate-0' type="submit" value="Save template" name="save-template-0">
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="temp-1" role="tabpanel" aria-labelledby="nav-temp-1-tab">
+                <form action="inventory-save-template" method="post">
+
+                    <input type="hidden" id="selecteditem" name="selected-item" value="{{selected_item}}">
+
+                    {% csrf_token %}
+                    <table style="width: 100%; border: none; margin-top:2em; margin-bottom:2em;" cellspacing="0" cellpadding="0">
+
+                        <!-- HEADER -->
+                        <tbody>
+                        <tr>
+                        <th style="width: 20%; text-align: center;"></th>
+                        <th style="width: 80%; text-align: center;"></th>
+                        </tr>
+                        <tr>
+                        <td style="text-align: center;"><img class="alignnone wp-image-4707" src="http://electronics.xzshop.eu/wp-content/uploads/2023/01/cropped-cropped-xz-300x300.png" alt="" width="180" height="180" /></td>
+                        <td style="text-align: center;">
+                        Title: <h2>{{ template_form_1.title }}</h2>
+                        </td>
+                        </tr>
+                        </tbody>
+                        </table>
+
+                        <!-- BODY -->
+                        <table style="width: 100%; border: none; margin-top:2em; margin-bottom:2em;" cellspacing="0" cellpadding="15">
+                            <tbody>
+                            <tr>
+                            <th style="width: 50%;"></th>
+                            <th style="width: 50%;"></th>
+                            </tr>
+                            <tr>
+                            <td>
+                                add image url: {{ template_form_1.urlimage1 }}
+                            </td>
+                            <td>
+                                html text: {{ template_form_1.text1 }}
+                            </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    add image url: {{ template_form_1.urlimage2 }}
+                                </td>
+                                <td>
+                                    html text: {{ template_form_1.text2 }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- BODY 3 COLUMN IMG SET-->
+                        <table style="width: 100%; border: none; margin-top:2em; margin-bottom:2em;" cellspacing="0" cellpadding="0">
+                            <tbody>
+                            <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            </tr>
+                            <tr>
+                            <td>add image url: {{ template_form_1.urlimage3 }}</td>
+                            <td>add image url: {{ template_form_1.urlimage4 }}</td>
+                            <td>add image url: {{ template_form_1.urlimage5 }}</td>
+                            </tr>
+                            </tbody>
+                            </table>
+                        
+                        <!-- FOOTER -->
+                        <table style="width: 100%; border: none; margin-top:2em; margin-bottom:2em;" cellspacing="0" cellpadding="0">
+                            <tbody>
+                            <tr>
+                            <th style="width: 33%; text-align: center;">Shipping</th>
+                            <th style="width: 33%; text-align: center;">24/7</th>
+                            <th style="width: 33%; text-align: center;">Return policy</th>
+                            </tr>
+                            <tr>
+                            <td style="text-align: center;">We strive to deliver as soon as possible, once your order is confirmed you will receive a tracking code.</td>
+                            <td style="text-align: center;">We provide 24/7 free assisitance, you can contact us by email or WhatsApp. We usually respond in 12-24 hours.</td>
+                            <td style="text-align: center;">Our return policy allows you to return the product up to 30 days after you receive it.</td>
+                            </tr>
+                            </tbody>
+                            </table>
+                        <table style="width: 100%; border: none;" cellspacing="0" cellpadding="0">
+                            <tbody>
+                            <tr>
+                            <th style="width: 20%; text-align: center;"></th>
+                            <th style="width: 80%; text-align: center;"></th>
+                            </tr>
+                            <tr>
+                            <td style="text-align: center;"><img class="alignnone wp-image-4707" src="http://electronics.xzshop.eu/wp-content/uploads/2023/01/cropped-cropped-xz-300x300.png" alt="" width="180" height="180" /></td>
+                            <td style="text-align: left; margin-left: 1em;">For any questions or assistance you can contact us by email at: <strong>hello@xzshop.eu</strong>
+                            or via WhatsApp: <strong>+39</strong></td>
+                            </tr>
+                            </tbody>
+                            </table>
+                    <div class="button" style="text-align: center;">
+                        <input id='savetemplate-1' type="submit" value="Save template" name="save-template-1">
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="temp-2" role="tabpanel" aria-labelledby="nav-temp-2-tab">
+                <form action="inventory-save-template" method="post">
+                    {% csrf_token %}
+                    {{ template_form_2}}xx
+                    <div class="button" style="text-align: center;">
+                        <input id='savetemplate-2' type="submit" value="Save template" name="save-template-2">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="tab-pane fade" id="temp-3" role="tabpanel" aria-labelledby="nav-temp-3-tab">...</div>
+          </div>
+    <div class="col-1">
+        
+    </div>
+  </div>
+  </div>
+
+  
+</main>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+
+
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">Profile</button>
+    <button class="nav-link" id="nav-connector-tab" data-bs-toggle="tab" data-bs-target="#nav-connector" type="button" role="tab" aria-controls="nav-connector" aria-selected="false">Connectors</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <div class="standard-command-container" style="margin-top:1em;">
+      <p>Username: {{ user.username }}</p>
+      <p>Email: {{ user.email }}</p>
+    </div>
+  </div>
+  <!--WOOCOMMERCE CONNECTOR -->
+  <div class="tab-pane fade" id="nav-connector" role="tabpanel" aria-labelledby="nav-connector-tab">
+     <div class="standard-command-container" style="margin-top:1em;">
+      <h5 style="margin-bottom:2em;">WooCommerce</h5>
+      {% if user.woocommerce_store_name == '' %}
+      <form action="connect-woocommerce-store" method="post">
+          {% csrf_token %}
+          {{ woocommerce_connect|crispy }}
+        <div class="button" style="text-align: center;">
+          <input class="standard-button" id='connectwoocommercestore' type="submit" value="Connect" name="woocommerce-connector">
+        </div>
+      </form>
+      {% else %}
+      <form action="connect-woocommerce-store" method="post">
+        {% csrf_token %}
+        <h5>You are connected to:</h5>
+        <ul style="margin:2em">
+          <li>
+            <b>Store name:</b> {{user.woocommerce_store_name}}
+    
+          </li>
+          <li>
+            <b>Domain:</b> {{user.woocommerce_host}}
+          </li>
+        </ul>
+      <div class="button" style="text-align: center;">
+        <input class="standard-button" id='resetwoocommercestore' type="submit" value="Reset" name="woocommerce-connector">
+      </div>
+    </form>
+      {% endif %}
+    </div>
+    <div class="standard-command-container">
+      <h5 style="margin-bottom:2em;">Shopify</h5>
+      <a href="https://sellfast-development-store.myshopify.com/admin/oauth/install_custom_app?client_id=6fb5b0131320a2eb79762a37c255b9aa&signature=eyJfcmFpbHMiOnsibWVzc2FnZSI6ImV5SmxlSEJwY21WelgyRjBJam94TmpjNU1UTTNPRFUyTENKd1pYSnRZVzVsYm5SZlpHOXRZV2x1SWpvaWMyVnNiR1poYzNRdFpHVjJaV3h2Y0cxbGJuUXRjM1J2Y21VdWJYbHphRzl3YVdaNUxtTnZiU0lzSW1Oc2FXVnVkRjlwWkNJNklqWm1ZalZpTURFek1UTXlNR0V5WldJM09UYzJNbUV6TjJNeU5UVmlPV0ZoSWl3aWNIVnljRzl6WlNJNkltTjFjM1J2YlY5aGNIQWlmUT09IiwiZXhwIjoiMjAyMy0wMy0yNVQxMToxMDo1Ni41MzlaIiwicHVyIjpudWxsfX0%3D--ccf9de465867607bd9a244ef19514e7ccf3f4eb2">Connect x</a>
+      
+      <a href="https://sellfast-development-store.myshopify.com/admin/oauth/authorize?client_id=8414cdc4f116c1fc6c28cab56f45eea0&scope=read_products&redirect_uri=https://redirect.xzshop.eu">Connect</a>
+    </div>
+    <!-- PRINTFUL CONNECTOR
+    <div class="standard-command-container">
+      <h5 style="margin-bottom:2em;">Printful</h5>
+      <button class="standard-command-button">
+        <a href="https://www.printful.com/oauth/authorize?client_id=app-8219094&state=123456789&redirect_url=http://redirect.xzshop.eu">Connect</a>
+      </button>
+      Paste access token
+          <form action="printful-oauth">
+            <div style="text-align:center;">
+              <input style="text-align:center;" type="text" name="auth-code" >
+              <div class="button" style="text-align: center;">
+                <input class="standard-button" id='getaccesstoken' type="submit" value="Get token" name="get-access-token">
+              </div>
+            </div>
+            
+            
+          </form>
+    </div>-->
+  </div>
+</div>
+<div class="standard-command-container">
+  <div>
+    <p>Connect your store:</p>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <div class="image-connect-store-container">
+        <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/shopify-ar21.png" style="width: 100%; height: 250px; text-align:center; padding:8px">
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="image-connect-store-container">
+        <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="standard-command-container" style="margin-top: 5%; margin-right:18%; margin-left:18%;">
+    <h4>You have been logged out</h4>
+    <div>
+        <a href="{% url 'login' %}">Log In</a>
+    </div>
+</div>
+
+
+{% endblock %}

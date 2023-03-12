@@ -1,0 +1,64 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div style="text-align:center;">
+    <h1><b></b></h1><br>
+    <div class="row justify-content-center" style="margin-bottom:2em;">
+        <div class="col-xl-7 col-lg-9 text-center">
+          <h3 style="color: rgba(51, 51, 51, 0.677);"></h3>
+        </div>
+      </div>
+      <div class="row justify-content-center" style="margin-bottom:2em;">
+        <button class="standard-button" style="margin-right:0.4em;"> Start Now </button> 
+       <button class="standard-button" style="margin-left:0.4em;"> <i class="fa fa-play" aria-hidden="true"></i> Video </button> 
+      </div>
+      <div class="card-deck">
+        <div class="index-card shadow card">
+          <div class="index-card-body card-body">
+            <h5 class="index-card-title card-title" ><b>Million of products</b></h5>
+            <p class="index-card-text card-text">Choose from millions of products from verified suppliers and import with one click.</p>
+            <p class="index-learn-more"><a href="">Learn more</a></p>
+            
+          </div>
+        </div>
+        <div class="index-card shadow card">
+          <div class="index-card-body card-body">
+            <h5 class="index-card-title card-title"><b>Connect to your Store</b></h5>
+            <p class="index-card-text card-text">Publish products and sync with your WooCommerce or Shopify store.</p>
+            <p class="index-learn-more"><a href="">Learn more</a></p>
+          </div>
+        </div>
+        <div class="index-card shadow card">
+            <div class="index-card-body card-body">
+              <h5 class="index-card-title card-title"><b>Connect to Marketplaces</b></h5>
+              <p class="index-card-text card-text">Connect to popular marketplaces: Ebay, Amazon and many more coming soon.</p>
+              <p class="index-learn-more"><a href="">Learn more</a></p>
+            </div>
+          </div>
+        <div class="index-card shadow card">
+          <div class="index-card-body card-body">
+            <h5 class="index-card-title card-title"><b>Pricing strategy</b></h5>
+            <p class="index-card-text card-text">Use built-in price comparators to define a pricing strategy for your products.</p>
+            <p class="index-learn-more"><a href="">Learn more</a></p>
+          </div>
+        </div>
+        <div class="index-card shadow card">
+            <div class="index-card-body card-body">
+              <h5 class="index-card-title card-title"><b>AI-Powered Marketing</b></h5>
+              <p class="index-card-text card-text">Save you up to 80% of time in writing headlines, product sheets, blog articles, etc.</p>
+              <p class="index-learn-more"><a href="">Learn more</a></p>
+            </div>
+          </div>
+      </div>
+            
+    </div>
+</div>
+
+
+{% endblock %}

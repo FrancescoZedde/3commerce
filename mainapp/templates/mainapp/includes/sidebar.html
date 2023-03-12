@@ -1,0 +1,116 @@
+{% if user.is_authenticated %}
+<nav id="sidebar">
+    <div class="sidebar-header">
+        <img src="http://xzshop.eu/wp-content/uploads/2023/03/sellfast-logo.png" style="max-width:100%;max-height:100%;">
+    </div>
+
+    <ul class="list-unstyled components">
+        <li>
+            <a href="#">Dashboard</a>
+        </li>
+        <li>
+            <a href="{% url 'trending' %}">Trending</a>
+        </li>
+        <li>
+            <a href="{% url 'search' %}">Search</a>
+        </li>
+        <li>
+            <a href="{% url 'inventory-list-view' %}">Inventory</a>
+        </li>
+        <li>
+            <a href="#">Orders</a>
+        </li>
+        <!--
+        <li>
+            <a href="{% url 'inventory-list-view' %}">Printful</a>
+        </li>-->
+
+        {% if user.woocommerce_store_name == '' and user.woocommerce_host == '' %}
+        <!-- CONNECT STORE -->
+        <li>
+            <a href="{% url 'profile' %}">Connect store</a>
+        </li>
+        
+        <!-- condition must be on shopify field -->
+        {% elif user.woocommerce_host == '' %}
+        <!-- SHOPIFY -->
+        <li>
+            <a href="#shopifySubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Shopify</a>
+            <ul class="collapse list-unstyled" id="shopifySubmenu">
+                <li>
+                    <a href="#">On Sale</a>
+                </li>
+                <li>
+                    <a href="#">Promotions</a>
+                </li>
+                <li>
+                    
+                    <a href="#">Categories</a>
+                </li>
+                <li>
+                    <a href="#">Settings</a>
+                </li>
+            </ul>
+        </li>
+        {% else %}
+        <li>
+            <a href="#woocommerceSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">WooCommerce</a>
+            <ul class="collapse list-unstyled" id="woocommerceSubmenu">
+                <li>
+                    <a href="{% url 'woocommerce-onsale' %}">On Sale</a>
+                </li>
+                <li>
+                    <a href="#">Promotions</a>
+                </li>
+                <li>
+                    
+                    <a href="{% url 'woocommerce-categories' %}">Categories</a>
+                </li>
+                <li>
+                    <a href="#">Settings</a>
+                </li>
+            </ul>
+        </li>
+        {% endif %}
+        <li>
+            <a href="#ebaySubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Ebay</a>
+            <ul class="collapse list-unstyled" id="ebaySubmenu">
+                <li>
+                    <a href="#">On Sale</a>
+                </li>
+                <li>
+                    <a href="#">Orders</a>
+                </li>
+                <li>
+                    <a href="{% url 'ebay-connect-store' %}">Settings</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#socialSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Social</a>
+            <ul class="collapse list-unstyled" id="socialSubmenu">
+                <li>
+                    <a href="#">Facebook</a>
+                </li>
+                <li>
+                    <a href="#">Instagram</a>
+                </li>
+                <li>
+                    <a href="#">TikTok</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <ul class="list-unstyled CTAs">
+        <li>
+            <a href="#" class="article">F.A.Q.</a>
+        </li>
+        <li>
+            <a href="#" class="article">Contact</a>
+        </li>
+    </ul>
+</nav>
+{% else %}
+
+{% endif %}

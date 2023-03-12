@@ -1,0 +1,60 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        
+        <div class="standard-command-container">
+          <p style="margin:10px">Search through millions of products from the most popular brands and manufacturers and import them with one click.
+          </p>
+          <div class="standard-command-container">
+            <form action="search-results" method="post">
+                {% csrf_token %}
+                {{ cj_search| crispy}}
+                <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='searchbycategory' type="submit" value="Search" name="search-by-category">
+                </div>
+            </form>
+          </div>
+          <!--
+        <div class="row" style="margin-top:2em">
+
+            
+            <div class="col-2">
+              <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="cj-search-list" data-toggle="list" href="#cj-search" role="tab" aria-controls="cjsearch"><b>CJ Dropshipping</b></a>
+                <a class="list-group-item list-group-item-action" id="bigbuy-search-list" data-toggle="list" href="#bigbuy-search" role="tab" aria-controls="bigbuysearch"><b>BigBuy</b></a>
+                <a class="list-group-item list-group-item-action" id="banggood-search-list" data-toggle="list" href="#banggood-search" role="tab" aria-controls="banggoodsearch"><b>Banggood</b></a>
+              </div>
+            </div>
+            <div class="col-10">
+              <div class="standard-command-container">
+              <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="cj-search" role="tabpanel" aria-labelledby="cj-search-list">
+                    <form action="search-results" method="post">
+                      <p style="margin-top:5px;margin-bottom:20px;"><b>CJDropshipping</b> is a chinese dropshipping provider offering quality products, competitive prices and dropshipping services worldwide.</p>
+                        {% csrf_token %}
+                        {{ cj_search| crispy}}
+                        <div class="button" style="text-align: center;">
+                            <input class="standard-button" id='searchbycategory' type="submit" value="Search" name="search-by-category">
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="bigbuy-search" role="tabpanel" aria-labelledby="bigbuy-search-list">bigbuy</div>
+                <div class="tab-pane fade" id="banggood-search" role="tabpanel" aria-labelledby="banggood-search-list">banggood</div>
+              </div>
+            </div>
+            </div>
+          </div>-->
+        </div>
+    </body>
+</html>
+
+{% endblock %}
+

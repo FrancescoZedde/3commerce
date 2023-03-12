@@ -1,0 +1,730 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main>
+
+  <input type="hidden" id="showselectall" name="show-select-all" value="{{show_select_all}}">
+
+<!-- SHOW/HIDE ACTIONS PANEL-->
+<div class="standard-command-container">
+  <div style="text-align: center; margin-bottom:1em;">
+    <button id="open-actions-panel-button" class="btn" onclick="control_actions_panel()">
+      <i class="fa fa-sort-desc fa-2x"></i>
+    </button>
+    <button id="close-actions-panel-button" class="btn" hidden="hidden" onclick="control_actions_panel()">
+      <i class="fa fa-sort-asc fa-2x"></i>
+    </button>
+  </div>
+  
+  <!--NEW COMMAND PANEL-->
+<div id="actions-panel" hidden="hidden">
+  <div class="row">
+    <div class="col-8">
+    </div>
+    <div class="col-2">
+      <div class="button" style="text-align: right;">
+        <button class="csv-button" id='open-modal-csv-import' name="csv-modal-button">Import CSV</button>
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="button" style="text-align: left;">
+        <button class="csv-button" id='open-modal-csv-export' name="csv-modal-button">Export CSV</button>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:2em;">
+    <div class="col-4">
+          <label for="action-dropdown">Actions:</label>
+            <select class="form-select" name="action-dropdown" id="action-options">
+              <option value="none" selected="selected"></option>
+              <option value="edit">Edit</option>
+              <option value="add-ai-description">Add description</option>
+              <option value="add-template">Add template</option>
+              <option value="add-ai-description-and-template">Add description and template</option>
+              <option value="delete">Delete</option> 
+            </select>
+            <div style="text-align: center;margin-top:1em;">
+              <button class="standard-button" id="OpenModalActions" onclick="open_modal_action()">Execute</button>
+            </div>
+          
+    </div>
+    <div class="col-4">
+        <label for="import-dropdown">Import:</label>
+          <select class="form-select" name="import-dropdown" id="import-options">
+            <option value="none" selected="selected"></option>
+            <option value="shopify">Shopify</option>
+            <option value="woocommerce">WooCommerce</option>
+            <option value="ebay">Ebay</option>
+          </select>
+          <div style="text-align: center;margin-top:1em;">
+            <button class="standard-button" id="OpenModalActions" onclick="open_modal_import()">Import</button>
+          </div>
+    </div>
+    <div class="col-4">
+      <form action="inventory-list-view-sync-commands" method="post" style="text-align: left;">
+        {% csrf_token %}
+        <label for="sync-dropdown">Sync to:</label>
+          <select class="form-select" name="sync-dropdown" id="sync-options">
+            <option value="none" selected="selected"></option>
+            <option value="sync-all">Sync All</option>
+            <option value="woocommerce">WooCommerce</option>
+            <option value="ebay">Ebay</option>
+          </select>
+        <div class="button" style="text-align: center; margin-top:1em;">
+          <input class="standard-button" id='bulk-sync-button' type="submit" value="Sync" name="bulk-button">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+  
+  <!--<div id="actions-panel" hidden="hidden">
+      <div class="standard-command-container">
+        <div class="row">
+          <p><b>Sync Actions</b></p>
+        </div>
+        <div class="row">
+          <div class="col-2">
+            <form action="inventory-sync" method="post">
+              {% csrf_token %}
+              <div class="button" style="text-align: center;">
+                <input class="sync-button" id='syncwoocommerce' type="submit" value="Sync with Woocommerce" name="sync-with-woocommerce">
+              </div>
+
+            </form>
+        </div>
+        <div class="col-2">
+          <form action="inventory-sync" method="post">
+            {% csrf_token %}
+            <div class="button" style="text-align: center;">
+              <input class="sync-button" id='syncebay' type="submit" value="Sync with Ebay" name="sync-with-ebay">
+            </div>
+            </form>
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-2">
+          <div class="button" style="text-align: center;">
+            <button class="csv-button" id='open-modal-csv-import' name="csv-modal-button">Import CSV</button>
+          </div>
+          <div class="button" style="text-align: center;">
+            <button class="csv-button" id='open-modal-csv-export' name="csv-modal-button">Export CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <div class="standard-command-container">
+        <div class="row">
+          <p><b>Bulk Import Actions</b></p>
+          <p>Action applies to all selected items.</p>
+        </div>
+        <div class="row">
+          <div class="col-2">
+
+            <div class="button" style="text-align: center;margin-bottom:1em;">
+              <button class="import-button" id="OpenModalImportWoocommerce">WooCommerce</button>
+            </div>
+              
+            
+        </div>
+        <div class="col-2">
+
+          <div class="button" style="text-align: center;">
+            <button class="import-button" id="OpenModalImportEbay">Ebay</button>
+          </div>
+
+        </div>
+        <div class="col-2">
+
+
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-2">
+        </div>
+      </div>
+    </div>
+      <div class="standard-command-container">
+       <div class="row">
+          <p><b>Bulk Manipulation Actions</b></p>
+          <p>Action applies to all selected items.</p>
+       </div>  
+        <div class="row">
+          <div class="col-2">
+            <form action="inventory-edit-items" method="post">
+              {% csrf_token %}
+              <div class="button" style="text-align: center;">
+                <input class="standard-button" id='editselecteditems' type="submit" value="Edit selected items" name="edit-selected-items">
+              </div>
+              <input type="hidden" id="selecteditems" name="selected-items" value="{{selected_items}}">
+            </form>
+        </div>
+        <div class="col-2">
+          <form action="inventory-delete-items" method="post">
+            {% csrf_token %}
+          <div class="button" style="text-align: center;">
+            <input class="standard-button" id='deleteselecteditems' type="submit" value="Delete selected items" name="delete-selected-items">
+          </div>
+          <input type="hidden" id="selecteditemsdelete" name="selected-items-delete" value="{{selected_items_delete}}">
+        </form>
+        </div>
+        <div class="col-2">
+          <form action="inventory-add-default-template" method="post">
+            {% csrf_token %}
+          <div class="button" style="text-align: center;">
+            <input class="standard-button" id='adddefaulttemplate' type="submit" value="Add default template" name="add-default-template">
+          </div>
+          <input type="hidden" id="selecteditemsadddefaulttemplate" name="selected-items-add-default-template" value="{{selected_items_add_default_template}}">
+          </form>
+        </div>
+        <div class="col-2">
+          
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-2">
+               
+        </div>
+      </div>
+    </div>
+  </div>-->
+</div>
+<div class="standard-command-container">
+  <div class="row">
+    <div class="col-2">
+      <button class="standard-button" onclick="filter_results()" ><i class="fa fa-filter"></i></button> 
+    </div>
+    <div class="col-8">
+    </div>
+    <div class="col-2">
+      
+    </div>
+  </div>
+  <div class="row">
+    <div id="filters-tab" hidden="hidden">
+      <div class="button" style="text-align: center;">
+          <button class="standard-button" onclick="apply_filters()">Apply</button>
+          <button class="standard-button" onclick="reset_filters()"><i class="fa fa-repeat" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+    
+</div>
+<table class="inventory-table" id="inventory-table">
+  <div style="text-align:right; margin-right:1em;">
+    <button id='select-all-button' class="standard-button" onclick="select_deselect_all_rows()" >Select all</button> 
+    <button id='deselect-all-button' class="standard-button" hidden='hidden'  onclick="select_deselect_all_rows()" >Deselect all</button> 
+  </div>
+  <tr class="tr-header">
+    <th></th>
+    <th></th>
+    <th>SKU</th>
+    <th>Name</th>
+    <th>Supplier</th>
+    <th>Category</th>
+    <th>Supplier price</th>
+    <th>Sell price</th>
+    <th>WooComm</th>
+    <th>Ebay</th>
+    <th>Amazon</th>
+    <th>Template</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+  {% for item in all_inventory_items %}
+  <tr class="tr-standard">
+    <td class="td-standard">{{item.id}}</td>
+    <td class="td-standard"><img src={{item.productImage}} alt="" width="100" height="100"></td>
+    <td class="td-name">{{item.sku}}</td>
+    <td class="td-name">{{item.itemName}}</td>
+    <td class="td-standard">{{item.supplier}}</td>
+    <td class="td-standard">{{item.categoryThird}}  </td>
+    <td class="td-standard">{{item.supplierSellPrice}}</td>
+    <td class="td-standard">{{item.sellPrice}}</td>
+    <td class="td-standard">
+        {% if item.onsaleWoocommerce == False %}
+          <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
+        {% else %}
+          <img src="http://xzshop.eu/wp-content/uploads/2023/02/check.png" alt="Yes" width="25" height="25"> 
+        {% endif %}
+    </td>
+    <td class="td-standard">
+      <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
+    </td>
+    <td class="td-standard">
+        {% if item.onsaleWoocommerce == False %}
+          <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
+        {% else %}
+          <img src="http://xzshop.eu/wp-content/uploads/2023/02/check.png" alt="Yes" width="25" height="25"> 
+        {% endif %}
+    </td>  
+    <td class="td-standard">
+        {% if item.descriptionTemplate == '' %}
+          <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
+        {% else %}
+          <img src="http://xzshop.eu/wp-content/uploads/2023/02/check.png" alt="Yes" width="25" height="25"> 
+        {% endif %}
+    </td>
+    <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
+    <td class="td-standard"><a style='color:rgb(65, 134, 255)' href="{% url 'inventory-item-detail-view' pk=item.id %}" target="_blank" rel="follow">View</a></td>
+    <td class="td-standard"><a style='color:rgb(239, 57, 57)' href="">Delete</a></td>
+
+  </tr>
+  {% endfor %}
+
+</table>
+
+<!--<input type="hidden" id="selecteditems" name="selected-items" value="{{selected_items}}">-->
+  <!-- WOOCOMMERCE IMPORT MODAL  -->
+  <div id="modalwoocommerce" class="modal-container">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="modal-description">
+        <h5><b>WooCommerce Import Setup</b></h5>
+        <p>Set the product <b>price increment</b> (relative to supplier prices) and enter <b>WooCommerce category IDs</b>. 
+          Enter IDs one at a time separating them with a comma [12, 43, 56, etc.]. <a href="/woocommerce-categories" target="_blank" rel="follow">Show categories</a></p>
+      </div>
+      <div id="" style="margin-top: 1em">
+        <!-- WOOCOMMERCE SETUP FORM-->
+        <form action="export-start" method="post">
+        {% csrf_token %}
+          <div class="row">
+            <div class="col-4" style="text-align:center;">
+              <p>Increase price by:</p>
+              {{woocommerce_import_setup_form.pricepercentageincrease}}
+            </div>
+            <div class="col-4" style="text-align:center;">
+              <p>WooCommerce categories IDs:</p>
+              {{woocommerce_import_setup_form.categories}}
+            </div>
+            <div class="col-4" style="text-align:center;">
+            </div>
+          </div>
+          <!-- WOOCOMMERCE IMPORT BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="import-button" id='startimport' type="submit" value="Start Import" name="start-import-items">
+              </div>
+            </div>
+          </div>
+          <!--<input type="hidden" id="selecteditemswoocommerce" name="selected-items-woocommerce" value="{{selected_items_woocommerce}}">-->
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- SHOPIFY -->
+  <div id="modal-shopify" class="modal-container">
+    <div class="modal-content">
+      <span id="close-shopify" class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- SHOPIFY IMPORT-->
+        <form action="inventory-list-view-import-commands" method="post" style="text-align: left;">
+          {% csrf_token %}
+          <div class="row">
+
+          </div>
+          <!-- SHOPIFY IMPORT  BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='importshopify' type="submit" value="Import to Shopify" name="import-shopify">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+          <input type="hidden" name="action" value="import-shopify">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- EBAY IMPORT MODAL  -->
+  <div id="modalebay" class="modal-container">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- EBAY SETUP FORM-->
+        <form action="ebay-start-export-batch" method="post">
+        {% csrf_token %}
+          <div class="row">
+            <div class="col-4" style="text-align:center;">
+              {{ebay_import_setup_form|crispy}}
+            </div>
+            <div class="col-4" style="text-align:center;">
+            </div>
+            <div class="col-4" style="text-align:center;">
+            </div>
+          </div>
+          <!-- EBAY IMPORT BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="import-button" id='startimportebay' type="submit" value="Start Import Ebay" name="start-import-ebay">
+              </div>
+            </div>
+          </div>
+          <!--<input type="hidden" id="selecteditemsebay" name="selected-items-ebay" value="{{selected_items_ebay}}">-->
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- CSV IMPORT MODAL -->
+  <div id="modalimportcsv" class="modal-container">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- CSV IMPORT FORM-->
+        <form action="inventory-list-view-csv-import" method="post">
+          {% csrf_token %}
+          <div class="row">
+            <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="csv_file" id="csv_file" required="True" class="form-control">
+          </div>
+          <!-- CSV IMPORT BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='startcsvimport' type="submit" value="Import CSV" name="start-csv-import">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- CSV EXPORT MODAL -->
+  <div id="modalexportcsv" class="modal-container">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- CSV EXPORT FORM-->
+        <form action="inventory-list-view-csv-export" method="post">
+          {% csrf_token %}
+          <div class="row">
+
+          </div>
+          <!-- CSV EXPORT BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='startcsvexport' type="submit" value="Export CSV" name="start-csv-export">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- ADD TEMPLATE MODAL -->
+  <div id="modal-add-template" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-add-template" class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- ADD TEMPLATE  FORM-->
+        <form action="inventory-list-view-manipulation-commands" method="post" style="text-align: left;">
+          {% csrf_token %}
+          <div class="row">
+
+          </div>
+          <!-- ADD TEMPLATE  BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='addtemplate' type="submit" value="Add Template" name="add-template">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+          <input type="hidden" name="action" value="add-template">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- ADD DESCRIPTION MODAL -->
+  <div id="modal-add-description" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-add-description" class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- ADD DESCRIPTION  FORM-->
+        <form action="inventory-list-view-manipulation-commands" method="post">
+          {% csrf_token %}
+          <div class="row">
+            {{gpt_write_description_form|crispy}}
+          </div>
+          <!-- ADD DESCRIPTION  BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='adddescription' type="submit" value="Add Description" name="add-description">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+          <input type="hidden" name="action" value="add-description">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- ADD DESCRIPTION + TEMPLATE MODAL -->
+  <div id="modal-add-description-and-template" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-add-description-and-template" class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- ADD DESCRIPTION + TEMPLATE  FORM -->
+        <form action="inventory-list-view-manipulation-commands" method="post">
+          {% csrf_token %}
+          <div class="row">
+
+          </div>
+          <!-- ADD DESCRIPTION + TEMPLATE  BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='adddescriptionandtemplate' type="submit" value="Add Description and Template" name="add-description-and-template">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+          <input type="hidden" name="action" value="add-description-and-template">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- DELETE MODAL -->
+  <div id="modal-delete" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-delete" class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- DELETE  FORM-->
+        <form action="inventory-list-view-manipulation-commands" method="post">
+          {% csrf_token %}
+          <div class="row">
+            <p>All selected item will be permanently deleted, are you sure?</p>
+          </div>
+          <!-- DELETE  BUTTON -->
+          <div class="row">
+            <div class="col-12" style="text-align:center;">
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='delete' type="submit" value="Delete" name="delete">
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="selected-items" value="{{selected_items}}">
+          <input type="hidden" name="action" value="delete">
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+      
+
+
+      <script src="{% static 'xz_inventory_list_view.js' %}"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+      <script>
+        
+        jQuery(document).ready(function($) {
+          $(".tr-standard-clickable-row").click(function() {
+              window.location = $(this).data("href");
+          });
+        });
+
+        function control_actions_panel() {
+          console.log('control_actions_panel')
+          let open_panel_button = document.getElementById("open-actions-panel-button");
+          let close_panel_button = document.getElementById("close-actions-panel-button");
+          let panel = document.getElementById("actions-panel");
+          
+          let hidden = panel.getAttribute("hidden");
+
+          if (hidden) {
+            panel.removeAttribute("hidden");
+            close_panel_button.removeAttribute("hidden");
+            open_panel_button.setAttribute("hidden", "hidden");
+            
+         } else {
+            panel.setAttribute("hidden", "hidden");
+            close_panel_button.setAttribute("hidden", "hidden");
+            open_panel_button.removeAttribute("hidden");
+            
+         }
+        }
+
+        // CSV IMPORT MODAL
+        let open_modal_csv_import = document.getElementById("open-modal-csv-import");
+        let modal_import_csv = document.getElementById("modalimportcsv");
+        let close_type_modal_2 = document.getElementsByClassName("close")[2];
+
+        close_type_modal_2.onclick = function() {
+          modal_import_csv.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal_import_csv) {
+              modal_import_csv.style.display = "none";
+            }
+        }
+        open_modal_csv_import.addEventListener('click', function () { 
+          modal_import_csv.style.display = "block";
+
+        })
+
+        // CSV EXPORT MODAL
+   
+        let open_modal_csv_export = document.getElementById("open-modal-csv-export");
+        let modal_export_csv = document.getElementById("modalexportcsv");
+        let close_type_modal_3 = document.getElementsByClassName("close")[3];
+
+        close_type_modal_3.onclick = function() {
+          modal_export_csv.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal_export_csv) {
+              modal_export_csv.style.display = "none";
+            }
+        }
+        open_modal_csv_export.addEventListener('click', function () { 
+          modal_export_csv.style.display = "block";
+
+        })
+        
+        // BULK ACTIONS MODAL
+        function open_modal_action(){
+          var action = document.getElementById("action-options").value;
+          var selected_items = document.getElementsByName("selected-items")[0].value
+          if (selected_items == ""){
+            alert("Select at least 1 product")
+          }
+          else if (action == "none"){
+            alert("Select a valid value")
+          }
+          else if (action == "add-ai-description"){
+            let modal_description = document.getElementById("modal-add-description");
+            let closetypemodal = document.getElementById("close-modal-add-description");
+
+            closetypemodal.onclick = function() {
+              modal_description.style.display = "none";
+            }
+            modal_description.style.display = "block";
+          }
+          else if (action == "add-template"){
+            let modal_template = document.getElementById("modal-add-template");
+            let closetypemodal = document.getElementById("close-modal-add-template");
+
+            closetypemodal.onclick = function() {
+              modal_template.style.display = "none";
+            }
+            modal_template.style.display = "block";
+          }
+          else if (action == "add-ai-description-and-template"){
+            let modal_description_and_template = document.getElementById("modal-add-description-and-template");
+            let closetypemodal = document.getElementById("close-modal-add-description-and-template");
+
+            closetypemodal.onclick = function() {
+              modal_description_and_template.style.display = "none";
+            }
+            modal_description_and_template.style.display = "block";
+          }
+          else if (action == "delete"){
+            let modal_delete = document.getElementById("modal-delete");
+            let closetypemodal = document.getElementById("close-modal-delete");
+
+            closetypemodal.onclick = function() {
+              modal_delete.style.display = "none";
+            }
+            modal_delete.style.display = "block";
+          }
+          
+        }
+
+        // BULK IMPORT MDOAL
+        function open_modal_import(){
+          var import_to = document.getElementById("import-options").value;
+          var selected_items = document.getElementsByName("selected-items")[0].value
+          if (selected_items == ""){
+            alert("Select at least 1 product")
+          }
+          else if (import_to == "none"){
+            alert("Select a valid value")
+          }
+          // WOOCOMMERCE
+          else if (import_to == "woocommerce"){
+            let modalWoocommerce = document.getElementById("modalwoocommerce");
+            let closetypemodal_0 = document.getElementsByClassName("close")[0];
+
+            closetypemodal_0.onclick = function() {
+              modalWoocommerce.style.display = "none";
+            }
+            modalWoocommerce.style.display = "block";
+          }
+          else if (import_to == "shopify"){
+            let modalShopify = document.getElementById("modal-shopify");
+            let close_modal = document.getElementById("close-shopify");
+
+            close_modal.onclick = function() {
+              modalShopify.style.display = "none";
+            }
+            modalShopify.style.display = "block";
+          }
+          // EBAY
+          else if (import_to == "ebay"){
+            let modalEbay = document.getElementById("modalebay");
+            let closetypemodal_1 = document.getElementsByClassName("close")[1];
+
+            closetypemodal_1.onclick = function() {
+              modalEbay.style.display = "none";
+            }
+            window.onclick = function(event) {
+                if (event.target == modalEbay) {
+                  modalEbay.style.display = "none";
+                }
+            }
+              modalEbay.style.display = "block";
+          }
+        }
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        
+          function filter_results(){
+              let element = document.getElementById("filters-tab");
+              let hidden = element.getAttribute("hidden");
+            
+              if (hidden) {
+                 element.removeAttribute("hidden");
+                 //button.innerText = "Hide filters tab";
+              } else {
+                 element.setAttribute("hidden", "hidden");
+                 //button.innerText = "Show filters tab";
+              }
+            }
+
+
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        
+        function send_selected_rows(){
+           select_rows()
+
+
+      }
+      </script>
+      {% endblock %}

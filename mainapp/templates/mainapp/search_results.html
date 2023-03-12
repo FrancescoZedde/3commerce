@@ -1,0 +1,98 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+<div>
+    <form action="inventory-import" method="post">
+        {% csrf_token %}
+        <div class="standard-command-container">
+            <input type="hidden" id="products" name="products" value="{{products}}">
+            <div style="text-align: center;">
+                <input class="standard-button" id='mass-import-inventory' type="submit" value="Mass Import" name="import-inventory" disabled>
+            </div>
+        </div>
+            <input type="hidden" id="selected-items-mass-import" name="selected-items" value="{{selected_items}}">
+    </form>
+        <div id="card-deck-table">
+            {% for group in grouped_products %}
+            <div class="card-deck">
+                            {% for product in group %}
+                            <div class="card shadow" style='max-width:14.66%' id="card-{{product.productSku}}">
+                                <img src={{product.productImage}} style="padding:0.5em;" width="200px" height="200px" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                  <h5 class="card-title" style="font-size:12px !important; min-height:28%">{{ product.productNameEn }}</h5>
+                                
+                                      <p class="card-text"><small class="text-muted">Sku: {{ product.productSku}} <br> 
+                                                                                     Listings: {{ product.listedNum}} <br> 
+                                                                                    <a href="">View on website</a></small>
+                                      </p>
+                                      <p class="card-text" style="font-size:15px">Price: {{ product.sellPrice }}$</p>
+                                      <form action="inventory-import" method="post">
+                                        {% csrf_token %}
+                                        <input class="simple-import-button" id='simple-import-inventory' type="submit" value="Import" name="import-inventory">
+                                        <input type="hidden" id="selected-item-{{ product.productSku}}" name="selected-item" value="{{ product.productSku}}">
+                                     </form>
+                                    
+                                </div>
+                                <div class="card-footer">
+                                    <small class="text-muted"><input type="checkbox" id="{{product.productSku}}" name="checkbox-item" onchange="check_checkboxes()"/> Mass Import</small>
+                                  </div>
+                              </div>
+                        {% endfor %}
+                </div> 
+            {% endfor %}
+        </div>
+
+</div>
+
+<script src="{% static 'xz_search_results.js' %}"></script>
+
+<script>
+    function filter_results(){
+        console.log('test')
+        let element = document.getElementById("filters-tab");
+        let hidden = element.getAttribute("hidden");
+      
+        if (hidden) {
+           element.removeAttribute("hidden");
+           //button.innerText = "Hide filters tab";
+        } else {
+           element.setAttribute("hidden", "hidden");
+           //button.innerText = "Show filters tab";
+        }
+      }
+
+      function check_checkboxes(){
+        console.log('here');
+        var selected_items = document.getElementById("selecteditems");
+        var check_boxes = document.getElementsByName("checkbox-item")
+        var sku_list = []
+        check_boxes.forEach(
+            function(check_box) {
+                if (check_box.checked==true){
+                    sku_list.push(check_box.id)
+                }
+            }
+        );
+        console.log(sku_list)
+        var items_list = document.getElementById("selected-items-mass-import");
+        console.log(items_list)
+        document.getElementById("selected-items-mass-import").value = sku_list;
+        let mass_import_button = document.getElementById("mass-import-inventory");
+        console.log(sku_list.length)
+        if (sku_list.length > 0) {
+            mass_import_button.removeAttribute("disabled");
+            //button.innerText = "Hide filters tab";
+         } else {
+            mass_import_button.setAttribute("disabled", "disabled");
+            //button.innerText = "Show filters tab";
+         }
+
+      }
+</script>
+
+{% endblock %}
+

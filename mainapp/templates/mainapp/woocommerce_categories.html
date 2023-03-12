@@ -1,0 +1,20 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="standard-command-container">
+    <h5>Category Tree</h5>
+    {% for category in woocommerce_categories %}
+    <div class="row" style="margin-left: 20%; margin-right: 60%;">
+        <div class="col-10">
+            {{category.name}}
+        </div>
+        <div class="col-2">
+            {{category.id}}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

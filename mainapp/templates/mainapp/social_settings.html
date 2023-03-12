@@ -1,0 +1,129 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="standard-command-container">
+    <div class="row">
+        <h5>Facebook and Instagram</h5>
+        <p>Connect an Instagram profile and a Facebook page to take advantage of automatic posting features. </p>
+    </div>
+
+    {% if user.facebook_access_token %}
+    <!-- FACEBOOK/INSTAGRAM CONNECTED -->
+    <div id="div-connected">
+        <p>Instagram profile and Facebook Page already connected</p>
+    </div>
+    {% else %}
+    <!-- FACEBOOK/INSTAGRAM NOT CONNECTED -->
+    <div id="div-not-connected">
+        <p>Login on Facebook to connect Instagram Profile and Facebook Page for your business</p>
+    </div>
+    {% endif %}
+      <!-- CHECK CONNECTION-->
+      <button id='select-facebook-status' class="standard-button" onclick="check_facebook_user_status()" >Check Status</button><div id="connection-status" ></div>
+      <div class="button" style="text-align: center;">
+        <button id='login-facebook' class="standard-button" onclick="test_login()" >Test login</button>
+      </div>
+      
+      <!-- NEW GENERATED TOKEN-->
+      <div id="login-response" style="word-wrap: break-word;" ></div>
+  
+      <!-- UPDATE FACEBOOK/INSTAGRAM ACCESS TOKEN-->
+      <form action="facebook-update-connection" method="post">
+        {% csrf_token %}
+        <div class="button" style="text-align: center;">
+            <p style="margin-top:1em">Update Instagram and Facebook Connection </p>
+            <input class="standard-button" id='update-fb-token' type="submit" value="Update Connection" name="update-fb-token">
+        </div>
+        <input type="hidden" id="fb-user-id" name="fb-user-id" value="{{fb_user_id}}">
+        <input type="hidden" id="fb-page-id" name="fb-page-id" value="{{fb_page_id}}">
+        <input type="hidden" id="ig-user-id" name="ig-user-id" value="{{ig_user_id}}">
+        <input type="hidden" id="new-access-token" name="new-access-token" value="{{new_access_token}}">
+      </form>
+</div>
+
+
+<!-- FACEBOOK JAVASCRIPT SDK -->
+    <script>
+
+        window.onload = function() {
+          console.log('Loading');
+
+        };
+
+
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '884668986161218',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v16.0'
+          });
+
+          FB.AppEvents.logPageView();   
+
+        };
+
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement(s); js.id = id;
+           js.src = "https://connect.facebook.net/en_US/sdk.js";
+           fjs.parentNode.insertBefore(js, fjs);
+         }(document, 'script', 'facebook-jssdk'));
+        
+
+        function check_facebook_user_status(){
+            console.log('check status')
+            FB.getLoginStatus(function(response) {
+                console.log(response)
+                document.getElementById('connection-status').textContent = response.status;
+                //statusChangeCallback(response);
+            });
+            console.log('status checked')
+        }
+
+        function test_login(){
+            FB.login(function(response) {
+                console.log('Login response:')
+                console.log(response)
+                if (response.status == 'connected'){
+                  document.getElementById('login-response').textContent = response.authResponse.accessToken;
+                  document.getElementById('new-access-token').value = response.authResponse.accessToken;
+                  document.getElementById('fb-user-id').value = response.authResponse.userID;
+                  let user_id = response.authResponse.userID;
+                  FB.api(
+                          '/' + user_id + '/accounts',
+                          'GET',
+                          {},
+                          function(response) {
+                              // Insert your code here
+                              console.log('GET pages linked with userID' + user_id);
+                              console.log(response);
+                              document.getElementById('fb-page-id').value = response.data[0].id;
+                              console.log(response.data[0].id)
+                              let facebook_page_id = response.data[0].id;
+                              FB.api(
+                                    '/' + facebook_page_id,
+                                    'GET',
+                                    {"fields":"instagram_business_account"},
+                                    function(response) {
+                                        console.log(response);
+                                        document.getElementById('ig-user-id').value = response.instagram_business_account.id;
+                                        
+                                    }
+                              );
+
+                          }
+                        );
+                }else{
+                  document.getElementById('login-response').textContent = response;
+                }
+                
+              }, {scope: 'instagram_basic,pages_show_list,instagram_content_publish,instagram_shopping_tag_products,ads_management,business_management,catalog_management'});
+        }
+    </script>
+
+{% endblock %}

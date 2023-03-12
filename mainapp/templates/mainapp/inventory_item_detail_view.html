@@ -1,0 +1,265 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+<main>
+    <input type="hidden" id="item" name="item" value="{{item}}">
+                <!-- PRODUCT INFORMATION -->
+                <div class="standard-command-container">
+                    <form action="inventory-item-detail-view-save-changes" method="post">
+                    <div class="row">
+                        <div class="col-4">
+                            <img src={{item.productImage}} width="75%" height="25%" alt="">
+                            {% autoescape off %}
+                            {{item_original_description}}
+                            {% endautoescape %}
+                        </div>
+                        <div class="col-8">
+                            <b>Name</b>
+                            {{item_form.itemName}}
+                            <b>SKU</b>
+                            {{item_form.sku}}
+                            <b>Supplier</b>
+                            {{item_form.supplier}}
+                            <b>Supplier price </b>
+                            {{item_form.supplierSellPrice}}
+                            <b>Category</b>
+                            {{item_form.categoryFirst}}
+                            <b>Attributes</b>
+                            {{item_form.attributes}}
+                            <b>Material</b>
+                            {{item_form.materialNameEn}}
+                            <b>Supplier description</b>
+                                <div id="html_description">
+                                    {{item_form.description}}
+                                </div>
+                            <b>Brand</b>
+                            {{item_form.brand}}
+                            <b>Features description *optional</b>
+                            {{item_form.descriptionFeatures}}
+                        </div>
+                    </div>
+                    <!-- SAVE CHANGES BUTTON-->
+                    <div class="row">
+                        <div class="col-12">
+                            
+                            {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <p style="margin-top:1em">If you have made any changes to the fields above, don't forget to <b>Save</b> to make them effective</p>
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='save-changes' type="submit" value="Save" name="save-changes">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            
+                        </div>
+                    </div>
+                </form>
+                </div>
+                <!-- SEARCH SIMILAR ITEMS -->
+                <div class="standard-command-container">
+                    <div class="row">
+                        <h5><b>Search Similar Items</b></h5>
+                        <p>Search for similar items on Ebay, Amazon, etc.</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <form action="inventory-item-search-similar-items" method="post">
+                            {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <p style="margin-top:1em">Search similar items using words contained in the Item Title as keywords </p>
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search" name="search-similar-item-name">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                                <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
+                            </form>
+                        </div>
+                        <div class="col-6">
+                            <form action="inventory-item-search-similar-items" method="post">
+                            {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <p style="margin-top:1em">Search similar items using custom words as keywords </p>
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-custom-keywords' type="submit" value="Search" name="search-similar-custom-keywords">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- IMAGES CONTROL PANEL -->
+                <div class="standard-command-container">
+                    <div class="row">
+                        <h5><b>Image Set</b></h5>
+                        <p>From this section you can better <b>manage product images</b>. Remove the ones you don't need, set the main image and add new ones</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            <!-- ADD NEW IMAGE BUTTON-->
+                            <form action="" method="post">
+                            {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <input class="standard-button" id='addnewimage' disabled="disabled" type="submit" value="Add image" name="add-new-image">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            </form>
+                        </div>
+                        <div class="col-10">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table style="margin-top:2em;display: block;overflow-x: auto; white-space: nowrap;">
+                            <tr>
+                                {% for img in img_set %}
+                                <td>
+                                    <div style="text-align:center">
+                                        <img src={{img}} alt="" width="125" height="125">
+                                    </div>
+                                    <!-- REMOVE IMAGE BUTTON -->
+                                    <br>
+                                    <form action="inventory-item-remove-image" method="post">
+                                        {% csrf_token %}
+                                        <div class="button" style="text-align: center;">
+                                            <input class="standard-button" id='removeimg' type="submit" value="Delete" name="remove-img">
+                                        </div>
+                                        <input type="hidden" id="imgurl" name="img-url" value="{{img}}">
+                                        <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                                    </form>
+                                    <!-- SET NEW IMAGE BUTTON -->
+                                    <form action="inventory-item-set-main-image" method="post">
+                                        {% csrf_token %}
+                                        <div class="button" style="text-align: center;">
+                                            <input class="standard-button" id='newmainimg' type="submit" value="Set as main" name="new-main-img">
+                                        </div>
+                                        <input type="hidden" id="imgurl" name="img-url" value="{{img}}">
+                                        <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
+                                    </form>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- AI DESCRIPTIONS -->
+                <div class="standard-command-container">
+                    <!-- MAIN DESCRIPTION-->
+                    <form action="inventory-item-detail-view-save-main-AI-manual-changes" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <p><b>Main description.</b> This is the description that will be used to generate description templates</p>
+                                {{item_form.descriptionChatGpt}}
+                            </div>
+                        </div>
+                       <!-- SAVE MANUAL CHANGES TO AI DESCRIPTION-->
+                       <div class="row">
+                            <div class="col-12"> 
+                                <div class="button" style="text-align: center;">
+                                    <p style="margin-top:1em">If you have made manual changes to AI description don't forget to <b>Save</b></p>
+                                    <input class="standard-button" id='save-ai-decription-changes' type="submit" value="Save" name="save-ai-decription-changes">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}"> 
+                            </div>
+                        </div>
+                        </form>
+                    <div class="row">
+                        <p><b>Product Description Writer</b></p>
+                      <p>Generate descriptions with Atifical Intelligence</p>
+                    </div>
+                    <form action="gpt-generate-description" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                            <div class="col-8">
+                                {{gpt_write_dscription_form|crispy}}
+                            </div>
+                            <div class="col-4">
+                                <!-- GENERATE NEW DESCRIPTIONS BUTTON-->
+                                    <div class="button" style="text-align: center; margin-top: 35%;">
+                                        <input class="standard-button" id='generateaidesc' type="submit" value="Generate description" name="generate-ai-desc">
+                                        <p style="font-size:11px; text-align:center">Previous descriptions will be overwritten</p>
+                                    </div>
+                                    <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            </div>
+                    </div>
+                    </form>
+                    <!-- OPTION 1 DESCRIPTION-->
+                    <div class="row">
+                        <div class="col-10">
+                            <p><b>Option 1</b></p>
+                        </div>
+                        <div class="col-2">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="button" style="text-align: center; margin-top:4em;">
+                                    <input class="standard-button" id='' type="submit" value="Set as main" name="set-main-ai-description">
+                                  </div>
+                                  <input type="hidden" id="writesonic_1" name="writesonic-description" value="">
+                                  <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
+                            </form>
+                        </div>
+                    </div>
+                    <!-- OPTION 2 DESCRIPTION-->
+                    <div class="row">
+                        <div class="col-10">
+                            <p><b>Option 2</b></p>
+                        </div>
+                        <div class="col-2">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="button" style="text-align: center; margin-top:4em;">
+                                    <input class="standard-button" id='' type="submit" value="Set as main" name="set-main-ai-description">
+                                  </div>
+                                  <input type="hidden" id="writesonic_2" name="writesonic-description" value="">
+                                  <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
+                            </form>
+                        </div>
+                    </div>
+                    <!-- OPTION 3 DESCRIPTION-->
+                    <div class="row">
+                        <div class="col-10">
+                            <p><b>Option 3</b></p>
+                        </div>
+                        <div class="col-2">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="button" style="text-align: center; margin-top:4em;">
+                                    <input class="standard-button" id='' type="submit" value="Set as main" name="set-main-ai-description">
+                                  </div>
+                                  <input type="hidden" id="writesonic_3" name="writesonic-description" value="">
+                                  <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- INSTAGRAM -->
+                <div class="standard-command-container">
+                    <div class="row">
+                        <h5><b>Social</b></h5>
+                        <p>Publish product on instagram</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <form action="" method="post">
+                            {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='create-ig-post' type="submit" value="Create Container" name="create-ig-post">
+                                    <p>
+                                        <small>After creating a Post Container you will be able tu publish it from <i>Social</i>><i>Instagram</i></small>
+                                    </p>
+                                    
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            </form>
+                        </div>
+                        <div class="col-6">
+                            
+                        </div>
+                    </div>
+                </div>
+</main>
+<script>
+
+
+</script>
+
+{% endblock %}

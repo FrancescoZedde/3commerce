@@ -1,0 +1,31 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main>
+    <div class="standard-command-container">
+        <h5><b>Ebay Connect Store</b></h5> 
+        <p><b>Update access token</b></p>
+        <!-- UPDATE EBAY ACCESS TOKEN -->
+        <small class="test-muted">
+            <p>Paste new Ebay access token and update</p>
+        </small>
+        <form action="ebay-update-access-token" method="post">
+            {% csrf_token %}
+            {{ ebay_update_access_token_form.access_token }}
+            <div class="button" style="text-align: center; margin-top:2em;">
+                <input class="standard-button" id='updateaccesstokenbutton' type="submit" value="Update" name="update-access-token-button">
+            </div>
+        </form>
+        <div style="max-width:100%; word-wrap: break-word;">
+            <p><b>Ebay access token:</b> {{ ebay_access_token }}</p>
+        </div>
+    </div>
+    
+</main>
+{% endblock %}
