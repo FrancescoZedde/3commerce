@@ -19,7 +19,7 @@ def refresh_access_token():
     
     client_id = '' 
     client_secret = ''
-    rt = 'v^1.1#i^1#f^0#I^3#r^1#p^3#t^Ul41Xzk6NTc4NjIyMjY4NDc5NjZGQ0QwQUI5NzJBNTY1QTI3ODhfMV8xI0VeMjYw'
+    rt = ''
 
     url = 'https://api.ebay.com/identity/v1/oauth2/token'
     
