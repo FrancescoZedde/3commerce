@@ -3,7 +3,7 @@ import requests
 
 class Printful():
     def __init__(self):
-        self.api_key = "JU77AP8F3AmeZLzzt7r5z9hfh3SnJkaCovpSZ29FABiHLtoUWVvHbEi1XOOk3aCD"
+        self.api_key = ""
         self.host = 'https://www.printful.com'
         self.host_api = 'https://www.api.printful.com'
 
@@ -24,15 +24,13 @@ class Printful():
 
         params = {
             'grant_type': 'authorization_code',
-            'client_id': 'app-8219094',
+            'client_id': '',
             'client_secret': self.api_key,
-            'code': 'SF3smWPcWvInV8duOwEA39V1oUkaoxZ9jKpkPrNC',
+            'code': '',
         }
 
         response = requests.post(url, params=params).json()
-        '''
-        {'access_token': '0wmQFp7GHGxrdZGxddsq0vWv77QXzFfSx1fURs54', 'expires_at': 1678224868, 'token_type': 'bearer', 'refresh_token': 'o4RwHJLSc0F9UosCUKBC7UDydINRAoo99AHNFCYCW5RR7oZrXDrwmDBPGO97'}
-        '''
+        
         print(response)
         return response['access_token'], response['refresh_token']
 
@@ -50,7 +48,7 @@ class Printful():
 
         params = {
             'grant_type': 'refresh_token',
-            'client_id': 'app-8219094',
+            'client_id': '',
             'client_secret': self.api_key,
             'refresh_token': refresh_token,
         }
@@ -60,13 +58,10 @@ class Printful():
 
 
     def get_scopes(self):
-        headers = {'Authorization': 'bearer '+ 'ulxHyMH1SvD461JaYEFeajjpgHQZ4mWApIHXM1jafHTdj9QWB0aCm3Oc6LFJ'}
+        headers = {'Authorization': 'bearer '+ ''}
         url = self.host_api + '/oauth/scopes'
         response = requests.get(url,  headers=headers, verify=False, timeout=100)
         print(response)
 
-    '''
-    {'access_token': 'I3gwoRSobZarPflJ6X40kTS4C8Bl86XvCb9es9uS', 'expires_at': 1678235812, 'token_type': 'bearer', 'refresh_token': 'ulxHyMH1SvD461JaYEFeajjpgHQZ4mWApIHXM1jafHTdj9QWB0aCm3Oc6LFJ'}
-    '''
     # 30 day valid token refresh xDHrC2NxEvQDI1NMnqld7HJmGOlBL8ZvuMJZOaCEPYRJybPGa8NJOLUWIojI
     #                   access KSswjbopXMORS4rLpCwSAfZwTGLK35XdtFM5cPrt

@@ -17,8 +17,8 @@ Production	POST https://api.ebay.com/identity/v1/oauth2/token
 '''
 def refresh_access_token():
     
-    client_id = 'xzshop-d-PRD-a7db68d0a-cf529eb1' 
-    client_secret = 'PRD-7db68d0a4bf9-5af1-4426-b52a-5044'
+    client_id = '' 
+    client_secret = ''
     rt = 'v^1.1#i^1#f^0#I^3#r^1#p^3#t^Ul41Xzk6NTc4NjIyMjY4NDc5NjZGQ0QwQUI5NzJBNTY1QTI3ODhfMV8xI0VeMjYw'
 
     url = 'https://api.ebay.com/identity/v1/oauth2/token'
@@ -39,8 +39,7 @@ def refresh_access_token():
 
 
 def get_application_access_token(client_id, client_secret):
-    #client_id = 'xzshop-d-PRD-a7db68d0a-cf529eb1'
-    #client_secret = 'PRD-7db68d0a4bf9-5af1-4426-b52a-5044'
+
     url = 'https://api.ebay.com/identity/v1/oauth2/token'
     basic_auth = base64_encode_credentials(client_id, client_secret)
     headers = {"Content-Type": 'application/x-www-form-urlencoded',
@@ -55,7 +54,6 @@ def get_application_access_token(client_id, client_secret):
     response = requests.post(url, data=data, headers=headers).json()
     print(response)
 
-    #get_application_access_token('xzshop-d-PRD-a7db68d0a-cf529eb1', 'PRD-7db68d0a4bf9-5af1-4426-b52a-5044')
 '''
 Sandbox POST https://api.sandbox.ebay.com/identity/v1/oauth2/token
 Production  POST https://api.ebay.com/identity/v1/oauth2/token

@@ -186,19 +186,9 @@ def update_items_offer(user, selected_items, percentage_increase):
 
 def update_item(data):
     sku = data.split("&", 1)[0]
-    print(sku)
     updates_dict = string_to_dict(data)
-    print(updates_dict)
-    print(updates_dict)
-    print('qui')
-    print(BeautifulSoup(updates_dict['description'], "html.parser"))
-
-    print(html.unescape(updates_dict['description']))
-
     enc = bytes(updates_dict['description'], 'utf-8')
     decodedLine = enc.decode('utf-8')
-
-    print(decodedLine)
     item_object_set = InventoryItem.objects.filter(sku=sku)
     item_object =item_object_set[0]
     item_object.itemName = updates_dict['itemName']

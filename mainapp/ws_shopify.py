@@ -1,12 +1,4 @@
-#client id 6fb5b0131320a2eb79762a37c255b9aa
-# secret d89906da5b9641cab0d92edb7472a3d4
 
-
-
-# App created from Admin store 
-# clinet id 669bba2f5b16fe9f02d41053b120c756
-#client secret 15e0e09582aca11f950bd8cbaccf0c80
-# access token generate dfrom admin app : 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
 from mainapp.ws_shopify_utils import ShopifyUtils
 import shopify
 import json
@@ -16,18 +8,18 @@ from ast import literal_eval
 class Shopify:
     def __init__(self):
         #start session
-        self.shopify = shopify.Session.setup(api_key="6fb5b0131320a2eb79762a37c255b9aa", secret="d89906da5b9641cab0d92edb7472a3d4")
+        self.shopify = shopify.Session.setup(api_key="6fb5b0131320a2eb79762a37c255b9aa", secret="")
         print(self.shopify)
 
     def shopify_check_status():
-        session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "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")
+        session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "")
         shopify.ShopifyResource.activate_session(session)
         shop = shopify.Shop.current()
         print(shop)
 
     def shopify_create_new_product(item, variants):
         # Create a new product
-        session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "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")
+        session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "")
         shopify.ShopifyResource.activate_session(session)
         new_product = shopify.Product()
         new_product.title = item.itemName
@@ -59,7 +51,7 @@ class Shopify:
 
         url = 'https://sellfast-development-store.myshopify.com/' + 'admin/api/2023-01/products.json'
 
-        headers = {'X-Shopify-Access-Token': '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',
+        headers = {'X-Shopify-Access-Token': '',
                     'Content-Type': 'application/json'}
 
         payload = {

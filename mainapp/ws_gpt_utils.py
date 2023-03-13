@@ -13,8 +13,8 @@ prompts = {
     'prompt2' : 
     [
         {"role": "system", "content": "You are an assistant"},
-    {"role": "user", "content": 'SellFast is the first dropshipping management software integrated with last OpenAPI technology, it"s new maybe you dont know it yet'},
-    {"role": "assistant", "content": 'yes I didnt, but now I know it. Looks like a nice technology'},
+    {"role": "user", "content": 'integrated with last OpenAPI technology, it"s new maybe you dont know it yet'},
+    {"role": "assistant", "content": 'yes I didnt, but now I know it.'},
     {"role": "user", "content": "yes you can import products and publish on woocommerce, ebay"},
     {"role": "assistant", "content": 'Ok thanks for this informations'},
     {"role": "user", "content":"ok now I will ask you a question about SellFast: " + question}
