@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'mainapp',
     'users',
     'crispy_forms',
+    "crispy_bootstrap5",
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -141,4 +142,8 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+#CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
