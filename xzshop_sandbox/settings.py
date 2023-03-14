@@ -35,7 +35,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'sellfast.app',
-    'www.sellfast.app'
+    'www.sellfast.app',
     '139.144.179.11',
 ]
 
