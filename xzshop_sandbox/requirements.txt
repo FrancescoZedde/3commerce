@@ -1,0 +1,10 @@
+django
+python-dotenv
+django-crispy-forms
+crispy-bootstrap5
+pandas
+bs4
+requests
+woocommerce
+openai
+ShopifyAPI
