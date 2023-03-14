@@ -25,6 +25,20 @@ def reset_woocommerce_store(user):
     user.woocommerce_secret_key = ''
     user.save()
 
+def connect_shopify_store(user, store_name, host, ck, cs):
+    user.shopify_store_name = store_name
+    user.shopify_host = host = host
+    user.shopify_consumer_key = ck
+    user.shopify_secret_key = cs
+    user.save()
+
+def reset_shopify_store(user):
+    user.shopify_store_name = ''
+    user.shopify_host = host = ''
+    user.shopify_consumer_key = ''
+    user.shopify_secret_key = ''
+    user.save()
+
 def update_woocommerce_on_sale_status(sku):
     item = InventoryItem.objects.get(sku=sku)
     if item.onsaleWoocommerce == True:

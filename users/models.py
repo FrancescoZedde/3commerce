@@ -28,6 +28,12 @@ class CustomUser(AbstractUser):
     woocommerce_consumer_key = models.TextField('WooCommerce consumer key', default='', blank=True)
     woocommerce_secret_key = models.TextField('WooCommerce secret key', default='', blank=True)
 
+    #SHOPIFY
+    shopify_store_name = models.TextField('Shopify store name', default='', blank=True)
+    shopify_host = models.TextField('Shopify store domain', default='', blank=True)
+    shopify_consumer_key = models.TextField('Shopify consumer key', default='', blank=True)
+    shopify_secret_key = models.TextField('Shopify secret key', default='', blank=True)
+
     description = models.TextField('Description', max_length=600, default='', blank=True)
 
     def _str_(self):

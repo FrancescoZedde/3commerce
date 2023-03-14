@@ -23,19 +23,18 @@ from mainapp.ws_ebay import ebay_match_product_with_ebay_catalog, ebay_search_it
 from mainapp.ws_cj import cj_products_by_category, cj_get_product_details
 from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id, start_woocommerce_products_batch
 from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
-
+from mainapp.ws_shopify import Shopify, ShopifyConnect
 from mainapp.ws_gpt import ChatGPT
 from mainapp.ws_printful import Printful
-from mainapp.ws_shopify import Shopify
 
 from mainapp.ws_facebook import instagram_check_container_validity, instagram_create_container_media, instagram_create_container_carousel, instagram_publish_carousel
 
-from mainapp.db_functions import retrieveItemBySku, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
+from mainapp.db_functions import retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
 
 
 
 from users.models import CustomUser
-from users.forms import WooCommerceConnectForm
+from users.forms import WooCommerceConnectForm, ShopifyConnectForm
 
 #from mainapp.woocommerce_methods import woocommerce_massive_import
 
@@ -45,25 +44,22 @@ from users.forms import WooCommerceConnectForm
 def profile(request):
     if request.method == 'GET':
         woocommerce_connect = WooCommerceConnectForm()
-        #class_instance = Shopify()
-        #shopify_auth_url = Shopify.shopify_create_auth_url(class_instance, "sellfast-development-store")
-        #Shopify.shopify_check_status()
-
+        shopify_connect = ShopifyConnectForm()
         context = {
             'woocommerce_connect':woocommerce_connect,
-            #'shopify_auth_url': shopify_auth_url,
+            'shopify_connect': shopify_connect,
         }
         return render(request, 'mainapp/profile.html', context)
 
 @login_required(login_url='/login')
-def connect_woocommerce_store_view(request):
+def connect_store(request):
     if request.method == 'GET':
         return redirect(profile)
     if request.method == 'POST':
-        flow = request.POST.get("woocommerce-connector",None)
-        if flow == "Connect":
+        connect_to = request.POST.get("connect", None)
+        print(request.POST)
+        if connect_to == "woocommerce":
             try:
-                print(request)
                 store_name = request.POST.get("woocommerce_store_name",None)
                 domain = request.POST.get("woocommerce_host",None)
                 ck = request.POST.get("woocommerce_consumer_key",None)
@@ -71,21 +67,46 @@ def connect_woocommerce_store_view(request):
                 connection = WooCommerceConnect(domain, ck, cs)
                 if connection.status == "valid":
                     connect_woocommerce_store(request.user,store_name, domain, ck, cs)
-                    messages.success(request, f"Success, WooCommerce store connected")
+                    messages.success(request, f"Success, WooCommerce store connected!")
                 else:
                     messages.error(request, f"Connection failed: invalid credentials. Retry or contact support")
                 return redirect(profile)
             except:
                 messages.error(request, f"Somethin goes wrong, contact Support")
                 return redirect(profile)
-        elif flow == "Reset":
+        elif connect_to == "shopify":
             try:
-                reset_woocommerce_store(request.user)
-                messages.success(request, f"Success, you can now connect a new WooCommerce store")
+                store_name = request.POST.get("shopify_store_name",None)
+                domain = request.POST.get("shopify_host",None)
+                ck = request.POST.get("shopify_consumer_key",None)
+                cs = request.POST.get("shopify_secret_key",None)
+                connection = ShopifyConnect(domain, cs)
+                
+                if connection.status == "valid":
+                    connect_shopify_store(request.user,store_name, domain, ck, cs)
+                    messages.success(request, f"Success, Shopify store connected!")
+                else:
+                    messages.error(request, f"Connection failed: invalid credentials. Retry or contact support")
                 return redirect(profile)
             except:
                 messages.error(request, f"Somethin goes wrong, contact Support")
                 return redirect(profile)
+        else:
+            return redirect(profile)
+
+
+@login_required(login_url='/login')
+def reset_store(request):
+    if request.method == 'GET':
+        return redirect(profile)
+    if request.method == 'POST':
+        reset = request.POST.get("reset", None)
+        if reset == 'woocommerce':
+            reset_woocommerce_store(request.user)
+        elif reset == 'shopify':
+            reset_shopify_store(request.user)
+        return redirect(profile)
+
 
 
 @login_required(login_url='/login')

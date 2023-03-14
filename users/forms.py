@@ -22,3 +22,9 @@ class WooCommerceConnectForm(forms.Form):
     woocommerce_host = forms.CharField(max_length = 100, required=True, help_text='Paste in format "https://yourdomain.com"')
     woocommerce_consumer_key = forms.CharField(max_length = 250, required=True, help_text='Public key')
     woocommerce_secret_key = forms.CharField(max_length = 250, required=True, help_text='Secret key')
+
+class ShopifyConnectForm(forms.Form):
+    shopify_store_name = forms.CharField(max_length = 30, required=True, help_text='Your store name')
+    shopify_host = forms.CharField(max_length = 100, required=True, help_text='Paste in format "https://yourdomain.com"')
+    shopify_consumer_key = forms.CharField(max_length = 250, required=True, help_text='Public key')
+    shopify_secret_key = forms.CharField(max_length = 250, required=True, help_text='Secret key')

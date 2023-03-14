@@ -3,7 +3,8 @@ from . import views
 
 urlpatterns = [
     path('profile', views.profile, name='profile'),
-    path('connect-woocommerce-store', views.connect_woocommerce_store_view, name='connect-woocommerce-store'),
+    path('connect-store', views.connect_store, name='connect-store'),
+    path('reset-store', views.reset_store, name='reset-store'),
 
     # TRENDING
     path('trending', views.trending, name='trending'),

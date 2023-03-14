@@ -5,6 +5,17 @@ import json
 import requests
 from ast import literal_eval
 
+
+class ShopifyConnect:
+    def __init__(self, shopify_host, shopify_secret_key):
+        try:
+            session = shopify.Session(shopify_host, "2023-01", shopify_secret_key)
+            shopify.ShopifyResource.activate_session(session)
+            shop = shopify.Shop.current()
+            self.status = 'valid'
+        except:
+            self.status = 'invalid'
+
 class Shopify:
     def __init__(self):
         #start session

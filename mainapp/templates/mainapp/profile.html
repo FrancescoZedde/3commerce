@@ -11,7 +11,7 @@
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
     <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">Profile</button>
-    <button class="nav-link" id="nav-connector-tab" data-bs-toggle="tab" data-bs-target="#nav-connector" type="button" role="tab" aria-controls="nav-connector" aria-selected="false">Connectors</button>
+    <button class="nav-link" id="nav-connector-tab" data-bs-toggle="tab" data-bs-target="#nav-connector" type="button" role="tab" aria-controls="nav-connector" aria-selected="false">Connect</button>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -24,17 +24,27 @@
   <!--WOOCOMMERCE CONNECTOR -->
   <div class="tab-pane fade" id="nav-connector" role="tabpanel" aria-labelledby="nav-connector-tab">
      <div class="standard-command-container" style="margin-top:1em;">
-      <h5 style="margin-bottom:2em;">WooCommerce</h5>
-      {% if user.woocommerce_store_name == '' %}
-      <form action="connect-woocommerce-store" method="post">
-          {% csrf_token %}
-          {{ woocommerce_connect|crispy }}
-        <div class="button" style="text-align: center;">
-          <input class="standard-button" id='connectwoocommercestore' type="submit" value="Connect" name="woocommerce-connector">
+      {% if user.woocommerce_store_name == '' and user.shopify_store_name == '' %}
+        <div>
         </div>
-      </form>
-      {% else %}
-      <form action="connect-woocommerce-store" method="post">
+        <div class="row">
+          <div class="col-6">
+            <div class="image-connect-store-container">
+              <button style="border:none; background: transparent;" id="open-modal-shopify" onclick="open_modal_connect(this.id)">
+                <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/shopify-ar21.png" style="width: 100%; height: 250px; text-align:center; padding:8px">
+              </button>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="image-connect-store-container">
+              <button style="border:none; background: transparent;" id="open-modal-woocommerce" onclick="open_modal_connect(this.id)">
+              <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
+            </button>
+            </div>
+          </div>
+        </div>
+      {% elif user.woocommerce_store_name != '' %}
+      <form action="reset-store" method="post">
         {% csrf_token %}
         <h5>You are connected to:</h5>
         <ul style="margin:2em">
@@ -49,49 +59,101 @@
       <div class="button" style="text-align: center;">
         <input class="standard-button" id='resetwoocommercestore' type="submit" value="Reset" name="woocommerce-connector">
       </div>
+      <input type="hidden" name="reset" value="woocommerce">
+    </form>
+    {% elif user.shopify_store_name != '' %}
+      <form action="reset-store" method="post">
+        {% csrf_token %}
+        <h5>You are connected to:</h5>
+        <ul style="margin:2em">
+          <li>
+            <b>Store name:</b> {{user.shopify_store_name}}
+    
+          </li>
+          <li>
+            <b>Domain:</b> {{user.shopify_host}}
+          </li>
+        </ul>
+      <div class="button" style="text-align: center;">
+        <input class="standard-button" id='resetshopifystore' type="submit" value="Reset" name="shopify-connector">
+      </div>
+      <input type="hidden" name="reset" value="shopify">
     </form>
       {% endif %}
-    </div>
-    <div class="standard-command-container">
-      <h5 style="margin-bottom:2em;">Shopify</h5>
-      
-    </div>
-    <!-- PRINTFUL CONNECTOR
-    <div class="standard-command-container">
-      <h5 style="margin-bottom:2em;">Printful</h5>
-      <button class="standard-command-button">
-        <a href="https://www.printful.com/oauth/authorize?client_id=&state=123456789&redirect_url=http://redirect.xzshop.eu">Connect</a>
-      </button>
-      Paste access token
-          <form action="printful-oauth">
-            <div style="text-align:center;">
-              <input style="text-align:center;" type="text" name="auth-code" >
-              <div class="button" style="text-align: center;">
-                <input class="standard-button" id='getaccesstoken' type="submit" value="Get token" name="get-access-token">
-              </div>
-            </div>
-            
-            
-          </form>
-    </div>-->
-  </div>
-</div>
-<div class="standard-command-container">
-  <div>
-    <p>Connect your store:</p>
-  </div>
-  <div class="row">
-    <div class="col-6">
-      <div class="image-connect-store-container">
-        <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/shopify-ar21.png" style="width: 100%; height: 250px; text-align:center; padding:8px">
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="image-connect-store-container">
-        <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
-      </div>
     </div>
   </div>
 </div>
 
+<!-- WOOCOMMERCE MODAL -->
+<div id="modal-woocommerce-connect" class="modal-container">
+  <div class="modal-content">
+    <span id="close-modal-woocommerce-connect" class="close">&times;</span>
+    <div id="" style="margin-top: 1em">
+      <form action="connect-store" method="post">
+        {% csrf_token %}
+        <div class="row">
+          {{ woocommerce_connect|crispy }}
+        </div>
+        <div class="row">
+          <div class="col-12" style="text-align:center;">
+            <div class="button" style="text-align: center; margin-top:2em">
+                <input class="standard-button" id='connectwoocommerce' type="submit" value="Connect" name="connect-woocommerce">
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="connect" value="woocommerce">
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- SHOPIDY MODAL -->
+<div id="modal-shopify-connect" class="modal-container">
+  <div class="modal-content">
+    <span id="close-modal-shopify-connect" class="close">&times;</span>
+    <div id="" style="margin-top: 1em">
+      <form action="connect-store" method="post">
+        {% csrf_token %}
+        <div class="row">
+          {{ shopify_connect|crispy }}
+        </div>
+        <div class="row">
+          <div class="col-12" style="text-align:center;">
+            <div class="button" style="text-align: center; margin-top:2em">
+                <input class="standard-button" id='connectshopify' type="submit" value="Connect" name="connect-shopify">
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="connect" value="shopify">
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function open_modal_connect(button_id){
+    if (button_id=='open-modal-shopify'){
+          let modal = document.getElementById("modal-shopify-connect");
+          let close = document.getElementById("close-modal-shopify-connect");
+
+          close.onclick = function() {
+            modal.style.display = "none";
+          }
+          modal.style.display = "block";
+    }
+    else if (button_id=='open-modal-woocommerce'){
+          let modal = document.getElementById("modal-woocommerce-connect");
+          let close = document.getElementById("close-modal-woocommerce-connect");
+
+          close.onclick = function() {
+            modal.style.display = "none";
+          }
+          modal.style.display = "block";
+    }
+    else {
+      alert('Error')
+    }
+
+}
+</script>
 {% endblock %}
