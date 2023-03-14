@@ -33,7 +33,11 @@ SECRET_KEY = str(os.getenv('DJANGO_SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'sellfast.app',
+    'www.sellfast.app'
+    '139.144.179.11',
+]
 
 
 # Application definition
