@@ -8,3 +8,4 @@ requests
 woocommerce
 openai
 ShopifyAPI
+six
