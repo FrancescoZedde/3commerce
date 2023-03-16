@@ -133,6 +133,29 @@ def contact(request):
                 messages.error(request, f'ERROR: contact us by email at sellfast.app@gmail.com')
                 return redirect(contact)
 
+def whitelist(request):
+    if request.method == 'GET':
+        contact_form = ContactForm()
+        context = {'contact_form':contact_form}
+        return render(request, "users/whitelist.html", context)
+    if request.method == 'POST':
+        contact_form = ContactForm(request.POST)
+        if contact_form.is_valid():
+            subject = "Website Inquiry" 
+            body = {
+            'first_name': contact_form.cleaned_data['first_name'], 
+            'last_name': contact_form.cleaned_data['last_name'], 
+            'email': contact_form.cleaned_data['email_address'], 
+            'message':contact_form.cleaned_data['message'], 
+            }
+            message = "\n".join(body.values())
+            email = EmailMessage(subject, message, to=['sellfast.app@gmail.com'])
+            if email.send():
+                messages.success(request, f'We have received your message! We will contact you by email, check your inbox.')
+                return redirect(contact)
+            else:
+                messages.error(request, f'ERROR: contact us by email at sellfast.app@gmail.com')
+                return redirect(contact)
 
 def faq(request):
     return render(request, 'users/faq.html')
