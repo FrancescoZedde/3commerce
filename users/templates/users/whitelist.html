@@ -7,12 +7,12 @@
 {% block content %}
 
 <div class="standard-command-container">
-    <p>Interested? Send us an email to get on a priority list. We'll let you know as soon as it's ready.</p>
-    <form action="contact" method="post">
+    <p>Interested? Join the whitelist.</p>
+    <form action="whitelist" method="post">
         {% csrf_token %}
-        {{ contact_form | crispy}}
+        {{ whitelist_form | crispy}}
         <div class="button" style="text-align: center; margin-top:2em">
-            <input class="standard-button" id='sendinquiry' type="submit" value="Send" name="send-inquiry">
+            <input class="standard-button" id='sendinquiry' type="submit" value="Join the whitelist" name="send-inquiry">
         </div>
     </form>
     

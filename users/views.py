@@ -10,7 +10,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 
 from users.tokens import account_activation_token
-from users.forms import UserRegistrationForm, ContactForm
+from users.forms import UserRegistrationForm, ContactForm, WhitelistForm
 # Create your views here.
 
 def index(request):
@@ -135,27 +135,29 @@ def contact(request):
 
 def whitelist(request):
     if request.method == 'GET':
-        contact_form = ContactForm()
-        context = {'contact_form':contact_form}
+        whitelist_form = WhitelistForm()
+        context = {'whitelist_form':whitelist_form}
         return render(request, "users/whitelist.html", context)
     if request.method == 'POST':
-        contact_form = ContactForm(request.POST)
-        if contact_form.is_valid():
-            subject = "Website Inquiry" 
+        whitelist_form = WhitelistForm(request.POST)
+        if whitelist_form.is_valid():
+            subject = "Whitelist request" 
             body = {
-            'first_name': contact_form.cleaned_data['first_name'], 
-            'last_name': contact_form.cleaned_data['last_name'], 
-            'email': contact_form.cleaned_data['email_address'], 
-            'message':contact_form.cleaned_data['message'], 
+            'first_name': whitelist_form.cleaned_data['first_name'], 
+            'last_name': whitelist_form.cleaned_data['last_name'], 
+            'email': whitelist_form.cleaned_data['email_address'], 
             }
             message = "\n".join(body.values())
             email = EmailMessage(subject, message, to=['sellfast.app@gmail.com'])
             if email.send():
                 messages.success(request, f'We have received your message! We will contact you by email, check your inbox.')
-                return redirect(contact)
+                return redirect(whitelist)
             else:
                 messages.error(request, f'ERROR: contact us by email at sellfast.app@gmail.com')
-                return redirect(contact)
+                return redirect(whitelist)
+        else:
+            messages.error(request, f'ERROR: contact us by email at sellfast.app@gmail.com')
+            return redirect(whitelist)
 
 def faq(request):
     return render(request, 'users/faq.html')
