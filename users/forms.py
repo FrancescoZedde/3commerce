@@ -17,6 +17,12 @@ class UserRegistrationForm(UserCreationForm):
         return user
 
 
+class ContactForm(forms.Form):
+	first_name = forms.CharField(max_length = 50)
+	last_name = forms.CharField(max_length = 50)
+	email_address = forms.EmailField(max_length = 150)
+	message = forms.CharField(widget = forms.Textarea, max_length = 2000)
+
 class WooCommerceConnectForm(forms.Form):
     woocommerce_store_name = forms.CharField(max_length = 30, required=True, help_text='Your store name')
     woocommerce_host = forms.CharField(max_length = 100, required=True, help_text='Paste in format "https://yourdomain.com"')

@@ -1,0 +1,21 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="standard-command-container">
+    <p>Describe your problem as accurately as possible. We will reply as soon as possible.</p>
+    <form action="contact" method="post">
+        {% csrf_token %}
+        {{ contact_form | crispy}}
+        <div class="button" style="text-align: center; margin-top:2em">
+            <input class="standard-button" id='sendinquiry' type="submit" value="Send" name="send-inquiry">
+        </div>
+    </form>
+    
+</div>
+
+{% endblock %}
