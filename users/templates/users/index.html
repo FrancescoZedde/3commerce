@@ -7,25 +7,18 @@
 {% block content %}
 
 
+
+
+
 <div style="text-align:center;">
-    <h1><b></b></h1><br>
-    <div class="row justify-content-center" style="margin-bottom:2em;">
-        <div class="col-xl-7 col-lg-9 text-center">
-          <iframe width="100%" height="420px"
-          src="https://www.youtube.com/embed/8bHteW5hXcU">
-          </iframe>
-        </div>
-      </div>
+    <div id="text-headline-1" style="color: #0161c8; font-family: Casanova Scotia; font-size:27px; margin-top:4em"></div>
       
-        <p><button class="standard-button"><a style="color:aliceblue" href="{% url 'registration' %}">Start Now</a></button> <br>
-          <a href="{% url 'login' %}">Log In</a></p>
-      
-      <div class="card-deck">
+      <div class="card-deck" style="margin-top:5em;">
         <div class="index-card shadow card">
           <div class="index-card-body card-body">
             <i class="index-icon fa-solid fa-warehouse fa-2x"></i>
-            <h5 class="index-card-title card-title" ><b>Million of products</b></h5>
-            <p class="index-card-text card-text">Choose from millions of products selected among verified suppliers and offered at a wholesale price.</p>
+            <h5 class="index-card-title card-title" ><b>Millions of products</b></h5>
+            <p class="index-card-text card-text">Choose from millions of products and import them with one click.</p>
             <p class="index-learn-more"><a href="">Learn more</a></p>
             
           </div>
@@ -34,10 +27,11 @@
           <div class="index-card-body card-body">
             <i class="index-icon fa-solid fa-solid fa-shop fa-2x"></i>
             <h5 class="index-card-title card-title"><b>Connect to your Store</b></h5>
-            <p class="index-card-text card-text">Synchronize with your store or create a new one. Publish and edit each product individually or in bulk with just a few clicks.</p>
+            <p class="index-card-text card-text">Connect your WooCommerce or Shopify store.</p>
             <p class="index-learn-more"><a href="">Learn more</a></p>
           </div>
         </div>
+        <!--
         <div class="index-card shadow card">
             <div class="index-card-body card-body">
               <i class="index-icon fa-solid fa-link fa-2x"></i>
@@ -46,16 +40,26 @@
               <p class="index-learn-more"><a href="">Learn more</a></p>
             </div>
           </div>
+          -->
         <div class="index-card shadow card">
             <div class="index-card-body card-body">
               <i class="index-icon fa-solid fa-robot fa-2x"></i>
-              <h5 class="index-card-title card-title"><b>AI-Powered Marketing</b></h5>
-              <p class="index-card-text card-text">Save up to 80% of time using AI to help you write product sheets, SEO-optimized headlines, blog articles, advertisements, and more</p>
+              <h5 class="index-card-title card-title"><b>Integrated ChatGPT</b></h5>
+              <p class="index-card-text card-text">Use AI to write product descriptions, SEO headlines, blog articles, ads and more</p>
               <p class="index-learn-more"><a href="">Learn more</a></p>
             </div>
           </div>
+          <div class="index-card shadow card">
+            <div class="index-card-body card-body">
+              <i class="index-icon fa-solid fa-truck-fast fa-2x"></i>
+              <h5 class="index-card-title card-title" ><b>Automated order fulfillment</b></h5>
+              <p class="index-card-text card-text">Automate order fulfillment and track your shipments.</p>
+              <p class="index-learn-more"><a href="">Learn more</a></p>
+              
+            </div>
+          </div>
       </div>
-      <!--seocnd row-->
+      <!--
       <div class="card-deck">
         <div class="index-card shadow card">
           <div class="index-card-body card-body">
@@ -90,28 +94,77 @@
             <p class="index-learn-more"><a href="">Learn more</a></p>
           </div>
         </div>
+      </div>-->
+      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+        <div class="col">
+          <div class="card mb-4 rounded-3 shadow-sm">
+            <div class="card-header py-3">
+              <h4 class="my-0 fw-normal">Free</h4>
+            </div>
+            <div class="card-body">
+              <h1 class="card-title pricing-card-title">$0<small class="text-muted fw-light">/mo</small></h1>
+              <ul class="list-unstyled mt-3 mb-4">
+                <li>Connect WooCommerce/Shopify</li>
+                <li>Connect CJDropshipping</li>
+                <li>ChatGPT</li>
+                <li>Email Support</li>
+              </ul>
+              <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up for free</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="standard-command-container" style="text-align: left; margin-top: 50px !important;">
-        <h5 style="margin-bottom:15px;">What is Dropshipping?</h5>
-        <p>Dropshipping is a retail fulfillment method where a store doesn't keep the products it sells in stock. Instead, when a store sells a product, 
-          it purchases the item from a third party and has it shipped directly to the customer. One of the major advantages of dropshipping is that it's
-          possible to launch an ecommerce store without having to invest thousands of dollars in inventory up front. Starting a dropshipping business is 
-          therefore a low-cost investment, allowing you to start it from anywhere and sell worldwide. </p>
+      <div class="standard-command-container" style="text-align:left !important; margin-top: 2em;">
+        <p><span style="color:#0161c8">SellFast</span> is the fastest and free solution to start your dropshipping business.</p>
+        <ul>
+          <li>Import products from CJDropshipping with one click</li>
+          <li>Easily connect your WooCommerce or Shopify store</li>
+          <li>Use ChatGPT to create product descriptions in seconds</li>
+          <li>Much more</li>
+        </ul>
+          <p>Would you like to have a particular feature? Let us know: <b>sellfast.app@gmail.com</b></p>
       </div>
-      <div class="standard-command-container" style="text-align: left; margin-top: 25px !important;">
-        <h5 style="margin-bottom:15px;">Why SellFast?</h5>
-        <p>As dropshippers we are well aware of the problems faced by those who decide to use this business model. Although it may seem 
-          simple there are many factors to consider when deciding to start a dropshipping e-commerce business. The first problem is finding a supplier for your products. 
-          And not just any supplier, but one that will guarantee you quality, low prices and proper shipping times. 
-          There are also a lot of marketing activities needed to start making your first sales. Not to mention the time it takes to research products, 
-          import them into your e-commerce or marketplaces and manage orders. All activities that if done manually take quite a bit of time.</p>
 
-          <p>That's why SellFast offers an all-in-one solution for handling all these activities automating each process as much as possible, but still leaving 
-            the ability to edit in detail each product. </p>
+
+      <p style="margin-top:5em;"><button class="standard-button" style="width: 50% !important"><a style="color:aliceblue" href="{% url 'registration' %}">Start, it's free</a></button> <br>
+        <a href="{% url 'login' %}">Log In</a></p>
+
+
+      <div class="row justify-content-center" style="margin-top:5em;">
+        <div class="col-xl-7 col-lg-9 text-center">
+          <iframe width="100%" height="420px"
+          src="https://www.youtube.com/embed/8bHteW5hXcU">
+          </iframe>
+        </div>
       </div>
+
             
     </div>
-</div>
+
+<script>
 
 
+var text = 'Automate boring stuff,  focus on growing your business';
+var item = document.getElementById("text-headline-1");
+
+function typeText(item, text, delay, i) {
+    $(item).append(text.charAt(i))
+        .delay(delay)
+        .promise()
+        .done(function() {
+          if(i<text.length) {
+            i++;
+            typeText(item, text, delay, i);  
+          }
+    });
+}
+
+
+(function loop() {
+  typeText(item, text, 150, 0)
+})();
+
+
+
+</script>
 {% endblock %}

@@ -95,6 +95,19 @@ def create_default_template_description_string(item):
     item.save()
 
 
+def new_default_template(item):
+    footer = '<div> <p>Feel free to write us at for any information: <b>hello@xzshop.eu</b></p> </div> <div> <p>You will receive a tracking code to keep track of your shipment</p> </div>'
+    if item.descriptionFeatures == '':
+        stringTemplateDescription = '<div id="text-description">' + item.descriptionChatGpt + '</div>'  + footer
+    else:
+        features = set_format_features_description(item.descriptionFeatures)
+        stringTemplateDescription = '<div id="text-description">' + item.descriptionChatGpt + '</div>' + '<div style="max-width:80%; margin-top:1em;">' + features + '</div>' + footer
+    print('FULL DESC')
+    print(stringTemplateDescription)
+    item.descriptionTemplate = stringTemplateDescription
+    item.save()
+
+
 def set_format_features_description(description_features):
     print(description_features)
     features_1 = '<ul>'
@@ -207,9 +220,9 @@ def filter_by_keywords(products, keywords):
     keywords = keywords.split()
     for product in products:
         for keyword in keywords:
-            print(keyword)
+            print(keyword.lower())
             print(product['productNameEn'].lower().split())
-            if keyword in product['productNameEn'].lower().split():
+            if keyword.lower() in product['productNameEn'].lower().split():
                 new_list.append(product)
     return new_list
 

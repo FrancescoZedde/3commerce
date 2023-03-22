@@ -98,12 +98,12 @@ class ChatGPT:
         return response['choices'][0]['message']['content']
 
 
-    def answer_question(self, question):
+    def answer_question(self, question, max_tokens):
         response = openai.Completion.create(
                 model='text-davinci-003',
                 prompt=question,
                 temperature=0.7,
-                max_tokens=128,
+                max_tokens=max_tokens,
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0
@@ -111,3 +111,19 @@ class ChatGPT:
 
         answer = response['choices'][0]['text']
         return answer
+'''
+    def generate_image_from_prompt(self, prompt):
+        response = openai.Image.create(
+                prompt=prompt,
+                n=1,
+                size="1024x1024"
+        )
+        return response
+    
+    def generate_image_variation(self):
+        response = openai.Image.create_variation(
+                image=open("mainapp/static/images/testimage2.b.png", "rb"),
+                n=2,
+                size="1024x1024"
+        )
+        print(response)'''

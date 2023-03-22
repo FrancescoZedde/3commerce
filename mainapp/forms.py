@@ -697,10 +697,12 @@ class ChatGPTWriteDescriptionForm(forms.Form):
 
 class ChatGPTAsk(forms.Form):
     question = forms.CharField(max_length = 250, required=True, help_text='Ask whatever you want')
+    max_words = forms.IntegerField(max_value=1000, min_value=70, initial=120,help_text='max words', widget=forms.NumberInput(attrs={'class': 'max_words'}))
     def __init__(self, *args, **kwargs):
         super(ChatGPTAsk, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.fields['question'].label = False
+        self.fields['max_words'].label = False
 
 
 class ChatGPTWriteTitleForm(forms.Form):

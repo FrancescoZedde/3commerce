@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
-from mainapp.views_utils import format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
+from mainapp.views_utils import new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
 
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
@@ -45,9 +45,12 @@ def profile(request):
     if request.method == 'GET':
         woocommerce_connect = WooCommerceConnectForm()
         shopify_connect = ShopifyConnectForm()
+        class_instance = Shopify()
+        auth_url = Shopify.shopify_create_auth_url(class_instance, 'sellfast-development-store')
         context = {
             'woocommerce_connect':woocommerce_connect,
             'shopify_connect': shopify_connect,
+            'auth_url': auth_url,
         }
         return render(request, 'mainapp/profile.html', context)
 
@@ -119,10 +122,13 @@ def trending(request):
         return render(request, 'mainapp/trending.html', context)
     if request.method =='POST':
         question = request.POST.get('question', None)
+        max_words = request.POST.get('max_words', None)
+        max_tokens = int(round((int(max_words)/0.75), 0))
+        print(max_tokens)
         if question != None:
             assistant_chat_form = ChatGPTAsk()
             class_instance = ChatGPT()
-            answer = ChatGPT.answer_question(class_instance, question)
+            answer = ChatGPT.answer_question(class_instance, question, max_tokens)
             print(answer)
             context = {
                 'question': question,
@@ -306,7 +312,7 @@ def inventory_list_view_manipulation_commands(request):
         elif dropdown_value == 'add-template':
             for item_sku in selected_items:
                 item = InventoryItem.objects.filter(user=request.user, sku=item_sku)
-                create_default_template_description_string(item[0])
+                new_default_template(item[0])
             return redirect(inventory_list_view)
 
         elif dropdown_value == 'add-description-and-template':
