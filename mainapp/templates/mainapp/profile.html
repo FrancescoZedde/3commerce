@@ -88,6 +88,7 @@
 <div id="modal-woocommerce-connect" class="modal-container">
   <div class="modal-content">
     <span id="close-modal-woocommerce-connect" class="close">&times;</span>
+    <p><a href="{% url 'faq' %}">Check instructions for linking your store</a></p>
     <div id="" style="margin-top: 1em">
       <form action="connect-store" method="post">
         {% csrf_token %}
@@ -111,6 +112,7 @@
 <div id="modal-shopify-connect" class="modal-container">
   <div class="modal-content">
     <span id="close-modal-shopify-connect" class="close">&times;</span>
+    <p><a href="{% url 'faq' %}">Check instructions for linking your store</a></p>
     <div id="" style="margin-top: 1em">
       <form action="connect-store" method="post">
         {% csrf_token %}

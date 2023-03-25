@@ -7,11 +7,19 @@
 {% block content %}
 
 
-
-
-
+<!--
+<style>
+  body {
+    background-image: url("{% static 'futuristic-artifical-intelligence-background.png' %}");
+    background-repeat: no-repeat;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+  }
+  </style>
+-->
 <div style="text-align:center;">
-    <div id="text-headline-1" style="color: #0161c8; font-family: Casanova Scotia; font-size:27px; margin-top:4em"></div>
+    <div id="text-headline-1" style="color: #005fc4; font-family: Casanova Scotia; font-size:27px; margin-top:4em"></div>
       
       <div class="card-deck" style="margin-top:5em;">
         <div class="index-card shadow card">
@@ -109,24 +117,25 @@
                 <li>ChatGPT</li>
                 <li>Email Support</li>
               </ul>
-              <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up for free</button>
+              <button type="button" class="w-100 btn btn-lg btn-outline-primary"><a href="{% url 'registration' %}">Sign up for free</a></button>
             </div>
           </div>
         </div>
       </div>
       <div class="standard-command-container" style="text-align:left !important; margin-top: 2em;">
+        <!--
         <p><span style="color:#0161c8">SellFast</span> is the fastest and free solution to start your dropshipping business.</p>
         <ul>
           <li>Import products from CJDropshipping with one click</li>
           <li>Easily connect your WooCommerce or Shopify store</li>
           <li>Use ChatGPT to create product descriptions in seconds</li>
           <li>Much more</li>
-        </ul>
+        </ul>-->
           <p>Would you like to have a particular feature? Let us know: <b>sellfast.app@gmail.com</b></p>
       </div>
 
 
-      <p style="margin-top:5em;"><button class="standard-button" style="width: 50% !important"><a style="color:aliceblue" href="{% url 'registration' %}">Start, it's free</a></button> <br>
+      <p style="margin-top:5em;"><button class="standard-button" style="width: 50% !important;"><a style="color:aliceblue" href="{% url 'registration' %}">Start, it's free</a></button> <br>
         <a href="{% url 'login' %}">Log In</a></p>
 
 
@@ -161,7 +170,7 @@ function typeText(item, text, delay, i) {
 
 
 (function loop() {
-  typeText(item, text, 150, 0)
+  typeText(item, text, 100, 0)
 })();
 
 

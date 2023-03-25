@@ -10,5 +10,6 @@ urlpatterns = [
     path('faq', views.faq, name='faq'),
     path('contact', views.contact, name='contact'),
     path('whitelist', views.whitelist, name='whitelist'),
+    path('terms-and-conditions', views.terms_and_conditions, name='terms-and-conditions'),
 
 ]

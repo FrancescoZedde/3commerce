@@ -25,21 +25,15 @@
             <a href="{% url 'inventory-list-view' %}">Printful</a>
         </li>-->
 
-        {% if user.woocommerce_store_name == '' and user.woocommerce_host == '' %}
-        <!-- CONNECT STORE -->
-        <li>
-            <a href="{% url 'profile' %}">Connect store</a>
-        </li>
-        
-        <!-- condition must be on shopify field -->
-        {% elif user.woocommerce_host == '' %}
+        {% if user.shopify_store_name != '' %}
         <!-- SHOPIFY -->
         <li>
             <a href="#shopifySubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Shopify</a>
             <ul class="collapse list-unstyled" id="shopifySubmenu">
                 <li>
-                    <a href="#">On Sale</a>
+                    <a href="{% url 'shopify-onsale' %}">On Sale</a>
                 </li>
+                <!--
                 <li>
                     <a href="#">Promotions</a>
                 </li>
@@ -49,10 +43,10 @@
                 </li>
                 <li>
                     <a href="#">Settings</a>
-                </li>
+                </li>-->
             </ul>
         </li>
-        {% else %}
+        {% elif user.woocommerce_store_name != '' %}
         <li>
             <a href="#woocommerceSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">WooCommerce</a>
             <ul class="collapse list-unstyled" id="woocommerceSubmenu">
@@ -60,17 +54,23 @@
                     <a href="{% url 'woocommerce-onsale' %}">On Sale</a>
                 </li>
                 <li>
+                    <a href="{% url 'woocommerce-categories' %}">Categories</a>
+                </li>
+                <!--
+                <li>
                     <a href="#">Promotions</a>
                 </li>
                 <li>
-                    
-                    <a href="{% url 'woocommerce-categories' %}">Categories</a>
-                </li>
-                <li>
                     <a href="#">Settings</a>
-                </li>
+                </li>-->
             </ul>
         </li>
+        {% else %}
+        <!-- CONNECT STORE -->
+        <li>
+            <a href="{% url 'profile' %}">Connect store</a>
+        </li>
+        
         {% endif %}
         <!--
         <li>

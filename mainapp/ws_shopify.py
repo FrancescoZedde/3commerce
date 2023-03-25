@@ -4,6 +4,7 @@ import shopify
 import json
 import requests
 from ast import literal_eval
+import re
 
 
 class ShopifyConnect:
@@ -17,10 +18,12 @@ class ShopifyConnect:
             self.status = 'invalid'
 
 class Shopify:
-    def __init__(self):
+    def __init__(self, user):
         #start session
-        self.shopify = shopify.Session.setup(api_key="6fb5b0131320a2eb79762a37c255b9aa", secret="")
-        print(self.shopify)
+        #self.shopify = shopify.Session.setup(api_key="", secret="")
+        self.api_key = user.shopify_secret_key
+        self.host = user.shopify_host
+        #print(self.shopify)
 
     def shopify_check_status():
         session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "")
@@ -28,7 +31,8 @@ class Shopify:
         shop = shopify.Shop.current()
         print(shop)
 
-    def shopify_create_new_product(item, variants):
+    '''
+    def shopify_creatroduct(item, variants):
         # Create a new product
         session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "")
         shopify.ShopifyResource.activate_session(session)
@@ -51,18 +55,18 @@ class Shopify:
         print(success)
         # or
         if new_product.errors:
-            print(new_product.errors.full_messages())
+            print(new_product.errors.full_messages())'''
 
-    def shopify_create_new_product_test(item, variants):
+    def shopify_create_new_product(self, item, variants):
 
         image_set = ShopifyUtils.shopify_set_images(literal_eval(item.productImageSet))
         options_set = ShopifyUtils.shopify_set_options(item.attributes, variants)
         variants_set = ShopifyUtils.shopify_set_variants(options_set, variants)
 
 
-        url = 'https://sellfast-development-store.myshopify.com/' + 'admin/api/2023-01/products.json'
+        url = self.host + '/admin/api/2023-01/products.json'
 
-        headers = {'X-Shopify-Access-Token': '',
+        headers = {'X-Shopify-Access-Token': self.api_key,
                     'Content-Type': 'application/json'}
 
         payload = {
@@ -78,19 +82,53 @@ class Shopify:
                     
                     }
 
-        print(payload)
+        #print(payload)
 
         response = requests.post(url, json=payload, headers=headers).json()
-        #print(response)
+        return response
+
+    def shopify_add_images_to_variants(self, variants, create_product_response):
+
+        shopify_variants_dict, images_names_shopify, images_names_sellfast = ShopifyUtils.shopify_match_skus_images_ids(variants, create_product_response)
+
+        for sku, image_name in images_names_sellfast.items():
+            id_shopify = shopify_variants_dict[sku]
+            id_image = images_names_shopify[image_name]
+
+            url = self.host + '/admin/api/2023-01/variants/' + str(id_shopify) +'.json'
+
+            headers = {'X-Shopify-Access-Token': self.api_key,
+                        'Content-Type': 'application/json'}
+
+            data = {"variant": 
+                {
+                "id" : id_shopify,
+                "image_id" : id_image,
+                }
+            }
+            r = requests.put(url, data=json.dumps(data), headers=headers)
+
+
+    def shopify_retrieve_all_products(self):
+        url = self.host + '/admin/api/2023-01/products.json?limit=250'
+
+        headers = {'X-Shopify-Access-Token': self.api_key,
+                    'Content-Type': 'application/json'}
+
+        response = requests.get(url, headers=headers).json()
+        print('RETRIEVE ALL PRODUCT RESPONSE')
+        print(response)
+
+
 
     def shopify_create_auth_url(self, shop_name):
         shop_url = shop_name + ".myshopify.com"
-        api_version = '2020-10'
+        api_version = '2023-01'
         state = "123456789"
-        redirect_uri = "http://redirect.xzshop.eu"
+        redirect_uri = "http://sellfast.app"
         scopes = ['read_products', 'read_orders']
 
-        newSession = self.shopify.Session(shop_url, api_version)
+        newSession = shopify.Session(shop_url, api_version)
         auth_url = newSession.create_permission_url(scopes, redirect_uri, state)
 
         return auth_url

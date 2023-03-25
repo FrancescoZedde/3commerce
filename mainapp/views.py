@@ -45,12 +45,9 @@ def profile(request):
     if request.method == 'GET':
         woocommerce_connect = WooCommerceConnectForm()
         shopify_connect = ShopifyConnectForm()
-        class_instance = Shopify()
-        auth_url = Shopify.shopify_create_auth_url(class_instance, 'sellfast-development-store')
         context = {
             'woocommerce_connect':woocommerce_connect,
             'shopify_connect': shopify_connect,
-            'auth_url': auth_url,
         }
         return render(request, 'mainapp/profile.html', context)
 
@@ -106,8 +103,10 @@ def reset_store(request):
         reset = request.POST.get("reset", None)
         if reset == 'woocommerce':
             reset_woocommerce_store(request.user)
+            reset_shopify_store(request.user)
         elif reset == 'shopify':
             reset_shopify_store(request.user)
+            reset_woocommerce_store(request.user)
         return redirect(profile)
 
 
@@ -351,7 +350,9 @@ def inventory_list_view_import_commands(request):
             for item in items:
                 variants = Variant.objects.filter(item=item) 
                 #Shopify.shopify_create_new_product(item, variants)
-                Shopify.shopify_create_new_product_test(item, variants)
+                class_instance = Shopify(request.user)
+                create_product_response = Shopify.shopify_create_new_product(class_instance, item, variants)
+                Shopify.shopify_add_images_to_variants(class_instance, variants, create_product_response)
             return redirect(inventory_list_view)
         elif dropdown_value == 'import-woocommerce':
             return redirect(inventory_list_view)
@@ -721,6 +722,16 @@ def woocommerce_onsale(request):
                     'ig_post_setup_form':ig_post_setup_form,
                     }
         return render(request, 'mainapp/woocommerce_onsale.html', context)
+
+
+# SHOPIFY
+@login_required(login_url='/login')
+def shopify_onsale(request):
+    if request.method == "GET":
+        class_instance = Shopify(request.user)
+        Shopify.shopify_retrieve_all_products(class_instance)
+
+        return redirect(inventory_list_view)
 
 # SOCIAL NETWORK
 @login_required(login_url='/login')

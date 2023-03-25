@@ -34,6 +34,9 @@ urlpatterns = [
     path('woocommerce-categories', views.woocommerce_categories, name='woocommerce-categories'),
     path('woocommerce-onsale', views.woocommerce_onsale, name='woocommerce-onsale'),
 
+    # SHOPIFY
+    path('shopify-onsale', views.shopify_onsale, name='shopify-onsale'),
+    
 
     path('inventory-sync', views.inventory_sync, name='inventory-sync'),
 

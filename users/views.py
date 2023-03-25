@@ -161,3 +161,7 @@ def whitelist(request):
 
 def faq(request):
     return render(request, 'users/faq.html')
+
+
+def terms_and_conditions(request):
+    return render(request, 'users/terms_and_conditions.html')

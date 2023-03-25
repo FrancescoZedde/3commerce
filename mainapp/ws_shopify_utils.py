@@ -1,5 +1,5 @@
 
-
+import re
 
 
 class ShopifyUtils:
@@ -33,8 +33,7 @@ class ShopifyUtils:
         for variant in variants:
             variant_values = variant.variantKey
             variant_values = variant_values.split("-")
-            print(variant.variantSku)
-            print(variant_values)
+
             variant_dict = {}
             for value in variant_values:
                 print(value)
@@ -45,10 +44,7 @@ class ShopifyUtils:
 
             variant_dict["sku"] = variant.variantSku
             variant_dict["price"] = variant.supplierSellPrice
-            #variant_dict["attributes"] = {}
-            #variant_dict["inventory_quantity"] = "50",
-            #variant_dict["inventory_management"] =  "shopify",
-            #variant_dict["inventory_quantity"] =  "99"
+
             variants_set.append(variant_dict)
         print(variants_set)
         print(variants_set[0])
@@ -61,3 +57,32 @@ class ShopifyUtils:
             img = {'src': image}
             img_set.append(img)
         return img_set
+
+    
+    def shopify_match_skus_images_ids(variants, create_product_response):
+        shopify_images = create_product_response["product"]["images"]
+        shopify_variants = create_product_response["product"]["variants"]
+
+        shopify_variants_dict = {}
+        for shopify_variant in shopify_variants:
+            shopify_variants_dict[shopify_variant['sku']] = shopify_variant['id']
+        images_names_shopify = {}
+        for image in shopify_images:
+            name = ShopifyUtils.find_between_strings(image["src"], "https://cdn.shopify.com/s/files/1/0733/8105/2714/products/", "?v=")
+            images_names_shopify[name] = image['id']
+
+        images_names_sellfast = {}
+        for variant in variants:
+            name = variant.variantImage[variant.variantImage.rindex('/')+1:]
+            images_names_sellfast[variant.variantSku] = name
+        
+        return shopify_variants_dict, images_names_shopify, images_names_sellfast
+
+
+    def find_between_strings( s, first, last ):
+        try:
+            start = s.index( first ) + len( first )
+            end = s.index( last, start )
+            return s[start:end]
+        except ValueError:
+            return ""
