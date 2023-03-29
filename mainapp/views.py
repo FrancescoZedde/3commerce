@@ -21,7 +21,7 @@ from mainapp.ws_ebay_utils import ebay_create_json_inventory_item_group, ebay_cr
 from mainapp.ws_ebay import ebay_match_product_with_ebay_catalog, ebay_search_items_by_keywords, ebay_publish_by_inventory_item_group, create_inventory_items_group, ebay_publish_offer, ebay_bulk_publish_offer, ebay_create_inventory_location, ebay_get_inventory_location, refresh_access_token, get_all_inventory_items, create_inventory_item, ebay_delete_inventory_item, bulk_create_offer
 
 from mainapp.ws_cj import cj_products_by_category, cj_get_product_details
-from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id, start_woocommerce_products_batch
+from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id
 from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
 from mainapp.ws_shopify import Shopify, ShopifyConnect
 from mainapp.ws_gpt import ChatGPT
@@ -252,6 +252,7 @@ def inventory_list_view(request):
         gpt_write_description_form = ChatGPTWriteDescriptionForm()
 
         products = InventoryItem.objects.filter(user=request.user)
+        products = reversed(products)
         print('All products associated with logged user: ')
         print(products)
 
@@ -355,6 +356,19 @@ def inventory_list_view_import_commands(request):
                 Shopify.shopify_add_images_to_variants(class_instance, variants, create_product_response)
             return redirect(inventory_list_view)
         elif dropdown_value == 'import-woocommerce':
+            print("import to woocommerc")
+            selected_items = request.POST.get("selected-items", None)
+            percentage_increase = request.POST.get("pricepercentageincrease", None)
+            categories = request.POST.get("wc-categories", None)
+            #select_categories = request.POST.get("selectcategories", None)
+
+            selected_items = re.split(',', selected_items,)
+            categories = re.split(',', categories,)
+            print(categories)
+            update_items_offer(request.user, selected_items, percentage_increase)
+            #start_woocommerce_products_batch(selected_items, categories)
+            class_instance = WooCommerce(request.user)
+            WooCommerce.start_woocommerce_products_batch(class_instance, selected_items, categories )
             return redirect(inventory_list_view)
         elif dropdown_value == 'import-ebay':
             return redirect(inventory_list_view)
@@ -835,3 +849,57 @@ def printful_oauth(request):
     #access_token, refresh_token = Printful.get_access_token(printful)
     #Printful.refresh_token(printful, refresh_token)
     return redirect(profile)
+
+'''
+def woocommerce_update_descriptions_bulk(request):
+    if request.method == 'POST':
+        print('0here')
+        selected_items_dict = request.POST.get('selected-items-dict', None)
+        print(selected_items_dict)
+        list_json_dict = json.loads(selected_items_dict)
+        print(list_json_dict)
+        class_instance = ChatGPT()
+        woo_class_instance = WooCommerce(request.user)
+        for json_dict in list_json_dict:
+            #for woocommerce_id,sku in json_dict.items():
+            #print(woocommerce_id)
+            #print(sku)
+            # call cj retrieve product details
+            print(json_dict)
+            product_details = cj_get_product_details(json_dict['sku'][2:])
+            #print(product_details)
+            try:
+                if product_details['message'] == 'Product not found':
+                    print('delete ..')
+                    WooCommerce.woocommerce_delete_product(woo_class_instance, str(json_dict['woocommerce_id']))
+                    print(str(sku) + 'deleted')
+            except:
+                print(str(json_dict['sku']) + ' ok')
+                chatgpt_description = ChatGPT.gpt35_write_product_description(class_instance, product_details['productNameEn'], clean_html(product_details['description']), product_details['entryNameEn'], '100', '60')
+                print(chatgpt_description)
+
+                WooCommerce.woocommerce_update_description(woo_class_instance, str(json_dict['woocommerce_id']), str(chatgpt_description))
+
+                
+                # call chatgpt
+                #chatgpt_description = ChatGPT.gpt35_write_product_description(class_instance, product_details['productNameEn'], clean_html(product_details['description']), product_details['entryNameEn'], '100', '60')
+                # update product
+        #class_instance = ChatGPT()
+        #chatgpt_description = ChatGPT.gpt35_write_product_description(class_instance, item.itemName, clean_html(item.description), keywords, max_words, min_words)
+        return redirect(inventory_list_view)
+
+
+def generate_img(request):
+    import requests
+    url = 'http://172.105.88.54:8000/todos/api'
+    headers = {
+        'Accept': 'application/json; indent=4'
+    }
+    auth = ('zedde', '')
+
+    response = requests.get(url, headers=headers, auth=auth)
+
+    print(response.json())
+
+    return redirect(trending)
+    '''

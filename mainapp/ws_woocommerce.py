@@ -37,17 +37,35 @@ class WooCommerce():
         products_batch_list = []
         for sku in sku_list:
             item = retrieve_item_by_user_and_sku(self.user, sku)
+
+
             json_woocommerce_export = create_json_products_batch(item, categories)
             item.jsonWooCommerceExport = str(json_woocommerce_export)
             item.save()
             products_batch_list.append(json_woocommerce_export)
 
+            #response = self.wcapi.post("products", json_woocommerce_export).json()
+            #print('response single product')
+            #print(response)
+
         payload = {"create": products_batch_list}
+        print('PAYLOAD BATCH PRODUCTS')
+        #print(payload)
         response = self.wcapi.post("products/batch", payload).json()
         print(response)
         products_list = response['create']
 
         for woocommerce_item in products_list:
+            
+            woocommerce_product_images = woocommerce_item['images']
+            images_dict_list = []
+            for woocommerce_image in woocommerce_product_images:
+                image_name = woocommerce_image['src'][woocommerce_image['src'].rindex('/')+1:]
+                images_dict_list.append({image_name : woocommerce_image['id']})
+
+            print('images_dict_list')
+            print(images_dict_list)
+
             woocommerce_product = self.woocommerce_get_product_by_id(woocommerce_item['id'])
             product_sku = woocommerce_product['sku']
             print(product_sku)
@@ -55,13 +73,13 @@ class WooCommerce():
 
             variants = retrieveVariantsByItem(inventory_item)
 
-            jsonwoocommercevariants = create_json_variants_batch(woocommerce_item, variants)
+            jsonwoocommercevariants = create_json_variants_batch(woocommerce_item, variants, images_dict_list)
 
             endpoint = "products/"+str(woocommerce_item['id'])+"/variations/batch"
 
             response = self.wcapi.post(endpoint, jsonwoocommercevariants).json()
 
-            print(response)
+            #print(response)
     
 
     def woocommerce_get_product_by_id(self, wocommerce_id):
@@ -71,18 +89,57 @@ class WooCommerce():
         return response
 
     def woocommerce_retrieve_all_products(self):
-        endpoint = "products"
-        params = {'per_page': '99',
-                  }
-        response = self.wcapi.get(endpoint, params=params).json()
-        return response
+        products_list = []
+        for i in range(1,10):
+            try:
+                endpoint = "products"
+                params = {  'page': str(i),
+                            'per_page': '100',
+                        }
+                response = self.wcapi.get(endpoint, params=params).json()
+                products_list = products_list + response
+                print(len(products_list))
+                if len(response) < 100:
+                    break
+            except:
+                break
+        return products_list
     
+    def woocommerce_retrieve_product_variations(self, woocommerce_id):
+        endpoint = "products/" + str(woocommerce_id) + "/variations"
+        response = self.wcapi.get("products/794").json()
+        print(response)
+
+    def woocommerce_update_variation_description(self, product_woocommerce_id, variation_woocommerce_id, new_description):
+        #wcapi.put("products/22/variations/733", data).json()
+        endpoint = "products/" + str(product_woocommerce_id) + "/variations/" + str(variation_woocommerce_id)
+        data = {
+                "description": str(new_description)
+                }
+        response = self.wcapi.put("products/794", data).json()
+        print(response)
+
+    def woocommerce_update_description(self, woocommerce_id, new_description):
+        endpoint = "products/" + str(woocommerce_id)
+        data = {
+                "description": str(new_description)
+                }
+        response = self.wcapi.put(endpoint, data).json()
+        print(response)
+  
+
+    def woocommerce_delete_product(self, woocommerce_id):
+        endpoint = "products/" + str(woocommerce_id)
+        params = {"force": True}
+
+        response = self.wcapi.get(endpoint, params=params).json()
+        print(response)
+
     def get_woocommerce_categories(self):
         params = {'per_page': '99'}
         woocommerce_categories = self.wcapi.get("products/categories", params=params).json()
 
         return woocommerce_categories
-
 
 
 
@@ -107,61 +164,8 @@ def get_woocommerce_categories():
     return woocommerce_categories
 
 
-def start_woocommerce_products_batch(sku_list, categories):
-    wcapi = woocommerce_authentication()
-    products_batch_list = []
-    for sku in sku_list:
-        #retrieveItemBySku, retrieveVariantsByItem
-        item = retrieveItemBySku(sku)
-        print(item)
-        #create json export woocommerce batch
-        json_woocommerce_export = create_json_products_batch(item, categories)
-        
-        #save json
-        item.jsonWooCommerceExport = str(json_woocommerce_export)
-        item.save()
-
-        #append to list of products
-        products_batch_list.append(json_woocommerce_export)
-        #response = wcapi.post("products", jsonWooCommerceExport).json()
-
-    payload = {"create": products_batch_list}
-    print(payload)
-
-    # products batch call
-    response = wcapi.post("products/batch", payload).json()
-    print(response)
-    #time.sleep(15)
-    products_list = response['create']
-
-    for woocommerce_item in products_list:
-        print(woocommerce_item)
-        #item = json.loads(item)
-        woocommerce_product = get_woocommerce_product_by_id(woocommerce_item['id'])
-        product_sku = woocommerce_product['sku']
-        print(product_sku)
-        inventory_item = updateWoocommerceId_sku_filter(product_sku,woocommerce_item['id'] )
-
-        variants = retrieveVariantsByItem(inventory_item)
-
-        jsonwoocommercevariants = create_json_variants_batch(woocommerce_item, variants)
-
-        endpoint = "products/"+str(woocommerce_item['id'])+"/variations/batch"
-
-        response = wcapi.post(endpoint, jsonwoocommercevariants).json()
-    
-        print(response)  
-
-        #update inventoryItem woocommerceId
-
-        #for each item retireve variants and create json variants batch
-
-        #make call to export variants
-        #jsonWooCommerceExportVariants = create_json_variants_batch(item, variants)
-
-
 def create_json_products_batch(item, categories):
-    img_set = set_img_set(literal_eval(item.productImageSet))
+    img_set = set_img_set(item)
     #woocommerce_categories = get_woocommerce_categories()
     attrbs, default_attributes = woocommerce_set_attributes(json.loads(item.jsonDataImported))
     #default_attributes = set_default_attributes()
@@ -194,14 +198,33 @@ def create_json_products_batch(item, categories):
 
     return json_woocommerce_export
 
-def create_json_variants_batch(item, variants):
+def create_json_variants_batch(item, variants, images_dict_list):
     attributes_names = item['attributes']
     print('attributesxxx')
     print(attributes_names)
     #attributes_names = attributes_names.split("-")
-    
+    print(images_dict_list)
     variants_list = []
     for variant in variants:
+
+        #match image
+        img_name_key = variant.variantImage[variant.variantImage.rindex('/')+1:]
+        print('match image ...')
+        
+        print(img_name_key)
+        for images_dict in images_dict_list:
+            if img_name_key in images_dict:
+                print('id matched')
+                image_id = images_dict.get(img_name_key)
+                print(image_id)
+            '''
+            try:
+                image_id = images_dict.get(img_name_key)
+            except:
+                pass'''
+
+
+
         attributes = []
         variant_values = variant.variantKey
         variant_values = variant_values.split("-")
@@ -212,10 +235,13 @@ def create_json_variants_batch(item, variants):
         
         variant_data = { "regular_price": variant.sellPrice,
                  "sku": variant.variantSku,
-                 "attributes":attributes
+                 "attributes":attributes,
+                 "image": {
+                    "id" : str(image_id),
+                    }
                }
         variants_list.append(variant_data)
-    
+
     jsonwoocommercevariants = {"create": variants_list}
     print('jsonwoocommercevariants')
     print(jsonwoocommercevariants)
@@ -225,11 +251,19 @@ def create_json_variants_batch(item, variants):
 
     return jsonwoocommercevariants
 
-def set_img_set(productImageSet):
+def set_img_set(item):
+
     img_set = []
-    for image in productImageSet:
-        img = {'src': image}
+    for image in literal_eval(item.productImageSet):
+        img = {"src": image}
         img_set.append(img)
+
+    variants = retrieveVariantsByItem(item)
+    for variant in variants:
+        img_set.append({"src": str(variant.variantImage)})
+    
+    print('IMG SET')
+    print(img_set)
     return img_set
 
 

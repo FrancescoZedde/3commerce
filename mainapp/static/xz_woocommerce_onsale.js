@@ -19,3 +19,29 @@ function retrieve_button_id_and_show_modal(clicked_id){
     document.getElementById("ig-selected-item").value = product_id;
     console.log(document.getElementById("ig-selected-item").value);
 }
+
+
+function select_deselect_all_rows() {
+    //var rows = document.getElementsByTagName("table")[0].rows;
+    var rows_checked = document.getElementsByName("checkbox-item")
+    let select_all_button = document.getElementById("select-all-button");
+    let deselect_all_button = document.getElementById("deselect-all-button");
+
+    let hidden = select_all_button.getAttribute("hidden");
+
+    if (hidden) {
+        select_all_button.removeAttribute("hidden");
+        deselect_all_button.setAttribute("hidden", "hidden");
+        rows_checked.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+     } else {
+        select_all_button.setAttribute("hidden", "hidden");
+        deselect_all_button.removeAttribute("hidden");
+        rows_checked.forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+     }
+
+    //select_rows()
+}

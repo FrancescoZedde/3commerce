@@ -37,10 +37,21 @@
             <div style="text-align: center;margin-top:1em;">
               <button class="standard-button" id="OpenModalActions" onclick="open_modal_action()">Execute</button>
             </div>
+    
           
     </div>
     <div class="col-4">
+        <form action="woocommerce-update-descriptions-bulk" method="POST">
+          {% csrf_token %}
+          <div class="row">
 
+              <div class="button" style="text-align: center; margin-top:2em">
+                  <input class="standard-button" id='' type="submit" value="Update descriptions" name="">
+              </div>
+
+          </div>
+          <input type="hidden" id="selected-items-dict" name="selected-items-dict" value="{{selected_items_dict}}">
+        </form>
     </div>
     <div class="col-4">
 
@@ -51,6 +62,10 @@
 
 
 <table class="inventory-table" id="inventory-table">
+  <div style="text-align:right; margin-right:1em;">
+    <button id='select-all-button' class="standard-button" onclick="select_deselect_all_rows()" >Select all</button> 
+    <button id='deselect-all-button' class="standard-button" hidden='hidden'  onclick="select_deselect_all_rows()" >Deselect all</button> 
+  </div>
     <tr class="tr-header">
       <th></th>
       <th></th>
@@ -78,7 +93,7 @@
             <button class="social-facebook-button" id="open-instagram-modal">Post on Facebook</button>
         </div>
       </td>
-      <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange=""/>&nbsp;</td>
+      <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
       <td class="td-standard"><a style='color:rgb(65, 134, 255)' href={{product.url}} target="_blank" rel="follow">URL</a></td>
       <td class="td-standard"><a style='color:rgb(239, 57, 57)' href="">Delete from Woocommerce</a></td>
   
@@ -120,5 +135,69 @@
   </div>
 
   <script src="{% static 'woocommerce_utils.js' %}"></script>
+  <script>
+    function select_deselect_all_rows() {
+    //var rows = document.getElementsByTagName("table")[0].rows;
+    var rows_checked = document.getElementsByName("checkbox-item")
+    let select_all_button = document.getElementById("select-all-button");
+    let deselect_all_button = document.getElementById("deselect-all-button");
 
+    let hidden = select_all_button.getAttribute("hidden");
+
+    if (hidden) {
+        select_all_button.removeAttribute("hidden");
+        deselect_all_button.setAttribute("hidden", "hidden");
+        rows_checked.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+     } else {
+        select_all_button.setAttribute("hidden", "hidden");
+        deselect_all_button.removeAttribute("hidden");
+        rows_checked.forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+     }
+
+    select_rows()
+}
+
+function select_rows() {
+    console.log('ciao')
+    var rows = document.getElementsByTagName("table")[0].rows;
+    var rows_checked = document.getElementsByName("checkbox-item")
+    console.log(rows_checked)
+    var woocommerce_id_list = []
+    var sku_list = []
+    var selected_items_dict = []
+    for (let i = 0; i < rows_checked.length; i++) {
+        var is_checked = rows_checked[i].checked;
+        console.log(is_checked)
+        if (is_checked==true){
+            var r = rows[i+1];
+            //woocommerce-id
+            var c = r.cells[0];
+            var woocommerce_id = c.innerHTML
+            woocommerce_id_list.push(woocommerce_id)
+
+            //skus
+            var c = r.cells[2];
+            var sku = c.innerHTML
+            sku_list.push(sku)
+            
+            make_dict_string = '{"woocommerce_id" : "' + woocommerce_id + '", "sku" : "' + sku  + '"}' ;
+            selected_items_dict.push(make_dict_string);
+
+        }
+        //var cell = row.cells[3];
+        //var value = cell.innerHTML;
+        //print(value)
+    }
+
+
+    document.getElementById("selected-items-dict").value = "[" + selected_items_dict + "]"
+    console.log(document.getElementById("selected-items-dict").value)
+    //console.log('ciao')
+    //document.getElementById("selecteditems").value = sku_list;
+      }
+  </script>
 {% endblock %}

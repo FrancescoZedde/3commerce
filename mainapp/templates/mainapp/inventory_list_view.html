@@ -239,9 +239,8 @@
     <th>Category</th>
     <th>Supplier price</th>
     <th>Sell price</th>
-    <th>WooComm</th>
+    <th>Store</th>
     <th>Ebay</th>
-    <th>Amazon</th>
     <th>Template</th>
     <th></th>
     <th></th>
@@ -252,8 +251,8 @@
   <tr class="tr-standard">
     <td class="td-standard">{{item.id}}</td>
     <td class="td-standard"><img src={{item.productImage}} alt="" width="100" height="100"></td>
-    <td class="td-name">{{item.sku}}</td>
-    <td class="td-name">{{item.itemName}}</td>
+    <td class="td-standard">{{item.sku}}</td>
+    <td class="td-standard">{{item.itemName}}</td>
     <td class="td-standard">{{item.supplier}}</td>
     <td class="td-standard">{{item.categoryThird}}  </td>
     <td class="td-standard">{{item.supplierSellPrice}}</td>
@@ -267,13 +266,6 @@
     </td>
     <td class="td-standard">
       <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
-    </td>
-    <td class="td-standard">
-        {% if item.onsaleWoocommerce == False %}
-          <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
-        {% else %}
-          <img src="http://xzshop.eu/wp-content/uploads/2023/02/check.png" alt="Yes" width="25" height="25"> 
-        {% endif %}
     </td>  
     <td class="td-standard">
         {% if item.descriptionTemplate == '' %}
@@ -303,30 +295,34 @@
       </div>
       <div id="" style="margin-top: 1em">
         <!-- WOOCOMMERCE SETUP FORM-->
-        <form action="export-start" method="post">
+        <form action="inventory-list-view-import-commands" method="post">
         {% csrf_token %}
           <div class="row">
             <div class="col-4" style="text-align:center;">
-              <p>Increase price by:</p>
-              {{woocommerce_import_setup_form.pricepercentageincrease}}
+              {{woocommerce_import_setup_form | crispy}}
             </div>
             <div class="col-4" style="text-align:center;">
-              <p>WooCommerce categories IDs:</p>
-              {{woocommerce_import_setup_form.categories}}
+              
             </div>
             <div class="col-4" style="text-align:center;">
             </div>
+          </div>
+          <h5 style="margin-top:2em; margin-bottom:5px;"><b>Select categories</b></h5>
+          <!-- WOOCOMMERCE CATEGORIES -->
+          <div class="woocommerce-categories-element" id="category-list">
+             <!-- innehtml categories-->
           </div>
           <!-- WOOCOMMERCE IMPORT BUTTON -->
           <div class="row">
             <div class="col-12" style="text-align:center;">
               <div class="button" style="text-align: center; margin-top:2em">
-                  <input class="import-button" id='startimport' type="submit" value="Start Import" name="start-import-items">
+                  <input class="standard-button" id='startimport' type="submit" value="Import" name="import-woocommerce">
               </div>
             </div>
           </div>
-          <!--<input type="hidden" id="selecteditemswoocommerce" name="selected-items-woocommerce" value="{{selected_items_woocommerce}}">-->
           <input type="hidden" name="selected-items" value="{{selected_items}}">
+          <input type="hidden" id="wc-categories-id" name="wc-categories" value="{{wc_categories}}">
+          <input type="hidden" name="action" value="import-woocommerce">
         </form>
       </div>
     </div>
@@ -534,6 +530,9 @@
       </div>
     </div>
   </div>
+  <div id="category-div">
+    
+  </div>
 </main>
 
       
@@ -548,6 +547,44 @@
               window.location = $(this).data("href");
           });
         });
+
+        //let {WooCommerceRestApi} = require("woocommerce-rest-api");
+
+        document.addEventListener("DOMContentLoaded", function(){
+          category_list = document.getElementById('category-list')
+          fetch('https://xzshop.eu/wp-json/wc/v3/products/categories?per_page=99', {
+              method: 'GET',
+              headers: {
+                'Authorization': 'Basic ' + btoa('ck_f7e2f705702d1ad6b8cb76a216329947e431a9a1:cs_8db2d0a442e9579465c0f3c9c7bfb1c80b461fd8')
+              }
+            })
+            .then(response => response.json())
+            .then(data => data.forEach(
+                function(element) {
+                  category_list.innerHTML += '<label><input id="wc-cat-' + element['id'] +'" style="position:absolute;top:-20px;" type="checkbox" value="1" onchange="select_woocommerce_categories()"><span>'+ element['name'] +'</span></label>'
+                })
+            )
+            .catch(error => console.error(error))
+        });
+        
+        
+        function select_woocommerce_categories() {
+        
+          console.log('wewe')
+          var inputs = $('[id^="wc-cat-"]');
+          console.log(inputs)
+          categories = [];
+          Array.from(inputs).forEach(checkbox => {
+            var is_checked = checkbox.checked
+            if (is_checked==true){
+                var checkbox_id = checkbox.getAttribute('id')
+                category_id = checkbox_id.replace("wc-cat-", "")
+                categories.push(category_id)
+            }
+        });
+          document.getElementById('wc-categories-id').value = categories
+          console.log(document.getElementById('wc-categories-id').value)
+        }
 
         function control_actions_panel() {
           console.log('control_actions_panel')

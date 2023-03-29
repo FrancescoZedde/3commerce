@@ -594,7 +594,7 @@ class ManipulationOptions(forms.Form):'''
 
 class woocommerceImportSetup(forms.Form):
     pricepercentageincrease = forms.FloatField(label="Increase price by (%):")
-    categories = forms.CharField(max_length = 200)
+    #categories = forms.CharField(max_length = 200)
 
 class EbayImportSetup(forms.Form):
     price_multiplier = forms.FloatField(label="Price Multiplier:", help_text=mark_safe("<div style='text-align:left'>Supplier price will be moltiplicated by this value. (i.e. If supplier price is 10 and multiplier 5, your sell price on Ebay will be 50.</div>"))
