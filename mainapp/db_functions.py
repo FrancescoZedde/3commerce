@@ -141,19 +141,6 @@ def create_item_and_variants(product_details, user):
     
 
 def create_variant(inventory_item, variant):
-    #retrive variant warehouse location
-    inventory_inquiry = cj_get_inventory_inquiry(variant['vid']) 
-    
-    #retrieve variant shippign methods
-    '''
-    shipping_address_country_codes = ['US','DE','GB','IT']
-    shipping_methods_list = []
-    
-    for end_country_code in shipping_address_country_codes:
-        sm = cj_get_shipping_methods(variant['vid'], inventory_inquiry[0]['countryCode'], end_country_code)
-        print(sm)
-        destination_sm = {"destination": end_country_code, "shipping_method":sm}
-        shipping_methods_list.append(destination_sm)'''
     variant = Variant(item = inventory_item,
                                         vid = variant['vid'],
                                         variantSku = 'XZ' + variant['variantSku'],
@@ -170,16 +157,12 @@ def create_variant(inventory_item, variant):
                                         variantHeight= variant['variantHeight'],
                                         variantVolume= variant['variantVolume'],
                                         variantWeight= variant['variantWeight'],
-
-                                        areaId = inventory_inquiry[0]['areaId'],
-                                        storageNum = inventory_inquiry[0]['storageNum'],
-                                        countryCode = inventory_inquiry[0]['countryCode'],
-                                        allLocations = inventory_inquiry,
                                         firstShippingMethod = '',
                                         secondShippingMethod = '',
                                         thirdShippingMethod = '',
                                         #allShippingMethods  = shipping_methods_list,
                                         )
+
     variant.save()
 
 def update_items_offer(user, selected_items, percentage_increase):
@@ -242,9 +225,11 @@ def string_to_dict(string):
 
 
 def set_item_price(item_object, percentage_increase):
-    if '-' in item_object.supplierSellPrice:
-
-        min_and_max = item_object.supplierSellPrice.split("-")
+    if '-' in item_object.supplierSellPrice or '--' in item_object.supplierSellPrice:
+        if '-' in item_object.supplierSellPrice:
+            min_and_max = item_object.supplierSellPrice.split("-")
+        elif '--' in item_object.supplierSellPrice:
+            min_and_max = item_object.supplierSellPrice.split("--")
         print(min_and_max)
         min_price = float(min_and_max[0]) + float(min_and_max[0])*float(percentage_increase)
         max_price = float(min_and_max[1]) + float(min_and_max[1])*float(percentage_increase)
