@@ -46,6 +46,7 @@ function select_rows() {
         if (is_checked==true){
             var r = rows[i+1];
             
+            
             var c = r.cells[2];
             var sku = c.innerHTML
             sku_list.push(sku)
