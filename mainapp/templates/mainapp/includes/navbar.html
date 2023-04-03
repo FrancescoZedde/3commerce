@@ -3,7 +3,8 @@
     <div class="container-fluid">
 
         <button type="button" id="sidebarCollapse" style="border:none; padding:0px; background-color: #fff;">
-            <img src="http://xzshop.eu/wp-content/uploads/2023/03/square.png" width="40px" height="40px">
+            <!--<img src="http://xzshop.eu/wp-content/uploads/2023/03/square.png" width="40px" height="40px">-->
+            <i class="fa fa-plus" aria-hidden="true"></i>
         </button>
         <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="fas fa-align-justify"></i>
@@ -27,7 +28,7 @@
         <ul class="nav navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">
-                    <img src="http://xzshop.eu/wp-content/uploads/2023/03/sellfast-logo-2.png" style="max-width:100%; max-height:70px;">
+                    <img src="http://xzshop.eu/wp-content/uploads/2023/03/sellfast-logo-2.png" style="max-width:70%; max-height:70px;">Beta
                 </a>
             </li>
         </ul>
@@ -41,9 +42,7 @@
                     <a class="nav-link" href="{% url 'login' %}"><b>Login</b></a>
                 </li>
                 <li class="nav-item">
-                    <button class="registration-button">
-                        <a class="nav-link" style="color: #fefefe;" href="{% url 'registration' %}"><b>Start for free</b></a>
-                    </button>
+                    <a class="nav-link" href="{% url 'registration' %}"><b>Sign up</b></a>
               </li>
             </ul>
         </div>
