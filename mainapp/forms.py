@@ -593,7 +593,8 @@ manipulation_options = (
 class ManipulationOptions(forms.Form):'''
 
 class woocommerceImportSetup(forms.Form):
-    pricepercentageincrease = forms.FloatField(label="Increase price by (%):")
+    pricepercentageincrease = forms.FloatField(label="Increase price by (%):", help_text="For a 100% increase write '100' ")
+    #usepriceperproduct = forms.BooleanField(label='Uses sell prices set on a per-product basis', initial=False, required=False)
     #categories = forms.CharField(max_length = 200)
 
 class EbayImportSetup(forms.Form):
@@ -728,31 +729,31 @@ class InventoryItemForm(ModelForm):
         widgets = {
             'itemName': TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 100%; font-size: 11px;',
+                'style': 'font-size: 11px;',
                 }),
             'sku': TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 200px;  font-size: 11px;',
+                'style': 'font-size: 11px;',
                 'readonly': True,
                 }),
             'supplier': TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 200px;  font-size: 11px;',
+                'style': 'font-size: 11px;',
                 'readonly': True,
                 }),
             'materialNameEn': TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 200px;  font-size: 11px;',
+                'style': 'font-size: 11px;',
                 'readonly': True,
                 }),
             'supplierSellPrice': TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 200px; font-size: 11px;',
+                'style': 'font-size: 11px;',
                 'readonly': True,
                 }),
             'categoryFirst' : TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 200px; font-size: 11px;',
+                'style': ' font-size: 11px;',
                 'readonly': True,
                 }),
             'brand' : TextInput(attrs={
@@ -781,7 +782,7 @@ class InventoryItemForm(ModelForm):
                 }),
             'attributes': TextInput(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 200px;font-size: 11px;',
+                'style': 'font-size: 11px;',
                 'readonly': True,
                 }),
             'productImage':TextInput(attrs={

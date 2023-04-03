@@ -231,8 +231,8 @@ def set_item_price(item_object, percentage_increase):
         elif '--' in item_object.supplierSellPrice:
             min_and_max = item_object.supplierSellPrice.split("--")
         print(min_and_max)
-        min_price = float(min_and_max[0]) + float(min_and_max[0])*float(percentage_increase)
-        max_price = float(min_and_max[1]) + float(min_and_max[1])*float(percentage_increase)
+        min_price = float(min_and_max[0]) + float(min_and_max[0]) * ( float(percentage_increase)/float(100) )
+        max_price = float(min_and_max[1]) + float(min_and_max[1]) * ( float(percentage_increase)/float(100) )
 
         item_object.sellPrice = str(min_price) + '-' + str(max_price)
 
@@ -240,7 +240,7 @@ def set_item_price(item_object, percentage_increase):
     else:
         supplier_price = float(item_object.supplierSellPrice)
 
-        sell_price = supplier_price + supplier_price*float(percentage_increase)
+        sell_price = supplier_price + supplier_price * ( float(percentage_increase)/float(100) )
 
         sell_price = math.modf(sell_price) # (0.5678000000000338, 1234.0)
 
@@ -253,7 +253,7 @@ def set_item_price(item_object, percentage_increase):
 def set_variant_price(variant, percentage_increase):
     supplier_price = float(variant.supplierSellPrice)
 
-    sell_price = supplier_price + supplier_price*float(percentage_increase)
+    sell_price = supplier_price + supplier_price * ( float(percentage_increase)/float(100) )
 
     sell_price = math.modf(sell_price) # (0.5678000000000338, 1234.0)
 

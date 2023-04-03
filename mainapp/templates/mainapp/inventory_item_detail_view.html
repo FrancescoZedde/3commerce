@@ -9,53 +9,43 @@
     <input type="hidden" id="item" name="item" value="{{item}}">
                 <!-- PRODUCT INFORMATION -->
                 <div class="standard-command-container">
-                    <form action="inventory-item-detail-view-save-changes" method="post">
-                    <div class="row">
-                        <div class="col-4">
-                            <img src={{item.productImage}} width="75%" height="25%" alt="">
-                            {% autoescape off %}
-                            {{item_original_description}}
-                            {% endautoescape %}
+                    <div class="card">
+                        <div class="product-img">
+                            <img class="card-img-top" src={{item.productImage}}>
                         </div>
-                        <div class="col-8">
-                            <b>Name</b>
-                            {{item_form.itemName}}
-                            <b>SKU</b>
-                            {{item_form.sku}}
-                            <b>Supplier</b>
-                            {{item_form.supplier}}
-                            <b>Supplier price </b>
-                            {{item_form.supplierSellPrice}}
-                            <b>Category</b>
-                            {{item_form.categoryFirst}}
-                            <b>Attributes</b>
-                            {{item_form.attributes}}
-                            <b>Material</b>
-                            {{item_form.materialNameEn}}
-                            <b>Supplier description</b>
-                                <div id="html_description">
-                                    {{item_form.description}}
-                                </div>
-                            <b>Brand</b>
-                            {{item_form.brand}}
-                            <b>Features description *optional</b>
-                            {{item_form.descriptionFeatures}}
-                        </div>
-                    </div>
-                    <!-- SAVE CHANGES BUTTON-->
-                    <div class="row">
-                        <div class="col-12">
-                            
-                            {% csrf_token %}
+                        <div class="card-body">
+                            <form action="inventory-item-detail-view-save-changes" method="post">
+                                <h5 class="card-title"><div id="item-name-text">{{item_form.itemName}}</div></h5>
+                                <p class="card-text">
+                                  <b>Sell Price</b>
+                                  {{item_form.sellPrice}}
+                                  <b>SKU</b>
+                                  {{item_form.sku}}
+                                  <b>Supplier</b>
+                                  {{item_form.supplier}}
+                                  <b>Supplier price </b>
+                                  {{item_form.supplierSellPrice}} 
+                                  <b>Category</b>
+                                  {{item_form.categoryFirst}}
+                                  <b>Attributes</b>
+                                  {{item_form.attributes}}
+                                  <b>Material</b>
+                                  {{item_form.materialNameEn}}
+                                  <b>Original description</b>
+                                  <div id="original-description" style="font-size: 12px;">
+                                      {% autoescape off %}
+                                      {{item_original_description}}
+                                      {% endautoescape %}
+                                  </div>  
+                                </p>
+                                {% csrf_token %}
                                 <div class="button" style="text-align: center;">
-                                    <p style="margin-top:1em">If you have made any changes to the fields above, don't forget to <b>Save</b> to make them effective</p>
-                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='save-changes' type="submit" value="Save" name="save-changes">
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='save-changes' type="submit" value="Save changes" name="save-changes">
                                 </div>
                                 <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
-                            
+                            </form>
                         </div>
-                    </div>
-                </form>
+                      </div>
                 </div>
                 <!-- SEARCH SIMILAR ITEMS -->
                 <div class="standard-command-container">
@@ -64,34 +54,21 @@
                         <p>Search for similar items on Ebay, Amazon, etc.</p>
                     </div>
                     <div class="row">
-                        <div class="col-6">
-                            <form action="inventory-item-search-similar-items" method="post">
+                        <form action="inventory-item-search-similar-items" method="post">
                             {% csrf_token %}
-                                <div class="button" style="text-align: center;">
-                                    <p style="margin-top:1em">Search similar items using words contained in the Item Title as keywords </p>
+                                <div class="button">
                                     <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search" name="search-similar-item-name">
                                 </div>
                                 <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
                                 <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
                             </form>
-                        </div>
-                        <div class="col-6">
-                            <form action="inventory-item-search-similar-items" method="post">
-                            {% csrf_token %}
-                                <div class="button" style="text-align: center;">
-                                    <p style="margin-top:1em">Search similar items using custom words as keywords </p>
-                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-custom-keywords' type="submit" value="Search" name="search-similar-custom-keywords">
-                                </div>
-                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
-                            </form>
-                        </div>
                     </div>
                 </div>
                 <!-- IMAGES CONTROL PANEL -->
                 <div class="standard-command-container">
                     <div class="row">
-                        <h5><b>Image Set</b></h5>
-                        <p>From this section you can better <b>manage product images</b>. Remove the ones you don't need, set the main image and add new ones</p>
+                        <h5><b>Images</b></h5>
+                        <p>Remove images you don't need, set the main image and add new ones</p>
                     </div>
                     <div class="row">
                         <div class="col-2">
@@ -143,110 +120,32 @@
                 <!-- AI DESCRIPTIONS -->
                 <div class="standard-command-container">
                     <!-- MAIN DESCRIPTION-->
-                    <form action="inventory-item-detail-view-save-main-AI-manual-changes" method="post">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-12">
-                                <p><b>Main description.</b> This is the description that will be used to generate description templates</p>
-                                {{item_form.descriptionChatGpt}}
-                            </div>
-                        </div>
-                       <!-- SAVE MANUAL CHANGES TO AI DESCRIPTION-->
-                       <div class="row">
-                            <div class="col-12"> 
-                                <div class="button" style="text-align: center;">
-                                    <p style="margin-top:1em">If you have made manual changes to AI description don't forget to <b>Save</b></p>
-                                    <input class="standard-button" id='save-ai-decription-changes' type="submit" value="Save" name="save-ai-decription-changes">
-                                </div>
-                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}"> 
-                            </div>
-                        </div>
-                        </form>
-                    <div class="row">
-                        <p><b>Product Description Writer</b></p>
-                      <p>Generate descriptions with Atifical Intelligence</p>
-                    </div>
-                    <form action="gpt-generate-description" method="post">
-                    {% csrf_token %}
-                    <div class="row">
-                            <div class="col-8">
-                                {{gpt_write_dscription_form|crispy}}
-                            </div>
-                            <div class="col-4">
-                                <!-- GENERATE NEW DESCRIPTIONS BUTTON-->
-                                    <div class="button" style="text-align: center; margin-top: 35%;">
-                                        <input class="standard-button" id='generateaidesc' type="submit" value="Generate description" name="generate-ai-desc">
-                                        <p style="font-size:11px; text-align:center">Previous descriptions will be overwritten</p>
-                                    </div>
-                                    <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
-                            </div>
-                    </div>
-                    </form>
-                    <!-- OPTION 1 DESCRIPTION-->
-                    <div class="row">
-                        <div class="col-10">
-                            <p><b>Option 1</b></p>
-                        </div>
-                        <div class="col-2">
-                            <form action="" method="post">
-                                {% csrf_token %}
-                                <div class="button" style="text-align: center; margin-top:4em;">
-                                    <input class="standard-button" id='' type="submit" value="Set as main" name="set-main-ai-description">
-                                  </div>
-                                  <input type="hidden" id="writesonic_1" name="writesonic-description" value="">
-                                  <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
-                            </form>
-                        </div>
-                    </div>
-                    <!-- OPTION 2 DESCRIPTION-->
-                    <div class="row">
-                        <div class="col-10">
-                            <p><b>Option 2</b></p>
-                        </div>
-                        <div class="col-2">
-                            <form action="" method="post">
-                                {% csrf_token %}
-                                <div class="button" style="text-align: center; margin-top:4em;">
-                                    <input class="standard-button" id='' type="submit" value="Set as main" name="set-main-ai-description">
-                                  </div>
-                                  <input type="hidden" id="writesonic_2" name="writesonic-description" value="">
-                                  <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
-                            </form>
-                        </div>
-                    </div>
-                    <!-- OPTION 3 DESCRIPTION-->
-                    <div class="row">
-                        <div class="col-10">
-                            <p><b>Option 3</b></p>
-                        </div>
-                        <div class="col-2">
-                            <form action="" method="post">
-                                {% csrf_token %}
-                                <div class="button" style="text-align: center; margin-top:4em;">
-                                    <input class="standard-button" id='' type="submit" value="Set as main" name="set-main-ai-description">
-                                  </div>
-                                  <input type="hidden" id="writesonic_3" name="writesonic-description" value="">
-                                  <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
-                            </form>
-                        </div>
+                    <h5><b>Title and Description Writer</b></h5> <small><i>Powered by GPT-4</i></small>
+
+                    <p style="margin-top: 1em;"><b>Words left:</b> {{request.user.words}}</p>
+                    <p>Write SEO-optimized product titles for ecommerce websites. Generate titles that are optimized for search engine results in seconds, helping to increase visibility and drive more traffic to products.</p>
+                    <div style="margin-top:1em;">
+                        <button class="standard-button" id="OpenModalTitleGPT" onclick="open_modal(this.id)">Generate Title</button>
+                      </div>
+                    <p>Write product descriptions with optional features such as bullet points lists and SEO optimized content. It provides custom-tailored, high-quality d
+                        escriptions to help businesses enhance their product listings, improve SEO rankings, and increase sales. With its natural language processing and 
+                        advanced AI capabilities, it can provide accurate and engaging descriptions that capture the essence of a product and highlight its best features.</p>
+                    <div style="margin-top:1em;">
+                      <button class="standard-button" id="OpenModalDescriptionGPT" onclick="open_modal(this.id)">Generate Description</button>
                     </div>
                 </div>
                 <!-- INSTAGRAM -->
                 <div class="standard-command-container">
                     <div class="row">
-                        <h5><b>Social</b></h5>
-                        <p>Publish product on instagram</p>
+                        <h5><b>Share</b></h5>
+                        <p>Share your product on social media</p>
                     </div>
                     <div class="row">
                         <div class="col-6">
                             <form action="" method="post">
                             {% csrf_token %}
-                                <div class="button" style="text-align: center;">
-                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='create-ig-post' type="submit" value="Create Container" name="create-ig-post">
-                                    <p>
-                                        <small>After creating a Post Container you will be able tu publish it from <i>Social</i>><i>Instagram</i></small>
-                                    </p>
-                                    
+                                <div class="button">
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='create-ig-post' type="submit" value="Share on Social Media" name="create-ig-post">                                   
                                 </div>
                                 <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
                             </form>
@@ -256,10 +155,316 @@
                         </div>
                     </div>
                 </div>
+<!-- WRITE TITLE MODAL -->
+  <div id="modal-write-title-gpt" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-write-title-gpt" class="close">&times;</span>
+      <div id="loader-title" hidden="hidden" class="loader"></div>
+      <div>
+        <p>Actual title for this product: </p>
+        <p>{{item_form.itemName}}</p>
+        <div class="form-group">
+            <div id="keywords-insert-div">
+                <label for="keywords-insert">Enter the keywords you want in the title</label>
+                <input id="keywords-insert" class="form-control" type="text">
+                <small id="keywords-insertHelp" class="form-text text-muted">Write keywords separated by commas.</small>
+                <button id="gpt-suggest-keywords-button" class="standard-button" onclick="gpt_suggest_keywords()"> Suggest keywords</button>
+            </div>
+            <div id="max-characters-div">
+                <label for="max-characters">Max characters</label>
+                <input id="max-characters" class="form-control" type="number" value="80" required>
+                <small id="max-charactersHelp" class="form-text text-muted">80 characters correspond to approximately 10 words.</small>
+            </div>
+        </div>
+        <!--
+        <div class="form-check form-switch" style="margin-left: 1em; margin-top: 1em;">
+            <input class="form-check-input" type="checkbox" id="keywords-suggest-title" onclick="gpt_suggest_keywords()">
+            <label class="form-check-label" for="keywords-suggest-title">Use keywords suggested by AI</label>
+          </div>-->
+        </div>
+      <div id="" style="margin-top: 1em; text-align:center;">
+        <div>
+            <textarea id="generated-title" class="textarea-gpt" rows="4" cols="50" hidden="hidden"></textarea>
+        </div>
+
+        <div>
+            <button id="gpt-write-button" class="standard-button" onclick="gpt_write_title()"> Write title</button>
+        </div>
+        <div id="save-or-generate-title-div">
+            <button id="gpt-re-write-button" class="standard-button" onclick="gpt_write_title()"> Try again</button>
+            <button id="gpt-save-button" class="standard-button" onclick=""> Save</button>
+        </div>
+        
+
+      </div>
+    </div>
+  </div>
+  <!-- WRITE DESCRIPTION MODAL -->
+  <div id="modal-write-description-gpt" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-write-description-gpt" class="close">&times;</span>
+      <div hidden="hidden" id="loader-description" class="loader"></div>
+      <div id="" style="margin-top: 1em;">
+        {{gpt_write_dscription_form|crispy}}
+      </div>
+      <div>
+        <textarea id="generated-description" class="textarea-gpt" rows="4" cols="50" hidden="hidden"></textarea>
+     </div>
+      <div style="text-align: center;">
+        <button id="gpt-write-description-button" class="standard-button" onclick="gpt_write_description()"> Write Description</button>
+      </div>
+      <div style="text-align: center;" id="save-or-generate-description-div">
+        <button id="gpt-re-write-description-button" class="standard-button" onclick="gpt_write_description()"> Try again</button>
+        <button id="gpt-save-description-button" class="standard-button" onclick=""> Save</button>
+    </div>
+    </div>
+  </div>
 </main>
 <script>
 
+    function open_modal(button_id){
+          //var action = document.getElementById("action-options").value;
+          //button_id
+          //var selected_items = document.getElementsByName("selected-items")[0].value
+          if (button_id == "OpenModalTitleGPT"){
+            document.getElementById('gpt-write-button').removeAttribute("hidden");
+            document.getElementById('generated-title').setAttribute("hidden", "hidden");
+            document.getElementById('save-or-generate-title-div').setAttribute("hidden", "hidden");
+            document.getElementById('keywords-insert').value = "";
+            document.getElementById('max-characters').value = "80";
+            let modal = document.getElementById("modal-write-title-gpt");
+            let close = document.getElementById("close-modal-write-title-gpt");
+            close.onclick = function() {
+                //reset_modals()
+                modal.style.display = "none";
+            }
+            modal.style.display = "block";
+          }
+          else if (button_id == "OpenModalDescriptionGPT"){
+            document.getElementById('gpt-write-description-button').removeAttribute("hidden");
+            document.getElementById('generated-description').setAttribute("hidden", "hidden");
+            document.getElementById('save-or-generate-description-div').setAttribute("hidden", "hidden");
+            let modal = document.getElementById("modal-write-description-gpt");
+            let close = document.getElementById("close-modal-write-description-gpt");
+            close.onclick = function() {
+              modal.style.display = "none";
+            }
+            modal.style.display = "block";
+          }
+          
+        }
+    
+        function reset_modals(){
 
+        }
+    
+    function hide_keywords_insert() {
+        use_keywords_suggested_by_AI = document.getElementById("keywords-suggest-title").checked
+        console.log(use_keywords_suggested_by_AI)
+
+        if (use_keywords_suggested_by_AI == true){
+            document.getElementById('keywords-insert-div').setAttribute("hidden", "hidden");
+        }else{
+            document.getElementById('keywords-insert-div').removeAttribute("hidden");
+        }
+    }
+
+    function update_words(data){
+        let csrftoken = "{{csrf_token}}"
+        var data_json = {'tokens_used': data['usage']['completion_tokens'], 'csrfmiddlewaretoken': csrftoken};
+        console.log(data_json)
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'update-user-words' %}",
+            data: data_json,
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function cleanHtml(rawHtml) {
+        const cleaner = /<.*?>/g;
+        let cleanText = rawHtml.replace(cleaner, '');
+        cleanText = cleanText.slice(0, 600);
+        return cleanText;
+    }
+
+    async function gpt_write_title(){
+        const apiKey = "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";
+        const url = "https://api.openai.com/v1/chat/completions";
+
+        let spinner = document.getElementById("loader-title")
+        spinner.removeAttribute("hidden");
+
+        let itemName = document.getElementById("id_itemName").value
+
+        let message_1 = "Write one professional and SEO optimized product title for a " + itemName + "."
+        let message_2 = document.getElementById("keywords-insert").value
+
+        const requestHeaders = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        };
+
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are a product title writer"},
+                      {"role": "user", "content": message_1},
+                      {"role": "assistant", "content": "Which keywords?"},
+                      {"role": "user", "content": message_2},
+                      {"role": "user", "content": "Avoid introduction or everything else. Return only the title."},
+                    ],
+          "temperature": 0.7
+        };
+
+        console.log('here2')
+        await fetch(url, {
+          method: "POST",
+          headers: requestHeaders,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)            
+            document.getElementById('generated-title').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
+            document.getElementById('generated-title').removeAttribute("hidden");
+            document.getElementById('gpt-write-button').setAttribute("hidden", "hidden");
+            document.getElementById('save-or-generate-title-div').removeAttribute("hidden");
+
+            // UPDATE WORDS COUNTER
+            update_words(data)
+            /*
+            let csrftoken = "{{csrf_token}}"
+            var data_json = {'tokens_used': data['usage']['completion_tokens'], 'csrfmiddlewaretoken': csrftoken};
+            console.log(data_json)
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'update-user-words' %}",
+                data: data_json,
+                success: function (data) {
+                    //this gets called when server returns an OK response
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });*/
+        })
+        .catch(error => console.error(error));
+
+        spinner.setAttribute("hidden", "hidden")
+    }
+
+    async function gpt_write_description(){
+        const apiKey = "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";
+        const url = "https://api.openai.com/v1/chat/completions";
+        
+        let spinner = document.getElementById("loader-description")
+        spinner.removeAttribute("hidden");
+
+        let itemName = document.getElementById("id_itemName").value
+        let description = document.getElementById("original-description").outerHTML
+        console.log(description)
+        description = cleanHtml(description)
+        console.log(itemName)
+        console.log(description)
+
+        const requestHeaders = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        };
+
+        console.log("here")
+
+        message_1 = "Write a professional product description for a " + itemName + " with these features: " //+ description
+        //message_2 = "A SEO optimized product description for keywords like: " + keywords
+        message_3 = "The description must not contain the title of the product"
+        message_4 = "Avoid introduction, just describe the product "
+
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are a product description writer"},
+                      {"role": "user", "content": message_1},
+                      //{"role": "user", "content": message_2},
+                      {"role": "user", "content": message_3},
+                      {"role": "user", "content":message_4},
+                    ],
+          "temperature": 0.7
+        };
+
+        await fetch(url, {
+          method: "POST",
+          headers: requestHeaders,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)            
+            document.getElementById('generated-description').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
+            document.getElementById('generated-description').removeAttribute("hidden");
+            document.getElementById('gpt-write-description-button').setAttribute("hidden", "hidden");
+            document.getElementById('save-or-generate-description-div').removeAttribute("hidden");
+
+            // UPDATE OWRDS
+            update_words(data)            
+        })
+        .catch(error => console.error(error));
+
+        
+
+        spinner.setAttribute("hidden", "hidden")
+    }
+
+
+    async function gpt_suggest_keywords(){
+        const apiKey = "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";
+        const url = "https://api.openai.com/v1/chat/completions";
+
+        let spinner = document.getElementById("loader-title")
+        spinner.removeAttribute("hidden");
+
+        let itemName = document.getElementById("id_itemName").value
+
+        let message_1 = 'Suggest kewyords for this product: ' + itemName +' .Write keywords in this format: keywords1, keyword2, keyword3, etc. Max 3 keywords'
+
+        const requestHeaders = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        };
+
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are a SEO expert"},
+                      {"role": "user", "content": message_1},
+                    ],
+          "temperature": 0.7
+        };
+
+        await fetch(url, {
+          method: "POST",
+          headers: requestHeaders,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)            
+            document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
+
+            update_words(data)
+            
+        })
+        .catch(error => console.error(error));
+
+        spinner.setAttribute("hidden", "hidden")
+    }
 </script>
 
 {% endblock %}

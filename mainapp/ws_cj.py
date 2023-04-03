@@ -21,7 +21,7 @@ def cj_products_by_category(category_id, pagenum, pagesize):
     url = 'https://developers.cjdropshipping.com/api2.0/v1/product/list'
 
     response = []
-    print(pagenum)
+    #print(pagenum)
     for i in range(int(pagenum)+1):
         if i != 0:
             print(i)
@@ -31,12 +31,12 @@ def cj_products_by_category(category_id, pagenum, pagesize):
             headers = {"CJ-Access-Token": access_token}
 
             get_products_resp = requests.get(url, params=data, headers=headers).json()
-            print(get_products_resp)
+            #print(get_products_resp)
             lista_prodotti = get_products_resp['data']['list']
-            print(lista_prodotti)
+            #print(lista_prodotti)
             response = response + lista_prodotti
-    print(response)
-    print(len(response))
+    #print(response)
+    #print(len(response))
     return response
 
 
@@ -48,7 +48,7 @@ def cj_get_product_details(sku):
 
     response = requests.get(url, headers=headers).json()
 
-    print(response)
+    #print(response)
     product_details = response['data']
 
     return product_details

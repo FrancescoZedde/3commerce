@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField(unique=True)
     status = models.CharField(max_length=100, choices=STATUS, default='regular')
-
+    words = models.IntegerField( default=2000)
     # EBAY
     ebay_access_token = models.TextField('Ebay Access Token', default='', blank=True)
 

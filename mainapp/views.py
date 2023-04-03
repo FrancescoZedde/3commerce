@@ -402,15 +402,14 @@ def inventory_item_detail_view(request, pk):
 def inventory_item_detail_view_save_changes(request):
     primary_key = request.POST.get("primary-key", None)
     new_name = request.POST.get("itemName", None)
-    new_description = request.POST.get("description", None)
-    new_brand = request.POST.get("brand", None)
-    new_descriptionFeatures = request.POST.get("descriptionFeatures", '')
+    new_sellprice= request.POST.get("sellPrice", None)
+    #new_description = request.POST.get("description", None)
+    #new_brand = request.POST.get("brand", None)
+    #new_descriptionFeatures = request.POST.get("descriptionFeatures", '')
 
     item = retrieveInventoryItemById(primary_key)
     item.itemName = new_name
-    item.description = new_description
-    item.descriptionFeatures = new_descriptionFeatures
-    item.brand = new_brand
+    item.sellPrice = new_sellprice
     item.save()
 
     return redirect(inventory_item_detail_view, pk=primary_key)
@@ -551,35 +550,6 @@ def inventory_edit_items(request):
         return render(request, 'mainapp/inventory_edit_items.html',context)
     if request.method == 'GET':
         return redirect(inventory_list_view)
-
-@login_required(login_url='/login')
-def export_start(request):
-    if request.method == 'GET':
-        return redirect(inventory_list_view)
-    if request.method == 'POST':
-        selected_items = request.POST.get("selected-items", None)
-        percentage_increase = request.POST.get("pricepercentageincrease", None)
-        categories = request.POST.get("categories", None)
-        #select_categories = request.POST.get("selectcategories", None)
-
-        selected_items = re.split(',', selected_items,)
-        categories = re.split(',', categories,)
-
-        update_items_offer(request.user, selected_items, percentage_increase)
-        #start_woocommerce_products_batch(selected_items, categories)
-        class_instance = WooCommerce(request.user)
-        WooCommerce.start_woocommerce_products_batch(class_instance, selected_items, categories )
-    
-        context = {
-            'all_inventory_items':'ok',
-        }
-
-        messages.success(request, f"Products are online on your shop!")
-        return redirect(inventory_list_view)
-    else:
-        messages.success(request, f"Something goes wrong :/")
-        return redirect(inventory_list_view)
-
 
 
 @login_required(login_url='/login')
@@ -849,6 +819,23 @@ def printful_oauth(request):
     #access_token, refresh_token = Printful.get_access_token(printful)
     #Printful.refresh_token(printful, refresh_token)
     return redirect(profile)
+
+@login_required(login_url='/login')
+def update_user_words(request):
+    if request.method == 'POST':
+        print('heresas')
+        print(request.POST)
+        try:
+            tokens_used = request.POST.get('tokens_used', None)
+            words_used = int(round((int(tokens_used)/0.80), 0))
+            user_instance = CustomUser.objects.get(email=request.user.email)
+            words = user_instance.words
+            user_instance.words = words - words_used
+            user_instance.save()
+            return HttpResponse('Success!')
+        except: 
+            return HttpResponse('Error :(')
+
 
 '''
 def woocommerce_update_descriptions_bulk(request):

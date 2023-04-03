@@ -41,7 +41,6 @@ urlpatterns = [
     path('inventory-sync', views.inventory_sync, name='inventory-sync'),
 
     path('inventory-edit-items', views.inventory_edit_items, name='inventory-edit-items'),
-    path('export-start', views.export_start, name='export-start'),
     path('json-export-generate', views.inventory_import, name='json-export-generate'),
 
     # EBAY
@@ -63,6 +62,13 @@ urlpatterns = [
     
     # PRINTFUL
     path('printful-oauth', views.printful_oauth, name='printful-oauth'),
+
+    # UPDATE WORDS
+    path('update-user-words', views.update_user_words, name='update-user-words'),
+
+    #path('woocommerce-update-descriptions-bulk', views.woocommerce_update_descriptions_bulk, name='woocommerce-update-descriptions-bulk'),
+    #path('generate-img', views.generate_img, name='generate-img'),
+
     
     
 ]
