@@ -156,46 +156,46 @@
                     </div>
                 </div>
 <!-- WRITE TITLE MODAL -->
-  <div id="modal-write-title-gpt" class="modal-container">
+<div id="modal-write-title-gpt" class="modal-container">
     <div class="modal-content">
       <span id="close-modal-write-title-gpt" class="close">&times;</span>
-      <div id="loader-title" hidden="hidden" class="loader"></div>
+      <div id="loader-title" hidden class="loader"></div>
       <div>
         <p>Actual title for this product: </p>
         <p>{{item_form.itemName}}</p>
         <div class="form-group">
-            <div id="keywords-insert-div">
-                <label for="keywords-insert">Enter the keywords you want in the title</label>
-                <input id="keywords-insert" class="form-control" type="text">
-                <small id="keywords-insertHelp" class="form-text text-muted">Write keywords separated by commas.</small>
-                <button id="gpt-suggest-keywords-button" class="standard-button" onclick="gpt_suggest_keywords()"> Suggest keywords</button>
-            </div>
-            <div id="max-characters-div">
-                <label for="max-characters">Max characters</label>
-                <input id="max-characters" class="form-control" type="number" value="80" required>
-                <small id="max-charactersHelp" class="form-text text-muted">80 characters correspond to approximately 10 words.</small>
-            </div>
+          <div id="keywords-insert-div">
+            <label for="keywords-insert">Enter the keywords you want in the title</label>
+            <input id="keywords-insert" class="form-control" type="text">
+            <small id="keywords-insertHelp" class="form-text text-muted">Write keywords separated by commas.</small>
+            <button id="gpt-suggest-keywords-button" class="standard-button" onclick="gpt_suggest_keywords()">Suggest keywords</button>
+          </div>
+          <div id="max-characters-div">
+            <label for="max-characters">Max characters</label>
+            <input id="max-characters" class="form-control" type="number" value="80" required>
+            <small id="max-charactersHelp" class="form-text text-muted">80 characters correspond to approximately 10 words.</small>
+          </div>
         </div>
-        <!--
-        <div class="form-check form-switch" style="margin-left: 1em; margin-top: 1em;">
-            <input class="form-check-input" type="checkbox" id="keywords-suggest-title" onclick="gpt_suggest_keywords()">
-            <label class="form-check-label" for="keywords-suggest-title">Use keywords suggested by AI</label>
-          </div>-->
-        </div>
+      </div>
       <div id="" style="margin-top: 1em; text-align:center;">
-        <div>
-            <textarea id="generated-title" class="textarea-gpt" rows="4" cols="50" hidden="hidden"></textarea>
-        </div>
-
-        <div>
-            <button id="gpt-write-button" class="standard-button" onclick="gpt_write_title()"> Write title</button>
-        </div>
-        <div id="save-or-generate-title-div">
-            <button id="gpt-re-write-button" class="standard-button" onclick="gpt_write_title()"> Try again</button>
-            <button id="gpt-save-button" class="standard-button" onclick=""> Save</button>
+        <!-- Write button --> 
+        <button id="gpt-write-button" class="standard-button" onclick="gpt_write_title()">Write title</button>
+        <!-- Save button -->
+        <form action="inventory-item-save-gpt-title" method="POST">
+          {% csrf_token %}
+          <div>
+            <textarea id="generated-title" name="text-area-generated-title" class="textarea-gpt" rows="4" cols="50" hidden></textarea>
+          </div>
+          <div name ="save-or-generate-title-div" id="save-or-generate-title-div-id">
+            <button id="gpt-save-button" class="standard-button">Save</button>
+            <input type="hidden" id="primarykey-savetitle" name="primary-key" value="{{item.id}}">
+          </div>
+        </form>
+        <!-- Try again button -->
+        <div name="save-or-generate-title-div">
+            <button id="gpt-re-write-button" class="standard-button" onclick="gpt_write_title()">Try again</button>
         </div>
         
-
       </div>
     </div>
   </div>
@@ -207,16 +207,28 @@
       <div id="" style="margin-top: 1em;">
         {{gpt_write_dscription_form|crispy}}
       </div>
-      <div>
-        <textarea id="generated-description" class="textarea-gpt" rows="4" cols="50" hidden="hidden"></textarea>
-     </div>
+      
       <div style="text-align: center;">
         <button id="gpt-write-description-button" class="standard-button" onclick="gpt_write_description()"> Write Description</button>
-      </div>
-      <div style="text-align: center;" id="save-or-generate-description-div">
+      
+      <!-- Save button -->
+      <form action="inventory-item-save-gpt-description" method="POST">
+        {% csrf_token %}
+        <div>
+            <textarea id="generated-description" name="text-area-generated-description" class="textarea-gpt" rows="4" cols="50" hidden="hidden"></textarea>
+         </div>
+        <div name ="save-or-generate-description-div" id="save-or-generate-title-div-id">
+            <button id="gpt-save-description-button" class="standard-button" onclick=""> Save</button>
+          <input type="hidden" id="primarykey-savetitle" name="primary-key" value="{{item.id}}">
+        </div>
+      </form>
+      <!-- Try again button -->
+      <div name="save-or-generate-description-div">
         <button id="gpt-re-write-description-button" class="standard-button" onclick="gpt_write_description()"> Try again</button>
-        <button id="gpt-save-description-button" class="standard-button" onclick=""> Save</button>
     </div>
+</div>
+
+
     </div>
   </div>
 </main>
@@ -229,7 +241,10 @@
           if (button_id == "OpenModalTitleGPT"){
             document.getElementById('gpt-write-button').removeAttribute("hidden");
             document.getElementById('generated-title').setAttribute("hidden", "hidden");
-            document.getElementById('save-or-generate-title-div').setAttribute("hidden", "hidden");
+            //hidden_el = document.getElementsByName('save-or-generate-title-div') //.setAttribute("hidden", "hidden");
+            document.getElementsByName('save-or-generate-title-div').forEach((el) => {
+            el.setAttribute("hidden", "hidden");
+            });
             document.getElementById('keywords-insert').value = "";
             document.getElementById('max-characters').value = "80";
             let modal = document.getElementById("modal-write-title-gpt");
@@ -243,7 +258,9 @@
           else if (button_id == "OpenModalDescriptionGPT"){
             document.getElementById('gpt-write-description-button').removeAttribute("hidden");
             document.getElementById('generated-description').setAttribute("hidden", "hidden");
-            document.getElementById('save-or-generate-description-div').setAttribute("hidden", "hidden");
+            document.getElementsByName('save-or-generate-description-div').forEach((el) => {
+            el.setAttribute("hidden", "hidden");
+            });
             let modal = document.getElementById("modal-write-description-gpt");
             let close = document.getElementById("close-modal-write-description-gpt");
             close.onclick = function() {
@@ -335,8 +352,9 @@
             document.getElementById('generated-title').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
             document.getElementById('generated-title').removeAttribute("hidden");
             document.getElementById('gpt-write-button').setAttribute("hidden", "hidden");
-            document.getElementById('save-or-generate-title-div').removeAttribute("hidden");
-
+            document.getElementsByName('save-or-generate-title-div').forEach((el) => {
+            el.removeAttribute("hidden");
+            });
             // UPDATE WORDS COUNTER
             update_words(data)
             /*
@@ -410,7 +428,9 @@
             document.getElementById('generated-description').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
             document.getElementById('generated-description').removeAttribute("hidden");
             document.getElementById('gpt-write-description-button').setAttribute("hidden", "hidden");
-            document.getElementById('save-or-generate-description-div').removeAttribute("hidden");
+            document.getElementsByName('save-or-generate-description-div').forEach((el) => {
+            el.removeAttribute("hidden");
+            })
 
             // UPDATE OWRDS
             update_words(data)            

@@ -28,7 +28,8 @@ urlpatterns = [
     path('inventory-item-detail-view/inventory-item-detail-view-save-main-AI-manual-changes', views.inventory_item_detail_view_save_main_AI_manual_changes, name='inventory-item-detail-view-save-main-AI-manual-changes'),
     path('inventory-item-detail-view/inventory-item-search-similar-items', views.inventory_item_search_similar_items, name='inventory-item-search-similar-items'),
     path('inventory-item-detail-view/gpt-generate-description', views.gpt_generate_description, name='gpt-generate-description'),
-
+    path('inventory-item-detail-view/inventory-item-save-gpt-title', views.inventory_item_save_gpt_title, name='inventory-item-save-gpt-title'),
+    path('inventory-item-detail-view/inventory-item-save-gpt-description', views.inventory_item_save_gpt_description, name='inventory-item-save-gpt-description'),
     
     # WOOCOMMERCE
     path('woocommerce-categories', views.woocommerce_categories, name='woocommerce-categories'),
@@ -65,6 +66,7 @@ urlpatterns = [
 
     # UPDATE WORDS
     path('update-user-words', views.update_user_words, name='update-user-words'),
+    
 
     #path('woocommerce-update-descriptions-bulk', views.woocommerce_update_descriptions_bulk, name='woocommerce-update-descriptions-bulk'),
     #path('generate-img', views.generate_img, name='generate-img'),

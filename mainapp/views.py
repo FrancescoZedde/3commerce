@@ -837,6 +837,28 @@ def update_user_words(request):
             return HttpResponse('Error :(')
 
 
+def inventory_item_save_gpt_title(request):
+    print(request.POST)
+    primary_key = request.POST.get("primary-key", None)
+    title = request.POST.get("text-area-generated-title", None)
+
+    item = retrieveInventoryItemById(primary_key)
+    item.itemName = title
+    item.save()
+
+    return redirect(inventory_item_detail_view, pk=primary_key)
+
+def inventory_item_save_gpt_description(request):
+    print(request.POST)
+    primary_key = request.POST.get("primary-key", None)
+    description = request.POST.get("text-area-generated-description", None)
+    print(primary_key)
+    print(description)
+    item = retrieveInventoryItemById(primary_key)
+    item.descriptionChatGpt = description
+    item.save()
+
+    return redirect(inventory_item_detail_view, pk=primary_key)
 '''
 def woocommerce_update_descriptions_bulk(request):
     if request.method == 'POST':

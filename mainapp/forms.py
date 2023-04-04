@@ -689,12 +689,13 @@ model_options = (
 )
 
 class ChatGPTWriteDescriptionForm(forms.Form):
-    prompt = forms.TypedChoiceField(label='Prompt:',choices=prompt_description_options, initial='prompt-description-1')
-    model = forms.TypedChoiceField(label='Model:',choices=model_options, initial='gpt-3.5-turbo')
+    prompt = forms.TypedChoiceField(label='Tone of voice:',choices=prompt_description_options, initial='prompt-description-1')
+    #model = forms.TypedChoiceField(label='Model:',choices=model_options, initial='gpt-3.5-turbo')
     keywords = forms.CharField(max_length = 100, required=False, help_text='write keywords separated by commas')
     min_words = forms.IntegerField(max_value=100, min_value=50, initial=70)
     max_words = forms.IntegerField(max_value=300, min_value=100, initial=120)
-    rewrite_title = forms.BooleanField(label='Rewrite a SEO optimized title?',initial=False, required=False)
+    #rewrite_title = forms.BooleanField(label='Rewrite a SEO optimized title?',initial=False, required=False)
+    add_bullet_list = forms.BooleanField(label='Showcase top features with bullet points',initial=False, required=False)
 
 class ChatGPTAsk(forms.Form):
     question = forms.CharField(max_length = 250, required=True, help_text='Ask whatever you want')
