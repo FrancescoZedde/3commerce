@@ -1,0 +1,169 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+<div class="standard-command-container" style="font-family: Poppins">
+    <div class="card">
+        <div class="card-body">
+            <div style="text-align: right;">
+                <form action="inventory-import" method="post">
+                    {% csrf_token %}
+                    <input class="standard-button" id='simple-import-inventory' type="submit" value="Import" name="import-inventory">
+                    <input type="hidden" id="selected-item-sku" name="selected-item" value="{{ product_details.productSku}}">
+                 
+            </div>
+                <h5 class="card-title"><div id="item-name-text">{{product_details.productNameEn}}</div></h5>
+                <div class="product-img">
+                    <img class="card-img-top" src={{img_main}}>
+                </div>
+                <div style="margin-top:2em;">
+                <p class="card-text">
+                  <b>Sell Price</b>
+                  {{product_details.sellPrice}}</p>
+                  <p class="card-text">
+                    <b>Category</b>
+                  {{product_details.categoryName}}
+                  </p>
+                  <p class="card-text">
+                    <b>Material</b>
+                  {{product_details.materialNameEn}}
+                  </p>
+                  <p class="card-text">
+                    <b>Packing Weight </b>
+                  {{product_details.packingWeight}}
+                  </p>
+                  <p class="card-text">
+                    <b>Description</b>
+                  {% autoescape off %}
+                      {{description}}
+                    {% endautoescape %}
+                  </p>
+                  <table style="margin-top:2em;display: block;overflow-x: auto; white-space: nowrap;">
+                    <tr>
+                        {% for img in product_details.productImageSet %}
+                        <td>
+                            <div style="text-align:center">
+                                <img src={{img}} alt="" width="200" height="200">
+                            </div>
+                            <br>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+                 <div style="text-align:center">
+                    <input class="standard-button" id='simple-import-inventory' type="submit" value="Import" name="import-inventory">
+                 </div>
+
+                  
+        </div>
+    </form>
+      </div>
+      <div style="margin-top: 5em;margin-left:1em;margin-right:1em;">
+        <p>
+            There are {{ product_details.variants|length}} <b>variants</b> of this product!
+          </p>
+          <div style="text-align:center">
+            <button class="standard-button" id="show-variants" onclick="show_hide_variants()">Show/Hide Variants</button>
+        </div>
+          <div id="variants-div" hidden="hidden">
+            {% for variant in product_details.variants %}
+            <div class="card bg-light mb-3" style="max-width:100%; max-height: 20em;">
+                <div class="card-header">{{variant.variantNameEn}}</div>
+                <div class="card-body">
+                    <img src="{{variant.variantImage}}" width="150px" height="150px">
+                  <p class="card-text"><b>Price:</b> {{variant.variantSellPrice}} -- <b>Variant key:</b> {{variant.variantKey}} --</p>
+                  <input type="hidden" name="variant-id" value="{{variant.vid}}">
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+      </div>
+      
+    
+</div>
+</div>
+<div class="standard-command-container" id="calc-shipping" style="font-family: Poppins">
+    <label for="calc-shipping-options">Ship to:</label>
+          <select class="form-select" name="calc-shipping" id="calc-shipping-options">
+            <option value="none" selected="selected"></option>
+            <option value="GB">United Kingdom</option>
+            <option value="BE">Belgium</option>
+            <option value="IT">Italy</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+          </select>
+          <div style="text-align: center;margin-top:1em;">
+            <button id="calc-shipping-button" class="standard-button" onclick="calc_shipping()">Estimate shipping</button>
+          </div>
+
+          <ul id="shipping-options" class="list-group">
+                <!-- SHIPPING OPTIONS -->
+          </ul>
+</div>
+
+<script>
+    function show_hide_variants(){
+        variants_div = document.getElementById('variants-div')
+        is_hidden = variants_div.hidden
+        if (is_hidden == true){
+            variants_div.removeAttribute('hidden')
+        }else {
+            variants_div.setAttribute('hidden','hidden')
+        }
+    }
+
+    function calc_shipping(){
+        document.getElementById('shipping-options').innerHTML = ''
+
+        var ship_to = document.getElementById("calc-shipping-options").value;
+        const access_token = "{{access_token}}"
+        variants_ids = document.getElementsByName('variant-id')
+        const vid = variants_ids[0].value
+        const url = 'https://developers.cjdropshipping.com/api2.0/v1/logistic/freightCalculate';
+        const data = { 
+                        "startCountryCode": "CN",
+                        "endCountryCode": ship_to,
+                        "products": [
+                                    {
+                                        "quantity": 1,
+                                        "vid": vid
+                                    }
+                                ]
+                            };
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers:{
+            'Content-Type': 'application/json',
+            "CJ-Access-Token": access_token,
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          var shipping_options = data['data']
+          var options_list = document.getElementById('shipping-options')
+          shipping_options.forEach((option) => {
+            options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><b>'+ option['logisticName'] + '</b> => ' + option['logisticAging'] + ' days -- ' + option['logisticPrice'] +'$</li>'        
+        })
+          /*
+          console.log(shipping_options)
+          for (option in shipping_options){
+            console.log(option["logisticAging"])
+          }*/
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+
+    
+</script>
+
+{% endblock %}

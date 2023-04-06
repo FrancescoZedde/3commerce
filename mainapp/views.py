@@ -20,7 +20,7 @@ from mainapp.models import InventoryItem, Variant
 from mainapp.ws_ebay_utils import ebay_create_json_inventory_item_group, ebay_create_json_inventory_item, ebay_create_json_offer
 from mainapp.ws_ebay import ebay_match_product_with_ebay_catalog, ebay_search_items_by_keywords, ebay_publish_by_inventory_item_group, create_inventory_items_group, ebay_publish_offer, ebay_bulk_publish_offer, ebay_create_inventory_location, ebay_get_inventory_location, refresh_access_token, get_all_inventory_items, create_inventory_item, ebay_delete_inventory_item, bulk_create_offer
 
-from mainapp.ws_cj import cj_products_by_category, cj_get_product_details
+from mainapp.ws_cj import cj_products_by_category, cj_get_product_details, cj_authentication
 from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id
 from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
 from mainapp.ws_shopify import Shopify, ShopifyConnect
@@ -180,9 +180,29 @@ def search_results(request):
             #pagina errore
             return render(request, 'mainapp/search_results.html')
 
+@login_required(login_url='/login')
+def search_product_details(request):
+    if request.method == 'GET':
+        return render(request, "mainapp/search_product_details.html")
+    if request.method == 'POST':
+        sku = request.POST.get("selected-item", None)
+        product_details = cj_get_product_details(sku)
+        print(literal_eval(product_details['productImage'])[0])
 
-
-
+        description = remove_img_tags(product_details['description'])
+        img_main = literal_eval(product_details['productImage'])[0]
+        img_set = product_details['productImageSet']
+        
+        access_token = cj_authentication()
+        context = {
+            'product_details': product_details,
+            'img_main': img_main,
+            'img_set': img_set,
+            'description': description,
+            'access_token':access_token,
+        }
+        return render(request, "mainapp/search_product_details.html", context)
+    
 @login_required(login_url='/login')
 def inventory_import(request):
     if request.method == 'GET':
@@ -195,6 +215,7 @@ def inventory_import(request):
             user_skus.append(product.sku[2:])
         print('USER SKUS: ') 
         print(user_skus)
+        print(mode)
         if mode == 'Mass Import':
             print('start mass import')
             selected_items = request.POST.get("selected-items", None)

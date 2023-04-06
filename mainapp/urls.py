@@ -12,6 +12,7 @@ urlpatterns = [
     # SEARCH + RESULTS + IMPORT VIEWS
     path('search', views.search, name='search'),
     path('search-results', views.search_results, name='search-results'),
+    path('search-product-details', views.search_product_details, name='search-product-details'),
     path('inventory-import', views.inventory_import, name='inventory-import'),
 
     # INVENTORY LIST VIEW 

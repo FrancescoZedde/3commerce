@@ -20,14 +20,19 @@
             {% for group in grouped_products %}
             <div class="card-deck">
                             {% for product in group %}
-                            <div class="card shadow" style='max-width:14.66%' id="card-{{product.productSku}}">
-                                <img src={{product.productImage}} style="padding:0.5em;" width="200px" height="200px" class="card-img-top" alt="...">
+                            <div class="card shadow" id="card-{{product.productSku}}">
+                                <img src={{product.productImage}} style="padding:0.5em;" height="auto" class="card-img-top" alt="...">
                                 <div class="card-body">
                                   <h5 class="card-title" style="font-size:12px !important; min-height:28%">{{ product.productNameEn }}</h5>
                                 
-                                      <p class="card-text"><small class="text-muted">Sku: {{ product.productSku}} <br> 
-                                                                                     Listings: {{ product.listedNum}} <br> 
-                                                                                    <a href="">View on website</a></small>
+                                      <p class="card-text"><small class="text-muted"><!--Sku: {{ product.productSku}}<br> --> 
+                                             Listings: {{ product.listedNum}} <br> 
+                                             <form action="search-product-details" method="post">
+                                                {% csrf_token %}
+                                                <input style="margin-left:-5px;border:none;color:rgb(73, 167, 255); background-color: transparent;" id='see-details' type="submit" value="See details" name="see-details">
+                                                <input type="hidden" id="selected-item-{{ product.productSku}}" name="selected-item" value="{{ product.productSku}}">
+                                            </form>
+                                        </small>
                                       </p>
                                       <p class="card-text" style="font-size:15px">Price: {{ product.sellPrice }}$</p>
                                       <form action="inventory-import" method="post">

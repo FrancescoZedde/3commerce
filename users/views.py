@@ -89,7 +89,7 @@ def custom_login(request):
             )
             if user is not None:
                 login(request, user)
-                messages.success(request, f"welcome back <b>{user.username}</b>")
+                messages.success(request, f"You're logged in!")
                 return redirect(index)
         else:
             for error in list(login_form.errors.values()):

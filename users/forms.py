@@ -7,13 +7,15 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password1']
     
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        #super().__init__(*args, **kwargs)
+        super(UserRegistrationForm, self).__init__(*args, **kwargs)
+        del self.fields['password2']
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
-        self.fields['password2'].help_text = None
+        #self.fields['password2'].help_text = None
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
