@@ -84,7 +84,7 @@ def profile(request):
             "app_name": "SellFastApp",
             "scope": "read_write",
             "user_id": 123,
-            "return_url": store_url + reverse(return_page, args=[0, 0]),
+            "return_url": store_url + reverse(return_page),
             "callback_url": store_url + reverse(callback_endpoint)
         }
         query_string = urlencode(params)
