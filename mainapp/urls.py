@@ -81,8 +81,8 @@ urlpatterns = [
     path('generate-img', views.generate_img, name='generate-img'),
 
 
-    path('return-page', views.generate_img, name='return-page'),
-    path('callback-endpoint', views.generate_img, name='callback-endpoint'),
+    path('return-page', views.profile, name='return-page'),
+    path('callback-endpoint', views.profile, name='callback-endpoint'),
     
     
 ]
