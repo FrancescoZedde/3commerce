@@ -55,7 +55,7 @@ def callback_endpoint(request):
     else:
         return JsonResponse({'error': 'Invalid request'})
 
-def return_page(request):
+def return_page(request, user_id, success):
     if request.method == 'GET':
         print('get here')
         return JsonResponse({'message': 'API keys received'})
@@ -84,11 +84,11 @@ def profile(request):
             "app_name": "SellFastApp",
             "scope": "read_write",
             "user_id": 123,
-            "return_url": store_url + reverse(return_page),
-            "callback_url": store_url + reverse(callback_endpoint)
+            "return_url": 'https://sellfast.app'  + reverse(return_page, args=(0,0)),
+            "callback_url": 'https://sellfast.app' + reverse(callback_endpoint)
         }
         query_string = urlencode(params)
-
+        print(params)
         print("%s%s?%s" % (store_url, endpoint, query_string))
 
         #auth_url = store_url + endpoint + query_string

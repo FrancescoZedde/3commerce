@@ -79,8 +79,9 @@ urlpatterns = [
 
     #path('woocommerce-update-descriptions-bulk', views.woocommerce_update_descriptions_bulk, name='woocommerce-update-descriptions-bulk'),
     path('generate-img', views.generate_img, name='generate-img'),
-    path('return-page/', views.return_page, name='return-page'),
-    path('callback-endpoint/', views.callback_endpoint, name='callback-endpoint'),
+
+    path('return-page/<int:user_id>/<str:success>', views.return_page, name='return-page'),
+    path('callback-endpoint', views.callback_endpoint, name='callback-endpoint'),
     
     
 ]
