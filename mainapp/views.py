@@ -42,6 +42,18 @@ from users.forms import WooCommerceConnectForm, ShopifyConnectForm
 
 #from mainapp.supplier_cj import create_jsonWoocommerceExport, create_jsonWooCommerceAddVariants
 
+
+from django.http import JsonResponse
+
+def callback_endpoint(request):
+    if request.method == 'POST':
+        data = request.POST.get('data')
+        # Save the data to your database
+        print(data)
+        return JsonResponse({'message': 'API keys received'})
+    else:
+        return JsonResponse({'error': 'Invalid request'})
+
 @login_required(login_url='/login')
 def profile(request):
     if request.method == 'GET':

@@ -82,7 +82,7 @@ urlpatterns = [
 
 
     path('return-page', views.profile, name='return-page'),
-    path('callback-endpoint', views.profile, name='callback-endpoint'),
+    path('callback-endpoint', views.callback_endpoint, name='callback-endpoint'),
     
     
 ]
