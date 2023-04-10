@@ -47,6 +47,20 @@ from django.http import JsonResponse
 
 def callback_endpoint(request):
     if request.method == 'POST':
+        print('here')
+        data = request.POST.get('data')
+        # Save the data to your database
+        print(data)
+        return JsonResponse({'message': 'API keys received'})
+    else:
+        return JsonResponse({'error': 'Invalid request'})
+
+def return_page(request):
+    if request.method == 'GET':
+        print('get here')
+        return JsonResponse({'message': 'API keys received'})
+    if request.method == 'POST':
+        print('here')
         data = request.POST.get('data')
         # Save the data to your database
         print(data)
@@ -59,22 +73,30 @@ def profile(request):
     if request.method == 'GET':
 
         from urllib.parse import urlencode
+        from django.urls import reverse
+
 
         store_url = 'https://xzshop.eu'
-        endpoint = '/wc-auth/v1/authorize?'
+        endpoint = '/wc-auth/v1/authorize'
+
+
         params = {
             "app_name": "SellFastApp",
             "scope": "read_write",
             "user_id": 123,
-            "return_url": "http://sellfast.app/return-page",
-            "callback_url": "https://sellfast.app/callback-endpoint"
+            "return_url": store_url + reverse(return_page, args=[0, 0]),
+            "callback_url": store_url + reverse(callback_endpoint)
         }
         query_string = urlencode(params)
 
         print("%s%s?%s" % (store_url, endpoint, query_string))
 
-        auth_url = store_url + endpoint + query_string
-        print(auth_url)
+        #auth_url = store_url + endpoint + query_string
+        #print(auth_url)
+
+        auth_url = "%s%s?%s" % (store_url, endpoint, query_string)
+
+
 
         woocommerce_connect = WooCommerceConnectForm()
         shopify_connect = ShopifyConnectForm()
