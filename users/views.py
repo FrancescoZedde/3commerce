@@ -14,7 +14,10 @@ from users.forms import UserRegistrationForm, ContactForm, WhitelistForm
 # Create your views here.
 
 def index(request):
-    return render(request, 'users/index.html')
+    if request.user.is_authenticated:
+        return render(request, 'mainapp/dashboard.html')
+    else:
+        return render(request, 'users/index.html')
 
 def activate(request, uidb64, token):
     User = get_user_model()

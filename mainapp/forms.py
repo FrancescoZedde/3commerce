@@ -837,3 +837,80 @@ class VariantForm(ModelForm):
             'allShippingMethods':Textarea(attrs={'cols': 100, 'rows': 5, 'style': 'max-width: 100%; font-size: 11px;','readonly': True,}),
             'allLocations':Textarea(attrs={'cols': 100, 'rows': 5, 'style': 'max-width: 100%; font-size: 11px;','readonly': True,}),
         }
+
+
+
+# SMARTCOPY
+
+tone_of_voice = [('funny', 'Funny'),('professional','Professional'),('excited','Excited')]
+
+class BlogArticleForm(forms.Form):
+    form_id = forms.CharField(initial='blog-article',widget=forms.TextInput(attrs={'readonly':True}))
+    topic = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'style':''}))
+    word_count = forms.IntegerField(initial=110)
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
+    #style = forms.CharField(max_length=100)
+    
+class BlogIdeasForm(forms.Form):
+    form_id = forms.CharField(initial='blog-ideas',widget=forms.TextInput(attrs={'readonly':True}))
+    topic = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'style':''}))
+    #word_count = forms.IntegerField(initial=110)
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
+    #style = forms.CharField(max_length=100)
+
+class BlogPlagiarismForm(forms.Form):
+    form_id = forms.CharField(initial='blog-ideas',widget=forms.TextInput(attrs={'readonly':True}))
+    text = forms.CharField(label='Paste your text:', help_text='', widget=forms.Textarea(attrs={
+                                                    'class': "form-control",
+                                                    'rows': 15, 
+                                                    'style': 'max-width: 100%; font-size: 12px;',
+                                                    }))
+    #topic = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'style':''}))
+    #word_count = forms.IntegerField(initial=110)
+    #keywords = forms.CharField(max_length=50)
+    #target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    #tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
+    #style = forms.CharField(max_length=100)
+
+class FacebookAdsForm(forms.Form):
+    form_id = forms.CharField(initial='facebook-ads',widget=forms.TextInput(attrs={'readonly':True}))
+    topic = forms.CharField(max_length=100)
+    word_count = forms.IntegerField(initial=100)
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))
+
+class InstagramAdsForm(forms.Form):
+    form_id = forms.CharField(initial='instagram-ads',widget=forms.TextInput(attrs={'readonly':True}))
+    topic = forms.CharField(max_length=100)
+    word_count = forms.IntegerField(initial=100)
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))
+
+class EmailMarketingForm(forms.Form):
+    form_id = forms.CharField(initial='email-marketing',widget=forms.TextInput(attrs={'readonly':True}))
+    topic = forms.CharField(max_length=100)
+    word_count = forms.IntegerField(initial=100)
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))
+
+class AmazonProductDescription(forms.Form):
+    form_id = forms.CharField(initial='amazon-description',widget=forms.TextInput(attrs={'readonly':True}))
+    topic = forms.CharField(max_length=100)
+    word_count = forms.IntegerField(initial=100)
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #purpose = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))

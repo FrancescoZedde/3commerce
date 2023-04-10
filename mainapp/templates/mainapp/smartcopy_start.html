@@ -1,0 +1,238 @@
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="standard-command-container">
+  <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="pills-blog-article-tab" data-bs-toggle="pill" data-bs-target="#pills-blog-article" type="button" role="tab" aria-controls="pills-blog-article" aria-selected="true">Blog</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-facebook-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-facebook-ads" type="button" role="tab" aria-controls="pills-facebook-ads" aria-selected="false">Facebook</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-instagram-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-instagram-ads" type="button" role="tab" aria-controls="pills-instagram-ads" aria-selected="false">Instagram</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-google-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-google-ads" type="button" role="tab" aria-controls="pills-google-ads" aria-selected="false">Google</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-amazon-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-amazon-ads" type="button" role="tab" aria-controls="pills-amazon-ads" aria-selected="false">Amazon</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-ebay-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-ebay-ads" type="button" role="tab" aria-controls="pills-ebay-ads" aria-selected="false">Ebay</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-landing-page-tab" data-bs-toggle="pill" data-bs-target="#pills-landing-page" type="button" role="tab" aria-controls="pills-landing-page" aria-selected="false">Landing Page</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-blog-article" role="tabpanel" aria-labelledby="pills-blog-article-tab">
+      <div class="card-deck">
+        <div class="shadow card">
+            <div class="card-body" style="">
+
+                <h5 class="index-card-title card-title" style=""><b>Blog Writing</b></h5>
+              <p class="index-card-text card-text" style="">Blog articles tailored to your niche</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="blog-article" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body">
+
+                <h5 class="index-card-title card-title"><b>Blog Ideas</b></h5>
+              <p class="index-card-text card-text">Ideas for your blog articles</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="blog-ideas" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body">
+
+                <h5 class="index-card-title card-title"><b>Blog Plagiarism</b></h5>
+              <p class="index-card-text card-text">Check if your content is unique</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="blog-plagiarism" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+      </div>
+    </div>
+    <!-- FACEBOOK -->
+    <div class="tab-pane fade" id="pills-facebook-ads" role="tabpanel" aria-labelledby="pills-facebook-ads-tab">
+      <div class="card-deck">
+        <div class="shadow card">
+            <div class="card-body" style="">
+
+                <h5 class="index-card-title card-title" style=""><b>Facebook Ads</b></h5>
+              <p class="index-card-text card-text" style="">High converting custom ads</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="facebook-ads" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body">
+
+                <h5 class="index-card-title card-title"><b>Facebook Post</b></h5>
+              <p class="index-card-text card-text">Posts to engage your followers</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="blog-ideas" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body">
+
+                <h5 class="index-card-title card-title"><b>Facebook Post Ideas</b></h5>
+              <p class="index-card-text card-text">Ideas for Facebook posts based on analytics </p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="blog-plagiarism" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="pills-instagram-ads" role="tabpanel" aria-labelledby="pills-instagram-ads-tab">...</div>
+    <div class="tab-pane fade" id="pills-google-ads" role="tabpanel" aria-labelledby="pills-google-ads-tab">...</div>
+    <div class="tab-pane fade" id="pills-amazon-ads" role="tabpanel" aria-labelledby="pills-amazon-ads-tab">...</div>
+    <div class="tab-pane fade" id="pills-ebay-ads" role="tabpanel" aria-labelledby="pills-ebay-ads-tab">...</div>
+    <div class="tab-pane fade" id="pills-landing-page" role="tabpanel" aria-labelledby="pills-landing-page-tab">...</div>
+    
+  </div>
+</div>
+<div class="standard-command-container">
+    <div class="card-deck">
+        
+            <div class="shadow card">
+                <div class="card-body" style="background-image: linear-gradient(to bottom right,  rgb(69, 112, 214), rgb(36, 197, 255));">
+    
+                    <h5 class="index-card-title card-title" style="color:rgb(255, 255, 255)"><b>Content Writing</b></h5>
+                  <p class="index-card-text card-text" style="color:rgb(255, 255, 255)">SEO-friendly blog articles tailored to your niche</p>
+                  <form action="smartcopy-play" method="post">
+                    {% csrf_token %}
+                    <div class="button" style="text-align: center;">
+                      <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                      <input type="hidden" value="blog-article" name="service">
+                    </div>
+                    </form>
+                </div>
+              </div> 
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Amazon Product Description</b></h5>
+              <p class="index-card-text card-text" style="color:rgb(255, 255, 255)">Compelling and persuasive Amazon product descriptions</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="amazon-description" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Facebook Ads Generator</b></h5>
+              <p class="index-card-text card-text" style="color:whitesmoke">Custom Facebook ads for businesses</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="facebook-ads" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Facebook Ads Generator</b></h5>
+              <p class="index-card-text card-text" style="color:whitesmoke">A service that creates custom Facebook ads</p>
+            </div>
+          </div>
+          </div>
+          <div class="card-deck">
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Instagram Ads Generator</b></h5>
+              <p class="index-card-text card-text" style="color:whitesmoke">Instagram ads for businesses based on their target audience.</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="instagram-ads" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Email Marketing Generator</b></h5>
+              <p class="index-card-text card-text" style="color:whitesmoke">Generate effective email marketing campaigns</p>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Email Marketing Content Generator</b></h5>
+              <p class="index-card-text card-text" style="color:whitesmoke">A service that creates engaging and effectivege.</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" name="sync-with-ebay">
+                  <input type="hidden" value="email-marketing" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body" style="background-image: linear-gradient(to bottom right, rgb(69, 112, 214), rgb(36, 197, 255));">
+              
+              <h5 class="index-card-title card-title"style="color:whitesmoke"><b>Landing Page Generator</b></h5>
+              <p class="index-card-text card-text" style="color:whitesmoke">Optimized and high-converting landing pages that drive sales</p>
+            </div>
+          </div> 
+
+          
+
+    </div>
+</div>
+
+<script>
+
+</script>
+{% endblock %}

@@ -530,6 +530,7 @@
 @media (max-width: 768px) {
     #sidebar {
         margin-left: -250px;
+        
     }
     #sidebar.active {
         margin-left: 0;
@@ -611,7 +612,7 @@
     .textarea-gpt {
           margin-top: 10px;
           width: 100%;
-          height: 100px;
+          height: 100%;
           -moz-border-bottom-colors: none;
           -moz-border-left-colors: none;
           -moz-border-right-colors: none;
@@ -640,6 +641,8 @@
   .product-img {display: inline-block; max-width: 500px; max-height: 500px;}
 
   .product-img img {max-width: 100%; height:auto;}
+
+  
   </style>
 </head>
 
@@ -650,8 +653,8 @@
   
   <div class="wrapper">
 
-      {% include 'mainapp/includes/sidebar.html' %}
-
+      
+    {% include 'mainapp/includes/sidebar.html' %}
       <div id="content" class="main-panel">
                 {% include 'mainapp/includes/navbar.html' %}
                 {% include 'mainapp/includes/messaging.html' %}

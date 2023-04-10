@@ -1,0 +1,175 @@
+
+
+{% extends 'mainapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+    
+
+<div class="standard-command-container">
+
+    
+    <h3 style="font-family:'Raleway', sans-serif; color:rgb(64, 106, 212)">
+        {{service_title}}
+    </h3>
+    
+
+    {% if service in 'blog-plagiarism' %}
+
+    <p>{{service}}</p>
+    <p>Paste text:</p>
+    {{form.text}}
+    <div style="text-align: center;">
+        <button style="margin-top: 25px;" class="standard-button" id="write-{{form.form_id.value}}" onclick="smartcopy_write(this.id)">
+            Check <i class="fa fa-pencil" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    {% elif service in 'blog-ideas' %}
+
+    {{form}}
+
+    {% else %}
+    <div class="row">
+        <div class="col">
+            {{form.topic|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{form.target_audience|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+                {{form.keywords|as_crispy_field}}
+                <div style="text-align: center;">
+                    <button class="standard-button" id="suggest-keywords">
+                        Suggest keywords
+                    </button>
+                </div>      
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{form.tone|as_crispy_field}}
+        </div>
+        <div class="col">
+            {{form.word_count|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <input type="hidden" value="{{form.form_id.value}}" id="service-id">
+        <div style="text-align: center;">
+            <button style="margin-top: 25px;" class="standard-button" id="write-{{form.form_id.value}}" onclick="smartcopy_write(this.id)">
+                Write <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div id="loader-smartcopy" hidden class="loader"></div>
+    </div>
+
+    {% endif %}
+</div>
+<div class="standard-command-container">
+        <div>
+            <textarea id="generated-text" name="generated-text-area" class="textarea-gpt" rows="30" cols="50" hidden="hidden"></textarea>
+        </div>
+</div>
+
+
+<script src="{% static 'smartcopy.js' %}"></script>
+
+<script>
+    function smartcopy_write(service_id){
+        console.log(service_id)
+        const url = "https://api.openai.com/v1/chat/completions";
+        const gpt = "{{GPT_KEY}}" //"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"
+        console.log(gpt)
+        const headers = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${gpt}`
+        };
+        console.log(headers)
+        let topic = document.getElementById('id_topic').value
+        let target_audience = document.getElementById('id_target_audience').value
+        let keywords = document.getElementById('id_keywords').value
+        let tone = document.getElementById('id_tone').value
+        let word_count = document.getElementById('id_word_count').value
+
+        let spinner = document.getElementById("loader-smartcopy")
+        console.log(spinner)
+        spinner.removeAttribute("hidden");
+
+        if (service_id == 'write-blog-article'){
+            text = smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count)
+        }else if(service_id == 'write-facebook-ads'){
+
+        }else if(service_id == 'write-instagram-ads'){
+
+        }else if(service_id == 'write-email-marketing'){
+
+        }else if(service_id == 'write-amazon-description'){
+
+        }
+
+    }
+
+    async function smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count){
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are a blog article writer"},
+                      {"role": "user", "content": "Write a" + tone + "blog article"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()},
+                    ],
+          "temperature": 0.05,
+          "max_tokens": 500,
+          "top_p": 1,
+          "frequency_penalty":0,
+          "presence_penalty":0,
+        };
+
+        console.log(requestData)
+
+        await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)            
+            document.getElementById('generated-text').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
+            document.getElementById('generated-text').removeAttribute("hidden");
+            show_hide_loader()
+            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
+
+            //update_words(data)
+            
+        })
+        .catch(error => console.error(error));
+        return 'text'
+    }
+
+    async function smartcopy_write_facebook_ads(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
+        
+    }
+
+    async function smartcopy_write_instagram_ads(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
+        
+    }
+
+    function show_hide_loader(){
+        let spinner = document.getElementById("loader-smartcopy")
+        if (spinner.hidden == true){
+            spinner.removeAttribute('hidden')
+        }else{
+            spinner.setAttribute('hidden', 'hidden')
+        }
+    }
+
+</script>
+    
+{% endblock %}

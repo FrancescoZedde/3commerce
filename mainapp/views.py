@@ -7,6 +7,8 @@ import pandas as pd
 from urllib.parse import unquote
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.conf import settings
+
 
 
 from mainapp.views_utils import new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
@@ -14,7 +16,7 @@ from mainapp.views_utils import new_default_template, format_results, woocommerc
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
 from mainapp.forms import EbayImportSetup, descriptionTemplate_1, descriptionTemplate_2, WritesonicDescriptionGeneratorForm, EbayUpdateAccessTokenForm
-from mainapp.forms import ChatGPTWriteDescriptionForm, ChatGPTAsk
+from mainapp.forms import ChatGPTWriteDescriptionForm, ChatGPTAsk, EmailMarketingForm, BlogArticleForm, BlogIdeasForm, BlogPlagiarismForm, FacebookAdsForm, InstagramAdsForm, AmazonProductDescription
 from mainapp.models import InventoryItem, Variant
 
 from mainapp.ws_ebay_utils import ebay_create_json_inventory_item_group, ebay_create_json_inventory_item, ebay_create_json_offer
@@ -43,9 +45,29 @@ from users.forms import WooCommerceConnectForm, ShopifyConnectForm
 @login_required(login_url='/login')
 def profile(request):
     if request.method == 'GET':
+
+        from urllib.parse import urlencode
+
+        store_url = 'https://xzshop.eu'
+        endpoint = '/wc-auth/v1/authorize?'
+        params = {
+            "app_name": "SellFastApp",
+            "scope": "read_write",
+            "user_id": 123,
+            "return_url": "http://sellfast.app/return-page",
+            "callback_url": "https://sellfast.app/callback-endpoint"
+        }
+        query_string = urlencode(params)
+
+        print("%s%s?%s" % (store_url, endpoint, query_string))
+
+        auth_url = store_url + endpoint + query_string
+        print(auth_url)
+
         woocommerce_connect = WooCommerceConnectForm()
         shopify_connect = ShopifyConnectForm()
         context = {
+            'auth_url':auth_url,
             'woocommerce_connect':woocommerce_connect,
             'shopify_connect': shopify_connect,
         }
@@ -880,6 +902,38 @@ def inventory_item_save_gpt_description(request):
     item.save()
 
     return redirect(inventory_item_detail_view, pk=primary_key)
+
+
+def smartcopy_start(request):
+    if request.method == 'GET':
+        return render(request, 'mainapp/smartcopy_start.html')
+
+def smartcopy_play(request):
+    if request.method == 'GET':
+        return redirect(smartcopy_start)
+    elif request.method == 'POST':
+        service = request.POST.get('service')
+        if service == 'blog-article':
+            form = BlogArticleForm()
+        elif service == 'blog-ideas':
+            form = BlogIdeasForm()
+        elif service == 'blog-plagiarism':
+            form = BlogPlagiarismForm()
+        elif service == 'facebook-ads':
+            form = FacebookAdsForm()
+        elif service == 'instagram-ads':
+            form = InstagramAdsForm()
+        elif service == 'email-marketing':
+            form = EmailMarketingForm()
+        elif service == 'amazon-description':
+            form = AmazonProductDescription()
+
+        service_title = service.replace('-', ' ').title()
+        context = { 'service_title':service_title,
+                    'service': service,
+                    'form':form, 
+                    'GPT_KEY' : settings.CHAT_GPT_KEY}
+        return render(request, 'mainapp/smartcopy_play.html', context)
 '''
 def woocommerce_update_descriptions_bulk(request):
     if request.method == 'POST':
@@ -918,8 +972,15 @@ def woocommerce_update_descriptions_bulk(request):
         #chatgpt_description = ChatGPT.gpt35_write_product_description(class_instance, item.itemName, clean_html(item.description), keywords, max_words, min_words)
         return redirect(inventory_list_view)
 
-
+'''
 def generate_img(request):
+    question = request.POST.get('question')
+    class_instance = ChatGPT()
+    #response =ChatGPT.generate_image_from_prompt(class_instance,question )
+    response =ChatGPT.generate_image_variation(class_instance)
+    print(response)
+    return redirect(trending)
+    '''
     import requests
     url = 'http://172.105.88.54:8000/todos/api'
     headers = {

@@ -6,7 +6,7 @@
 
     <ul class="list-unstyled components">
         <li>
-            <a href="#">Dashboard</a>
+            <a href="{% url 'index' %}">Dashboard</a>
         </li>
         <li>
             <a href="{% url 'trending' %}">Trending</a>
@@ -70,38 +70,13 @@
         <li>
             <a href="{% url 'profile' %}">Connect store</a>
         </li>
-        
         {% endif %}
-        <!--
         <li>
-            <a href="#ebaySubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Ebay</a>
-            <ul class="collapse list-unstyled" id="ebaySubmenu">
-                <li>
-                    <a href="#">On Sale</a>
-                </li>
-                <li>
-                    <a href="#">Orders</a>
-                </li>
-                <li>
-                    <a href="{% url 'ebay-connect-store' %}">Settings</a>
-                </li>
-            </ul>
+            <a href="{% url 'smartcopy-start' %}"><i class="fa fa-pencil" aria-hidden="true"></i> SmartCopy</a>
         </li>
-
         <li>
-            <a href="#socialSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Social</a>
-            <ul class="collapse list-unstyled" id="socialSubmenu">
-                <li>
-                    <a href="#">Facebook</a>
-                </li>
-                <li>
-                    <a href="#">Instagram</a>
-                </li>
-                <li>
-                    <a href="#">TikTok</a>
-                </li>
-            </ul>
-        </li>-->
+            <a href="{% url 'profile' %}"> <i class="fa fa-paint-brush" aria-hidden="true"></i> SmartImage</a>
+        </li>
     </ul>
 
     <ul class="list-unstyled CTAs">

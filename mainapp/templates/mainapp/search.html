@@ -13,6 +13,7 @@
         <div class="standard-command-container">
           <p style="margin:10px">Search through millions of products from the most popular brands and manufacturers and import them with one click.
           </p>
+          <!--
           <div class="standard-command-container">
             <form action="search-results" method="post">
                 {% csrf_token %}
@@ -22,15 +23,15 @@
                 </div>
             </form>
           </div>
-          <!--
+        -->
         <div class="row" style="margin-top:2em">
 
             
             <div class="col-2">
               <div class="list-group" id="list-tab" role="tablist">
                 <a class="list-group-item list-group-item-action active" id="cj-search-list" data-toggle="list" href="#cj-search" role="tab" aria-controls="cjsearch"><b>CJ Dropshipping</b></a>
-                <a class="list-group-item list-group-item-action" id="bigbuy-search-list" data-toggle="list" href="#bigbuy-search" role="tab" aria-controls="bigbuysearch"><b>BigBuy</b></a>
-                <a class="list-group-item list-group-item-action" id="banggood-search-list" data-toggle="list" href="#banggood-search" role="tab" aria-controls="banggoodsearch"><b>Banggood</b></a>
+                <a class="list-group-item list-group-item-action" id="aliexpress-search-list" data-toggle="list" href="#aliexpress-search" role="tab" aria-controls="aliexpresssearch"><b>Aliexpress</b></a>
+                <a class="list-group-item list-group-item-action" id="europe-search-list" data-toggle="list" href="#europe-search" role="tab" aria-controls="europesearch"><b>Europe</b></a>
               </div>
             </div>
             <div class="col-10">
@@ -46,12 +47,12 @@
                         </div>
                     </form>
                 </div>
-                <div class="tab-pane fade" id="bigbuy-search" role="tabpanel" aria-labelledby="bigbuy-search-list">bigbuy</div>
-                <div class="tab-pane fade" id="banggood-search" role="tabpanel" aria-labelledby="banggood-search-list">banggood</div>
+                <div class="tab-pane fade" id="aliexpress-search" role="tabpanel" aria-labelledby="aliexpress-search-list">aliexpress</div>
+                <div class="tab-pane fade" id="europe-search" role="tabpanel" aria-labelledby="europe-search-list">europe</div>
               </div>
             </div>
             </div>
-          </div>-->
+          </div>
         </div>
     </body>
 </html>

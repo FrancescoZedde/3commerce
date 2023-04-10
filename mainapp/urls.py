@@ -9,6 +9,9 @@ urlpatterns = [
     # TRENDING
     path('trending', views.trending, name='trending'),
 
+    # DASHBOARD
+    #path('dashboard', views.dashboard, name='dashboard'),
+    
     # SEARCH + RESULTS + IMPORT VIEWS
     path('search', views.search, name='search'),
     path('search-results', views.search_results, name='search-results'),
@@ -67,11 +70,19 @@ urlpatterns = [
 
     # UPDATE WORDS
     path('update-user-words', views.update_user_words, name='update-user-words'),
+
+    # SMAARTCOPY
+    path('smartcopy-start', views.smartcopy_start, name='smartcopy-start'),
+    path('smartcopy-play', views.smartcopy_play, name='smartcopy-play'),
+    
     
 
     #path('woocommerce-update-descriptions-bulk', views.woocommerce_update_descriptions_bulk, name='woocommerce-update-descriptions-bulk'),
-    #path('generate-img', views.generate_img, name='generate-img'),
+    path('generate-img', views.generate_img, name='generate-img'),
 
+
+    path('return-page', views.generate_img, name='return-page'),
+    path('callback-endpoint', views.generate_img, name='callback-endpoint'),
     
     
 ]
