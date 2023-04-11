@@ -467,9 +467,8 @@ def inventory_list_view_import_commands(request):
                 class_instance = Shopify(request.user)
                 create_product_response = Shopify.shopify_create_new_product(class_instance, item, variants)
                
-                add_images_response = Shopify.shopify_add_images_to_variants(class_instance, variants, create_product_response)
+                Shopify.shopify_add_images_to_variants(class_instance, variants, create_product_response)
             messages.error(request, f"Select a valid option + {create_product_response}")
-            messages.error(request, f"Select a valid 2 + {add_images_response}")
             return redirect(inventory_list_view)
         elif dropdown_value == 'import-woocommerce':
             print("import to woocommerc")

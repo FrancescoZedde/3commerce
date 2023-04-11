@@ -98,9 +98,9 @@ class Shopify:
                 "image_id" : id_image,
                 }
             }
-            response = requests.put(url, data=json.dumps(data), headers=headers)
+            requests.put(url, data=json.dumps(data), headers=headers)
         
-        return response
+        #return response
 
 
     def shopify_retrieve_all_products(self):
