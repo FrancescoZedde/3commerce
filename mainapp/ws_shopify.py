@@ -9,6 +9,8 @@ import re
 
 
 def shopify_exchange_code(shop, code):
+
+    print('exchange code...')
     url = "https://" + shop + "/admin/oauth/access_token"
     payload = {
             'client_id': '700418a025a1df4a02784f0ed03362da',
@@ -19,6 +21,8 @@ def shopify_exchange_code(shop, code):
     response = requests.post(url, data=payload)
 
     print(response.json())
+
+    return response.json()
 
 class ShopifyConnect:
     def __init__(self, shopify_host, shopify_secret_key):

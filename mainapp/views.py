@@ -57,9 +57,11 @@ def callback_endpoint(request):
 
         #exchange code for access token
 
-        shopify_exchange_code(shop, code)
-
-        return JsonResponse({'message': 'API keys received', 'code':code})
+        try:
+            response = shopify_exchange_code(shop, code)
+        except:
+            response = 'NO'
+        return JsonResponse({'message': 'API keys received', 'code':code , 'response': response})
     if request.method == 'POST':
         print('here')
         data = request.POST.get('data')
