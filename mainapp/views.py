@@ -64,7 +64,8 @@ def callback_endpoint(request):
             user_instance = CustomUser.objects.get(email=request.user.email)
             user_instance.shopify_secret_key = access_token
             user_instance.shopify_host = shop
-            user.save()
+            user_instance.shopify_store_name = shop
+            user_instance.save()
         except:
             response = 'NO'
 
