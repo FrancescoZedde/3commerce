@@ -73,6 +73,7 @@ class Shopify:
                     
                     }
 
+        print(url)
         #print(payload)
 
         response = requests.post(url, json=payload, headers=headers).json()
