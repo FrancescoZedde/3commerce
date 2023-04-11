@@ -45,6 +45,19 @@ from users.forms import WooCommerceConnectForm, ShopifyConnectForm
 
 from django.http import JsonResponse
 
+def callback_endpoint_wc(request):
+    if request.method == 'GET':
+        print('get request callback')
+        code = 'test'
+        return JsonResponse({'message': 'API keys received', 'code':code })
+    if request.method == 'POST':
+        print('here')
+        data = request.POST.get('data')
+        # Save the data to your database
+        print(data)
+        return JsonResponse({'message': 'API keys received'})
+    else:
+        return JsonResponse({'error': 'Invalid request'})
 def callback_endpoint(request):
     if request.method == 'GET':
         print('get request callback')
@@ -109,8 +122,8 @@ def profile(request):
             "app_name": "SellFastApp",
             "scope": "read_write",
             "user_id": 123,
-            "return_url": 'https://sellfast.app'  + reverse(return_page, args=(0,0)),
-            "callback_url": 'https://sellfast.app' + reverse(callback_endpoint)
+            "return_url": 'https://sellfast.app'  + '/return-page',
+            "callback_url": 'https://sellfast.app' + '/callback-endpoint-wc'
         }
         query_string = urlencode(params)
         print(params)
