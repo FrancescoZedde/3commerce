@@ -46,6 +46,9 @@ from users.forms import WooCommerceConnectForm, ShopifyConnectForm
 from django.http import JsonResponse
 
 def callback_endpoint(request):
+    if request.method == 'GET':
+        print('get request callback')
+        
     if request.method == 'POST':
         print('here')
         data = request.POST.get('data')
@@ -97,10 +100,21 @@ def profile(request):
         auth_url = "%s%s?%s" % (store_url, endpoint, query_string)
 
 
+        shopify_store_url = "https://sellfast-development-store.myshopify.com/admin/oauth/authorize"
+        shopify_params = {
+            "client_id": "700418a025a1df4a02784f0ed03362da",
+            "scope": "write_products",
+            "redirect_uri" : "https://sellfast.app/calback-endpoint"
+        }
 
+        shopify_query_string = urlencode(shopify_params)
+        shopify_auth_url = "%s?%s" % (shopify_store_url, shopify_query_string)
+
+        print(shopify_auth_url)
         woocommerce_connect = WooCommerceConnectForm()
         shopify_connect = ShopifyConnectForm()
         context = {
+            'shopify_auth_url':shopify_auth_url,
             'auth_url':auth_url,
             'woocommerce_connect':woocommerce_connect,
             'shopify_connect': shopify_connect,
