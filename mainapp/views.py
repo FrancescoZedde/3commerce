@@ -59,8 +59,16 @@ def callback_endpoint(request):
 
         try:
             response = shopify_exchange_code(shop, code)
+            # save access-token for the user
+            access_token = response['access_token']
+            user_instance = CustomUser.objects.get(email=request.user.email)
+            user_instance.shopify_secret_key = access_token
+            user_instance.shopify_host = shop
+            user.save()
         except:
             response = 'NO'
+
+
         return JsonResponse({'message': 'API keys received', 'code':code , 'response': response})
     if request.method == 'POST':
         print('here')
