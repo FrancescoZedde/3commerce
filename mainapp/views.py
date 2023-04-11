@@ -93,16 +93,13 @@ def callback_endpoint(request):
     else:
         return JsonResponse({'error': 'Invalid request'})
 
-def return_page(request, user_id, success):
+def return_page(request):
     if request.method == 'GET':
         print('get here')
-        return JsonResponse({'message': 'API keys received'})
+        return JsonResponse({'message': 'API keys GET'})
     if request.method == 'POST':
-        print('here')
-        data = request.POST.get('data')
-        # Save the data to your database
-        print(data)
-        return JsonResponse({'message': 'API keys received'})
+        
+        return JsonResponse({'message': 'API keys POST'})
     else:
         return JsonResponse({'error': 'Invalid request'})
 
