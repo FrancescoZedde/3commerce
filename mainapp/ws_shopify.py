@@ -7,6 +7,19 @@ from ast import literal_eval
 import re
 
 
+
+def shopify_exchange_code(shop, code):
+    url = "https://" + shop +".myshopify.com/admin/oauth/access_token"
+    payload = {
+            'client_id': '700418a025a1df4a02784f0ed03362da',
+            'client_secret': '264a8fc49e40cbfe57f2ce39da0e9cc5',
+            'code': code,
+            }
+
+    response = requests.post(url, data=payload)
+
+    print(response.json())
+
 class ShopifyConnect:
     def __init__(self, shopify_host, shopify_secret_key):
         try:
@@ -30,32 +43,6 @@ class Shopify:
         shopify.ShopifyResource.activate_session(session)
         shop = shopify.Shop.current()
         print(shop)
-
-    '''
-    def shopify_creatroduct(item, variants):
-        # Create a new product
-        session = shopify.Session("https://sellfast-development-store.myshopify.com/", "2023-01", "")
-        shopify.ShopifyResource.activate_session(session)
-        new_product = shopify.Product()
-        new_product.title = item.itemName
-        new_product.body_html = item.descriptionTemplate
-
-        image_set = ShopifyUtils.shopify_set_images(literal_eval(item.productImageSet))
-        options_set = ShopifyUtils.shopify_set_options(item.attributes, variants)
-        variants_set = ShopifyUtils.shopify_set_variants(options_set, variants)
-        #print(variants_set)
-        new_product.images = image_set
-        #new_product.options = options_set
-        #new_product.variants = variants_set
-        #new_product.variants.attributes = {}
-        #new_product.product_type = "Snowboard"
-        #new_product.vendor = "Burton"
-        print(new_product)
-        success = new_product.save() #returns false if the record is invalid
-        print(success)
-        # or
-        if new_product.errors:
-            print(new_product.errors.full_messages())'''
 
     def shopify_create_new_product(self, item, variants):
 

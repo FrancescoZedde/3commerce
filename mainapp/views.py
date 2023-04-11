@@ -25,7 +25,7 @@ from mainapp.ws_ebay import ebay_match_product_with_ebay_catalog, ebay_search_it
 from mainapp.ws_cj import cj_products_by_category, cj_get_product_details, cj_authentication
 from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id
 from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
-from mainapp.ws_shopify import Shopify, ShopifyConnect
+from mainapp.ws_shopify import Shopify, ShopifyConnect, shopify_exchange_code
 from mainapp.ws_gpt import ChatGPT
 from mainapp.ws_printful import Printful
 
@@ -55,6 +55,9 @@ def callback_endpoint(request):
         shop = request.GET.get('shop')
         timestamp = request.GET.get('timestamp')
 
+        #exchange code for access token
+
+        shopify_exchange_code(shop, code)
 
         return JsonResponse({'message': 'API keys received', 'code':code})
     if request.method == 'POST':
