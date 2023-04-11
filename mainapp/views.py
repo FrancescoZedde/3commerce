@@ -48,7 +48,15 @@ from django.http import JsonResponse
 def callback_endpoint(request):
     if request.method == 'GET':
         print('get request callback')
-        return JsonResponse({'message': 'API keys received'})
+        print(request.GET)
+        code = request.GET.get('code')
+        hmac = request.GET.get('hmac')
+        host = request.GET.get('host')
+        shop = request.GET.get('shop')
+        timestamp = request.GET.get('timestamp')
+
+
+        return JsonResponse({'message': 'API keys received', 'code':code})
     if request.method == 'POST':
         print('here')
         data = request.POST.get('data')
