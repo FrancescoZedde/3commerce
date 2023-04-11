@@ -9,7 +9,7 @@ import re
 
 
 def shopify_exchange_code(shop, code):
-    url = "https://" + shop +".myshopify.com/admin/oauth/access_token"
+    url = "https://" + shop + "/admin/oauth/access_token"
     payload = {
             'client_id': '700418a025a1df4a02784f0ed03362da',
             'client_secret': '264a8fc49e40cbfe57f2ce39da0e9cc5',
