@@ -34,7 +34,7 @@ SECRET_KEY = str(os.getenv('DJANGO_SECRET_KEY'))
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    #'127.0.0.1',
+    
     'sellfast.app',
     'www.sellfast.app',
     '139.144.179.11',
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'users',
     'crispy_forms',
     "crispy_bootstrap5",
-    'django_user_agents',
+    
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -69,13 +69,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+'''
 MIDDLEWARE_CLASSES = ('django_user_agents.middleware.UserAgentMiddleware')
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': 'sellfast.app'}
-}
+}'''
 
 ROOT_URLCONF = 'xzshop_sandbox.urls'
 
@@ -96,8 +97,8 @@ TEMPLATES = [
 ]
 
 
-TEMPLATE_LOADERS = 'django_mobile.loader.Loader',
-TEMPLATE_CONTEXT_PROCESSORS =  'django_mobile.context_processors.flavour',
+#TEMPLATE_LOADERS = 'django_mobile.loader.Loader',
+#TEMPLATE_CONTEXT_PROCESSORS =  'django_mobile.context_processors.flavour',
 
 WSGI_APPLICATION = 'xzshop_sandbox.wsgi.application'
 
