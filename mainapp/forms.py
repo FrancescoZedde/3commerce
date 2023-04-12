@@ -558,9 +558,9 @@ class CJSearchProducts(forms.Form):
                                             initial=20 , 
                                             validators=[MinValueValidator(1), MaxValueValidator(100)],
                                             widget=forms.NumberInput(attrs={'style': 'width: 300px; margin-top:0.5em;margin-bottom:1em',}))
-    category = forms.TypedChoiceField(label='Select category',choices=cj_categories, initial='default',widget=forms.Select(attrs={'style': 'width: 220px;margin-bottom:2em'}))
+    category = forms.TypedChoiceField(label='Select category',choices=cj_categories, initial='default',widget=forms.Select(attrs={'style': ''}))
     keywords = forms.CharField(label='Filter by keywords', max_length = 200, required=False)
-
+    search_by_sku = forms.CharField(label='Search by SKU', max_length = 200, required=False)
 
 class exportSetup(forms.Form):
     marketplace = forms.TypedChoiceField(label='Select marketplace',choices=marketplace_choices, initial='default',widget=forms.Select(attrs={'style': 'width: 220px;margin-bottom:2em'}))
@@ -842,10 +842,16 @@ class VariantForm(ModelForm):
 
 # SMARTCOPY
 
-tone_of_voice = [('funny', 'Funny'),('professional','Professional'),('excited','Excited')]
+tone_of_voice = [('funny', 'Funny'),
+                ('professional','Professional'),
+                ('excited','Excited'),
+                ('descriptive', 'Descriptive'),
+                ('humorous', 'Humorous'),
+                ('inspirational', 'Inspirational'),
+                ('formal', 'Formal'),]
 
 class BlogArticleForm(forms.Form):
-    form_id = forms.CharField(initial='blog-article',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='blog-article',widget = forms.HiddenInput())
     topic = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'style':''}))
     word_count = forms.IntegerField(initial=110)
     keywords = forms.CharField(max_length=50)
@@ -855,62 +861,82 @@ class BlogArticleForm(forms.Form):
     #style = forms.CharField(max_length=100)
     
 class BlogIdeasForm(forms.Form):
-    form_id = forms.CharField(initial='blog-ideas',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='blog-ideas',widget = forms.HiddenInput())
     topic = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'style':''}))
     #word_count = forms.IntegerField(initial=110)
     keywords = forms.CharField(max_length=50)
     target_audience = forms.CharField(max_length=50)
     #purpose = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
+    #tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
     #style = forms.CharField(max_length=100)
 
 class BlogPlagiarismForm(forms.Form):
-    form_id = forms.CharField(initial='blog-ideas',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='blog-plagiarism',widget = forms.HiddenInput())
     text = forms.CharField(label='Paste your text:', help_text='', widget=forms.Textarea(attrs={
                                                     'class': "form-control",
                                                     'rows': 15, 
                                                     'style': 'max-width: 100%; font-size: 12px;',
                                                     }))
-    #topic = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'style':''}))
-    #word_count = forms.IntegerField(initial=110)
-    #keywords = forms.CharField(max_length=50)
-    #target_audience = forms.CharField(max_length=50)
-    #purpose = forms.CharField(max_length=100)
-    #tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
-    #style = forms.CharField(max_length=100)
 
 class FacebookAdsForm(forms.Form):
-    form_id = forms.CharField(initial='facebook-ads',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='facebook-ads',widget = forms.HiddenInput())
     topic = forms.CharField(max_length=100)
-    word_count = forms.IntegerField(initial=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
     keywords = forms.CharField(max_length=50)
     target_audience = forms.CharField(max_length=50)
+    word_count = forms.IntegerField(initial=100)
+    n_copies = forms.IntegerField(initial=3)
+    emoji = forms.BooleanField(label='Check to use emoji',initial=False, required=False)
+    bullet_list = forms.BooleanField(label='Check to use bullet point list',initial=False, required=False)
+    
+
+class FacebookPostForm(forms.Form):
+    form_id = forms.CharField(initial='facebook-post',widget = forms.HiddenInput())
+    topic = forms.CharField(max_length=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    word_count = forms.IntegerField(initial=100)
+    n_copies = forms.IntegerField(initial=3)
+    emoji = forms.BooleanField(label='Check to use emoji',initial=False, required=False)
+    bullet_list = forms.BooleanField(label='Check to use bullet point list',initial=False, required=False)
+
+class FacebookPostIdeasForm(forms.Form):
+    form_id = forms.CharField(initial='facebook-post-ideas',widget = forms.HiddenInput())
+    topic = forms.CharField(max_length=100)
+    #tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
+    keywords = forms.CharField(max_length=50)
+    target_audience = forms.CharField(max_length=50)
+    #word_count = forms.IntegerField(initial=100)
     #purpose = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))
+
+
+
 
 class InstagramAdsForm(forms.Form):
-    form_id = forms.CharField(initial='instagram-ads',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='instagram-ads',widget = forms.HiddenInput())
     topic = forms.CharField(max_length=100)
-    word_count = forms.IntegerField(initial=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
     keywords = forms.CharField(max_length=50)
     target_audience = forms.CharField(max_length=50)
+    word_count = forms.IntegerField(initial=100)
     #purpose = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))
+    n_copies = forms.IntegerField(initial=3)
 
 class EmailMarketingForm(forms.Form):
-    form_id = forms.CharField(initial='email-marketing',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='email-marketing',widget = forms.HiddenInput())
     topic = forms.CharField(max_length=100)
-    word_count = forms.IntegerField(initial=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
     keywords = forms.CharField(max_length=50)
     target_audience = forms.CharField(max_length=50)
+    word_count = forms.IntegerField(initial=100)
     #purpose = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))
 
 class AmazonProductDescription(forms.Form):
-    form_id = forms.CharField(initial='amazon-description',widget=forms.TextInput(attrs={'readonly':True}))
+    form_id = forms.CharField(initial='amazon-description',widget = forms.HiddenInput())
     topic = forms.CharField(max_length=100)
-    word_count = forms.IntegerField(initial=100)
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
     keywords = forms.CharField(max_length=50)
     target_audience = forms.CharField(max_length=50)
+    word_count = forms.IntegerField(initial=100)
     #purpose = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'max-width:200px', 'size':'1'}))

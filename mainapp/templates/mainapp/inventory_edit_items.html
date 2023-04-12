@@ -8,17 +8,6 @@
 <main role="main" class="container">
     <h3>Select marketplace</h3>
     {{selected_items}}
-    <form action="export-start" method="post">
-        {% csrf_token %}
-
-        <input type="hidden" id="selecteditems" name="selected-items" value="{{selected_items}}">
-        {{ export_setup_form.pricepercentageincrease }}
-        {{ export_setup_form.selectcategories }}
-        {{ export_setup_form.marketplace }}
-        <div class="button" style="text-align: center;">
-            <input id='startimport' type="submit" value="start import items" name="start-import-items">
-        </div>
-    </form>
     <!-- woocommerce categories ids-->
     <div>
       {% for category in woocommerce_categories %}

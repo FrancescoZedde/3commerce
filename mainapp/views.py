@@ -16,7 +16,7 @@ from mainapp.views_utils import new_default_template, format_results, woocommerc
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
 from mainapp.forms import EbayImportSetup, descriptionTemplate_1, descriptionTemplate_2, WritesonicDescriptionGeneratorForm, EbayUpdateAccessTokenForm
-from mainapp.forms import ChatGPTWriteDescriptionForm, ChatGPTAsk, EmailMarketingForm, BlogArticleForm, BlogIdeasForm, BlogPlagiarismForm, FacebookAdsForm, InstagramAdsForm, AmazonProductDescription
+from mainapp.forms import ChatGPTWriteDescriptionForm, ChatGPTAsk, EmailMarketingForm, BlogArticleForm, BlogIdeasForm, BlogPlagiarismForm, FacebookAdsForm,FacebookPostForm, FacebookPostIdeasForm, InstagramAdsForm, AmazonProductDescription
 from mainapp.models import InventoryItem, Variant
 
 from mainapp.ws_ebay_utils import ebay_create_json_inventory_item_group, ebay_create_json_inventory_item, ebay_create_json_offer
@@ -119,7 +119,7 @@ def profile(request):
             "app_name": "SellFastApp",
             "scope": "read_write",
             "user_id": 123,
-            "return_url": 'https://sellfast.app'  + '/return-page',
+            "return_url": 'http://sellfast.app'  + '/return-page',
             "callback_url": 'https://sellfast.app' + '/callback-endpoint-wc'
         }
         query_string = urlencode(params)
@@ -257,22 +257,17 @@ def search_results(request):
     if request.method == 'GET':
         return redirect(request, 'mainapp/search.html', context)
     if request.method == 'POST':
-        #setup = generalSetup()
-        #simpledropdown = simpleDropdown()
-        #print(request.body)
         category_id = request.POST.get('category', None)
         pagenum = request.POST.get('pagenum', None)
         pagesize = request.POST.get('pagesize', None)
         keywords = request.POST.get('keywords', None)
         if category_id != None:
             #esegui ricerca
-            products = cj_products_by_category(category_id, pagenum, pagesize)
+            products = cj_products_by_category(category_id)
             if keywords != '':
                 products = filter_by_keywords(products, keywords)
             #make a list of lists products grouped by 5
             grouped_products = format_results(products, 6)
-            print('grouped')
-            print(grouped_products)
             context = {
                 'grouped_products':grouped_products,
                 'products' : products,
@@ -1003,6 +998,10 @@ def smartcopy_play(request):
             form = BlogPlagiarismForm()
         elif service == 'facebook-ads':
             form = FacebookAdsForm()
+        elif service == 'facebook-post':
+            form = FacebookPostForm()
+        elif service == 'facebook-post-ideas':
+            form = FacebookPostIdeasForm()
         elif service == 'instagram-ads':
             form = InstagramAdsForm()
         elif service == 'email-marketing':
@@ -1058,8 +1057,8 @@ def woocommerce_update_descriptions_bulk(request):
 def generate_img(request):
     question = request.POST.get('question')
     class_instance = ChatGPT()
-    #response =ChatGPT.generate_image_from_prompt(class_instance,question )
-    response =ChatGPT.generate_image_variation(class_instance)
+    response =ChatGPT.generate_image_from_prompt(class_instance,question )
+    #response =ChatGPT.generate_image_variation(class_instance)
     print(response)
     return redirect(trending)
     '''

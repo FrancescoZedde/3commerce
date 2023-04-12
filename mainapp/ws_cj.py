@@ -16,12 +16,26 @@ def cj_authentication():
     return access_token
 
 # get products by category id
-def cj_products_by_category(category_id, pagenum, pagesize):
+def cj_products_by_category(category_id):
     access_token = cj_authentication()
     url = 'https://developers.cjdropshipping.com/api2.0/v1/product/list'
 
     response = []
-    #print(pagenum)
+    for i in range(int(100)+1):
+        try:
+            if i != 0:
+                print(i)
+                data = {"pageNum": i,
+                       "pageSize": '200',
+                        'categoryId': category_id}
+                headers = {"CJ-Access-Token": access_token}
+
+                get_products_resp = requests.get(url, params=data, headers=headers).json()
+                lista_prodotti = get_products_resp['data']['list']
+                response = response + lista_prodotti
+        except:
+            break
+    '''
     for i in range(int(pagenum)+1):
         if i != 0:
             print(i)
@@ -31,12 +45,9 @@ def cj_products_by_category(category_id, pagenum, pagesize):
             headers = {"CJ-Access-Token": access_token}
 
             get_products_resp = requests.get(url, params=data, headers=headers).json()
-            #print(get_products_resp)
             lista_prodotti = get_products_resp['data']['list']
-            #print(lista_prodotti)
-            response = response + lista_prodotti
-    #print(response)
-    #print(len(response))
+            response = response + lista_prodotti'''
+
     return response
 
 
