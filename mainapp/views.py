@@ -268,12 +268,18 @@ def store_onsale(request):
         print(user_instance.store_type)
         if user_instance.store_type == 'shopify':
             class_instance = Shopify(user_instance)
-            response = Shopify.shopify_retrieve_all_products(class_instance)
+            products = Shopify.shopify_retrieve_all_products(class_instance)
 
-            context = {'response': response}
+            context = {'products': products}
             return render(request, 'mainapp/store_onsale.html', context)
         elif user_instance.store_type == 'woocommerce':
-            print('wooooo')
+            class_instance = WooCommerce(request.user)
+            woocommerce_products = WooCommerce.woocommerce_retrieve_all_products(class_instance)
+            products = make_woocommerce_on_sale_products_list(woocommerce_products)
+            print(products)
+            context = {'products': products,
+                    }
+            return render(request, 'mainapp/store_onsale.html', context)
         else:
             return redirect(inventory_list_view)
     if request.method == 'POST':

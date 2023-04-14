@@ -5,7 +5,11 @@
 {% block content %}
 
 <div class="standard-command-container">
-    {{response}}
+    {{products}}
+    {% for product in products %}
+        {{product}}
+    {% endfor %}
+
 </div>
 
 
