@@ -5,6 +5,7 @@ urlpatterns = [
     path('profile', views.profile, name='profile'),
     path('connect-store', views.connect_store, name='connect-store'),
     path('reset-store', views.reset_store, name='reset-store'),
+    path('orders', views.orders, name='orders'),
 
     # TRENDING
     path('trending', views.trending, name='trending'),

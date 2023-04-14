@@ -104,15 +104,24 @@ class Shopify:
 
 
     def shopify_retrieve_all_products(self):
-        url = self.host + '/admin/api/2023-01/products.json?limit=250'
-
+        url = self.host + '/admin/api/2023-01/products.json?limit=25'
         headers = {'X-Shopify-Access-Token': self.api_key,
                     'Content-Type': 'application/json'}
 
         response = requests.get(url, headers=headers).json()
         print('RETRIEVE ALL PRODUCT RESPONSE')
-        print(response)
+        return response['products']
 
+
+    def shopify_retrieve_orders(self):
+        url = self.host + '/admin/api/2023-04/orders.json?status=any'
+        headers = {'X-Shopify-Access-Token': self.api_key,
+                    'Content-Type': 'application/json'}
+
+        response = requests.get(url, headers=headers).json()
+        print('RETRIEVE ALL ORDERS RESPONSE')
+        print(response)
+        return response
 
 
     def shopify_create_auth_url(self, shop_name):

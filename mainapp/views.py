@@ -148,6 +148,9 @@ def profile(request):
         }
         return render(request, 'mainapp/profile.html', context)
 
+
+
+
 @login_required(login_url='/login')
 def connect_store(request):
     if request.method == 'GET':
@@ -177,7 +180,7 @@ def connect_store(request):
                 shopify_store_url = "https://" + str(store_name) +".myshopify.com/admin/oauth/authorize"
                 shopify_params = {
                     "client_id": "700418a025a1df4a02784f0ed03362da",
-                    "scope": "write_products",
+                    "scope": "write_products, read_orders, write_orders",
                     "redirect_uri" : "https://sellfast.app/callback-endpoint"
                 }
 
@@ -236,19 +239,45 @@ def reset_store(request):
             reset_woocommerce_store(request.user)
         return redirect(profile)
 
+
+@login_required(login_url='/login')
+def orders(request):
+    if request.method == 'GET':
+        #check if store is woo or shop
+        user_instance = CustomUser.objects.get(email=request.user.email)
+        print(user_instance.store_type)
+        if user_instance.store_type == 'shopify':
+            class_instance = Shopify(user_instance)
+            response = Shopify.shopify_retrieve_orders(class_instance)
+
+            context = {'response': response}
+            return render(request, 'mainapp/orders.html', context)
+        elif user_instance.store_type == 'woocommerce':
+            print('wooooo')
+        else:
+            return redirect(inventory_list_view)
+    if request.method == 'POST':
+        return redirect(inventory_list_view)
+
+
 @login_required(login_url='/login')
 def store_onsale(request):
     if request.method == 'GET':
         #check if store is woo or shop
+        user_instance = CustomUser.objects.get(email=request.user.email)
+        print(user_instance.store_type)
+        if user_instance.store_type == 'shopify':
+            class_instance = Shopify(user_instance)
+            response = Shopify.shopify_retrieve_all_products(class_instance)
 
-        #retrieve products
-            #retrieve keys
-            #call to retrive
-
-        context = {'products': 'x'}
-        return render(request, 'mainapp/store_onsale.html', context)
+            context = {'response': response}
+            return render(request, 'mainapp/store_onsale.html', context)
+        elif user_instance.store_type == 'woocommerce':
+            print('wooooo')
+        else:
+            return redirect(inventory_list_view)
     if request.method == 'POST':
-        return redirect(profile)
+        return redirect(inventory_list_view)
 
 @login_required(login_url='/login')
 def trending(request):
@@ -509,7 +538,7 @@ def inventory_list_view_import_commands(request):
                 #Shopify.shopify_create_new_product(item, variants)
                 class_instance = Shopify(request.user)
                 create_product_response = Shopify.shopify_create_new_product(class_instance, item, variants)
-               
+                print(create_product_response)
                 Shopify.shopify_add_images_to_variants(class_instance, variants, create_product_response)
             messages.error(request, f"Select a valid option + {create_product_response}")
             return redirect(inventory_list_view)
