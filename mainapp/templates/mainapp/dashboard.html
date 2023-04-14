@@ -10,7 +10,12 @@
 
 
     
-      
+{% if request.user_agent.is_mobile %}
+<p>mobile</p>
+{% else %}
+<p>non mobile</p>
+
+{% endif %}
 	  <div class="card-deck">
 		<div class="shadow card">
 			<div class="card-body" style="">

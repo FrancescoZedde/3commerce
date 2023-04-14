@@ -22,6 +22,7 @@ def connect_woocommerce_store(user, store_name, host, ck, cs):
 
 def reset_woocommerce_store(user):
     user.store_type = 'none'
+    user.store_name = ''
     user.woocommerce_store_name = ''
     user.woocommerce_host = host = ''
     user.woocommerce_consumer_key = ''
@@ -44,6 +45,7 @@ def connect_cj_account(user, cj_email, cj_key):
 
 def reset_shopify_store(user):
     user.store_type = 'none'
+    user.store_name = ''
     user.shopify_store_name = ''
     user.shopify_host = host = ''
     user.shopify_consumer_key = ''
