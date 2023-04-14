@@ -8,7 +8,8 @@ from urllib.parse import unquote
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
-
+from urllib.parse import urlencode
+from django.urls import reverse
 
 
 from mainapp.views_utils import new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
@@ -16,13 +17,13 @@ from mainapp.views_utils import new_default_template, format_results, woocommerc
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
 from mainapp.forms import EbayImportSetup, descriptionTemplate_1, descriptionTemplate_2, WritesonicDescriptionGeneratorForm, EbayUpdateAccessTokenForm
-from mainapp.forms import ChatGPTWriteDescriptionForm, ChatGPTAsk, EmailMarketingForm, BlogArticleForm, BlogIdeasForm, BlogPlagiarismForm, FacebookAdsForm,FacebookPostForm, FacebookPostIdeasForm, InstagramAdsForm, AmazonProductDescription
+from mainapp.forms import ChatGPTWriteDescriptionForm, ChatGPTAsk, EmailMarketingForm, BlogArticleForm, BlogIdeasForm, BlogPlagiarismForm, FacebookAdsForm,FacebookPostForm, FacebookPostIdeasForm, InstagramPostForm, InstagramTagsForm, GoogleAdsTitleForm, GoogleAdsDescriptionForm, AmazonProductDescription
 from mainapp.models import InventoryItem, Variant
 
 from mainapp.ws_ebay_utils import ebay_create_json_inventory_item_group, ebay_create_json_inventory_item, ebay_create_json_offer
 from mainapp.ws_ebay import ebay_match_product_with_ebay_catalog, ebay_search_items_by_keywords, ebay_publish_by_inventory_item_group, create_inventory_items_group, ebay_publish_offer, ebay_bulk_publish_offer, ebay_create_inventory_location, ebay_get_inventory_location, refresh_access_token, get_all_inventory_items, create_inventory_item, ebay_delete_inventory_item, bulk_create_offer
 
-from mainapp.ws_cj import cj_products_by_category, cj_get_product_details, cj_authentication
+from mainapp.ws_cj import cj_products_by_category, cj_get_product_details, cj_authentication, CJDropshippingConnect
 from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id
 from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
 from mainapp.ws_shopify import Shopify, ShopifyConnect, shopify_exchange_code
@@ -31,12 +32,12 @@ from mainapp.ws_printful import Printful
 
 from mainapp.ws_facebook import instagram_check_container_validity, instagram_create_container_media, instagram_create_container_carousel, instagram_publish_carousel
 
-from mainapp.db_functions import retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
+from mainapp.db_functions import connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
 
 
 
 from users.models import CustomUser
-from users.forms import WooCommerceConnectForm, ShopifyConnectForm
+from users.forms import WooCommerceConnectForm, ShopifyConnectForm, CJDropshippingConnectForm
 
 #from mainapp.woocommerce_methods import woocommerce_massive_import
 
@@ -60,16 +61,11 @@ def callback_endpoint_wc(request):
         return JsonResponse({'error': 'Invalid request'})
 def callback_endpoint(request):
     if request.method == 'GET':
-        print('get request callback')
-        print(request.GET)
         code = request.GET.get('code')
-        hmac = request.GET.get('hmac')
+        #hmac = request.GET.get('hmac')
         host = request.GET.get('host')
         shop = request.GET.get('shop')
-        timestamp = request.GET.get('timestamp')
-
-        #exchange code for access token
-
+        #timestamp = request.GET.get('timestamp')
         try:
             response = shopify_exchange_code(shop, code)
             # save access-token for the user
@@ -79,19 +75,17 @@ def callback_endpoint(request):
             user_instance.shopify_host = 'https://' + str(shop)
             user_instance.shopify_store_name = shop
             user_instance.save()
+
+            messages.success(request, f"Success, Shopify store connected!")
+            return redirect(profile)
+
         except:
-            response = 'NO'
-
-
-        return JsonResponse({'message': 'API keys received', 'code':code , 'response': response})
+            messages.error(request, f"Something goes wrong, retry or contact support.")
+            return redirect(profile)
     if request.method == 'POST':
-        print('here')
-        data = request.POST.get('data')
-        # Save the data to your database
-        print(data)
-        return JsonResponse({'message': 'API keys received'})
+        return redirect(profile)
     else:
-        return JsonResponse({'error': 'Invalid request'})
+        return redirect(profile)
 
 def return_page(request):
     if request.method == 'GET':
@@ -106,10 +100,6 @@ def return_page(request):
 @login_required(login_url='/login')
 def profile(request):
     if request.method == 'GET':
-
-        from urllib.parse import urlencode
-        from django.urls import reverse
-
 
         store_url = 'https://xzshop.eu'
         endpoint = '/wc-auth/v1/authorize'
@@ -145,11 +135,14 @@ def profile(request):
         print(shopify_auth_url)
         woocommerce_connect = WooCommerceConnectForm()
         shopify_connect = ShopifyConnectForm()
+        cjdropshipping_connect = CJDropshippingConnectForm()
+
         context = {
             'shopify_auth_url':shopify_auth_url,
             'auth_url':auth_url,
             'woocommerce_connect':woocommerce_connect,
             'shopify_connect': shopify_connect,
+            'cjdropshipping_connect':cjdropshipping_connect,
         }
         return render(request, 'mainapp/profile.html', context)
 
@@ -179,14 +172,44 @@ def connect_store(request):
         elif connect_to == "shopify":
             try:
                 store_name = request.POST.get("shopify_store_name",None)
-                domain = request.POST.get("shopify_host",None)
+                shopify_store_url = "https://" + str(store_name) +".myshopify.com/admin/oauth/authorize"
+                shopify_params = {
+                    "client_id": "700418a025a1df4a02784f0ed03362da",
+                    "scope": "write_products",
+                    "redirect_uri" : "https://sellfast.app/callback-endpoint"
+                }
+
+                print("here1")
+                shopify_query_string = urlencode(shopify_params)
+                shopify_auth_url = "%s?%s" % (shopify_store_url, shopify_query_string)
+                #auth_url = shopify_build_auth_url()
+                '''domain = request.POST.get("shopify_host",None)
                 ck = request.POST.get("shopify_consumer_key",None)
-                cs = request.POST.get("shopify_secret_key",None)
-                connection = ShopifyConnect(domain, cs)
+                cs = request.POST.get("shopify_secret_key",No'ne)
+                connection = ShopifyConnect(domain, cs)'''
+                print("here2")
+                return redirect(str(shopify_auth_url))
                 
+                '''
                 if connection.status == "valid":
                     connect_shopify_store(request.user,store_name, domain, ck, cs)
                     messages.success(request, f"Success, Shopify store connected!")
+                else:
+                    messages.error(request, f"Connection failed: invalid credentials. Retry or contact support")
+                return redirect(profile)'''
+            except:
+                messages.error(request, f"Somethin goes wrong, contact Support")
+                return redirect(profile)
+        elif connect_to == "cjdropshipping":
+            try:
+                print("connect to cjdropshipping ...")
+                cj_email = request.POST.get("cjdropshipping_email",None)
+                cj_key = request.POST.get("cjdropshipping_api_key",None)
+
+                connection = CJDropshippingConnect(cj_email, cj_key)
+                if connection.status == "valid":
+                    connect_cj_account(request.user, cj_email, cj_key)
+                    messages.success(request, f"Success, CJ Dropshipping account connected!")
                 else:
                     messages.error(request, f"Connection failed: invalid credentials. Retry or contact support")
                 return redirect(profile)
@@ -261,9 +284,10 @@ def search_results(request):
         pagenum = request.POST.get('pagenum', None)
         pagesize = request.POST.get('pagesize', None)
         keywords = request.POST.get('keywords', None)
+        results_limit = request.POST.get('results_limit', None)
         if category_id != None:
             #esegui ricerca
-            products = cj_products_by_category(category_id)
+            products = cj_products_by_category(category_id, results_limit)
             if keywords != '':
                 products = filter_by_keywords(products, keywords)
             #make a list of lists products grouped by 5
@@ -1002,8 +1026,14 @@ def smartcopy_play(request):
             form = FacebookPostForm()
         elif service == 'facebook-post-ideas':
             form = FacebookPostIdeasForm()
-        elif service == 'instagram-ads':
-            form = InstagramAdsForm()
+        elif service == 'instagram-post':
+            form = InstagramPostForm()
+        elif service == 'instagram-tags':
+            form = InstagramTagsForm()
+        elif service == 'google-ads-title':
+            form = GoogleAdsTitleForm()
+        elif service == 'google-ads-description':
+            form = GoogleAdsDescriptionForm()
         elif service == 'email-marketing':
             form = EmailMarketingForm()
         elif service == 'amazon-description':

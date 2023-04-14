@@ -29,24 +29,37 @@
   <div class="tab-pane fade" id="nav-connector" role="tabpanel" aria-labelledby="nav-connector-tab">
      <div class="standard-command-container" style="margin-top:1em;">
       {% if user.woocommerce_store_name == '' and user.shopify_store_name == '' %}
-        <div>
-        </div>
-        <div class="row">
-          <div class="col-6">
+        <div class="card-deck">
+          <div class="card" style="border:none">
             <div class="image-connect-store-container">
               <button style="border:none; background: transparent;" id="open-modal-shopify" onclick="open_modal_connect(this.id)">
+              
                 <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/shopify-ar21.png" style="width: 100%; height: 250px; text-align:center; padding:8px">
-              </button>
-            </div>
+              
+                </button>
           </div>
-          <div class="col-6">
+          </div>
+         </div> 
+          <div class="card-deck">
+          <div class="card" style="border:none">
             <div class="image-connect-store-container">
               <button style="border:none; background: transparent;" id="open-modal-woocommerce" onclick="open_modal_connect(this.id)">
-              <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
+                <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
+              </button>
+          </div>
+          </div>
+          </div>
+        <div class="card-deck">
+          <div class="card" style="border:none;">
+            <div class="image-connect-store-container">
+            <button style="border:none !important; background: transparent;" id="open-modal-cjdropshipping" onclick="open_modal_connect(this.id)">
+              <img class="connect-store-image" src="https://www.naveedulhaq.com/wp-content/uploads/2021/11/cj-dropshipping.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
             </button>
-            </div>
+          </div>
           </div>
         </div>
+        </div>
+
       {% elif user.woocommerce_store_name != '' %}
       <form action="reset-store" method="post">
         {% csrf_token %}
@@ -85,6 +98,7 @@
     </form>
       {% endif %}
     </div>
+
   </div>
 </div>
 
@@ -116,17 +130,20 @@
 <div id="modal-shopify-connect" class="modal-container">
   <div class="modal-content">
     <span id="close-modal-shopify-connect" class="close">&times;</span>
-    <p><a href="{% url 'faq' %}">Check instructions for linking your store</a></p>
+    <p>
+      Enter your store name and click Connect, you will be redirected to the Shopify authentication page.  
+    </p>
     <div id="" style="margin-top: 1em">
-      <form action="connect-store" method="post">
+      
+      <form action="connect-store" method="POST">
         {% csrf_token %}
         <div class="row">
-          {{ shopify_connect|crispy }}
+          {{ shopify_connect.shopify_store_name|as_crispy_field }}
         </div>
         <div class="row">
           <div class="col-12" style="text-align:center;">
             <div class="button" style="text-align: center; margin-top:2em">
-                <input class="standard-button" id='connectshopify' type="submit" value="Connect" name="connect-shopify">
+              <input class="standard-button" id='connectshopify' type="submit" value="Connect" name="connect-shopify">
             </div>
           </div>
         </div>
@@ -136,7 +153,60 @@
   </div>
 </div>
 
+<!-- CJ DROPSHIPPING MODAL -->
+<div id="modal-cjdropshipping-connect" class="modal-container">
+  <div class="modal-content">
+    <span id="close-modal-cjdropshipping-connect" class="close">&times;</span>
+    <p>
+      <ul>
+          <li>1. if you don't have one, <a href="https://cjdropshipping.com/register.html?token=69d98772-9259-4805-a95c-c483863cb752">create an account</a> with CJDropshipping.</li>
+          <li>2. Log in to your account and navigate to the API section.</li>
+          <li>3. Generate an API key by following the instructions provided.</li>
+          <li>4. Copy the API key to your clipboard.</li>
+          <li>5. Paste you EMAIL and API key here and click Connect</li>
+      </ul> 
+    </p>
+    <small><a href="{% url 'faq' %}">Check detailed instructions</a></small>
+    <div id="" style="margin-top: 1em">
+      <form action="connect-store" method="POST">
+        {% csrf_token %}
+        <div class="row">
+          {{ cjdropshipping_connect|crispy }}
+        </div>
+        <div class="row">
+          <div class="col-12" style="text-align:center;">
+            <div class="button" style="text-align: center; margin-top:2em">
+                <input class="standard-button" id='connectdjdropshipping' type="submit" value="Connect" name="connect-cjdropshipping">
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="connect" value="cjdropshipping">
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
+/*
+  document.getElementById('id_shopify_store_name').addEventListener('change', (event) => {
+    console.log(document.getElementById('id_shopify_store_name').value)
+    shopify_store_url = document.getElementById('id_shopify_store_name').value
+    shopify_endpoint = "/admin/oauth/authorize"
+    shopify_params = {
+        "client_id": "700418a025a1df4a02784f0ed03362da",
+        "scope": "write_products",
+        "redirect_uri" : "https://sellfast.app/callback-endpoint"
+    }
+
+    encoded_shopify_params = encodeURIComponent(shopify_params)
+
+    url = shopify_store_url + shopify_endpoint +shopify_params
+    auth_url = document.getElementById('shopify-auth-url')
+
+    auth_url.setAttribute("href", url);
+    console.log(document.getElementById('shopify-auth-url'))
+  });*/
+
   function open_modal_connect(button_id){
     if (button_id=='open-modal-shopify'){
           let modal = document.getElementById("modal-shopify-connect");
@@ -150,6 +220,15 @@
     else if (button_id=='open-modal-woocommerce'){
           let modal = document.getElementById("modal-woocommerce-connect");
           let close = document.getElementById("close-modal-woocommerce-connect");
+
+          close.onclick = function() {
+            modal.style.display = "none";
+          }
+          modal.style.display = "block";
+    }
+    else if (button_id=='open-modal-cjdropshipping'){
+          let modal = document.getElementById("modal-cjdropshipping-connect");
+          let close = document.getElementById("close-modal-cjdropshipping-connect");
 
           close.onclick = function() {
             modal.style.display = "none";

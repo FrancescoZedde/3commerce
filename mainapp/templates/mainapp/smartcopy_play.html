@@ -96,15 +96,16 @@
             let keywords = document.getElementById('id_keywords').value
             let tone = document.getElementById('id_tone').value
             let word_count = document.getElementById('id_word_count').value
-            smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count)
+            let language = document.getElementById('id_language').value
+            smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, language)
         }
         // BLOG IDEAS
         else if(service_id == 'blog-ideas'){
             let topic = document.getElementById('id_topic').value
             let target_audience = document.getElementById('id_target_audience').value
             let keywords = document.getElementById('id_keywords').value
-            
-            smartcopy_blog_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, )
+            let language = document.getElementById('id_language').value
+            smartcopy_blog_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language)
         }
         // BLOG PLAGIARISM
         else if(service_id == 'blog-plagiarism'){
@@ -120,10 +121,9 @@
             let word_count = document.getElementById('id_word_count').value
             let emoji = set_copy_style('emoji', document.getElementById('id_emoji').checked)
             let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
-            console.log(emoji)
-            console.log(bullet_list)
             let n_copies = document.getElementById('id_n_copies').value
-            text = smartcopy_write_facebook_ads(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list)
+            let language = document.getElementById('id_language').value
+            text = smartcopy_write_facebook_ads(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
         }
         // FACEBOOK POST
         else if(service_id == 'facebook-post'){
@@ -134,20 +134,41 @@
             let word_count = document.getElementById('id_word_count').value
             let emoji = set_copy_style('emoji', document.getElementById('id_emoji').checked)
             let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
-            console.log(emoji)
-            console.log(bullet_list)
             let n_copies = document.getElementById('id_n_copies').value
-            text = smartcopy_facebook_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list)
+            let language = document.getElementById('id_language').value
+            text = smartcopy_facebook_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
         }
         // FACEBOOK POST IDEAS
         else if(service_id == 'facebook-post-ideas'){
             let topic = document.getElementById('id_topic').value
             let target_audience = document.getElementById('id_target_audience').value
             let keywords = document.getElementById('id_keywords').value
-            
-            smartcopy_facebook_post_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, )
+            let language = document.getElementById('id_language').value
+            smartcopy_facebook_post_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language)
         }
-        else if(service_id == 'instagram-ads'){
+        else if(service_id == 'instagram-post'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let tone = document.getElementById('id_tone').value
+            let word_count = document.getElementById('id_word_count').value
+            let emoji = set_copy_style('emoji', document.getElementById('id_emoji').checked)
+            let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
+            let n_copies = document.getElementById('id_n_copies').value
+            let language = document.getElementById('id_language').value
+
+            smartcopy_write_instagram_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+        }
+        else if(service_id == 'instagram-tags'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let language = document.getElementById('id_language').value
+            smartcopy_write_instagram_tags(service_id, gpt, url, headers, topic, target_audience, keywords, language)
+        }
+        else if(service_id == 'google-ads-title'){
+        }
+        else if(service_id == 'google-ads-description'){
         }
         else if(service_id == 'email-marketing'){
 
@@ -157,13 +178,13 @@
 
     }
 
-    async function smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count){
+    async function smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, language){
         const requestData = {
           "model": "gpt-3.5-turbo",
           "messages": [
                       {"role": "system", "content": "You are a blog article writer"},
                       {"role": "user", "content": "Write a " + tone + " blog article"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString() + ". Language: " + language},
                     ],
           "temperature": 0.7,
           "max_tokens": 2000,
@@ -195,13 +216,13 @@
     }
 
     // BLOG-IDEAS
-    async function smartcopy_blog_ideas(service_id, gpt, url, headers, topic, target_audience, keywords){
+    async function smartcopy_blog_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language){
         const requestData = {
           "model": "gpt-3.5-turbo",
           "messages": [
                       {"role": "system", "content": "You are a blog writer"},
                       {"role": "user", "content": "Make a list of 15 blog article ideas" },
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords },
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords  + ". Language: " + language},
                     ],
           "temperature": 0.7,
           "max_tokens": 300,
@@ -269,13 +290,13 @@
     }
 
 
-    async function smartcopy_write_facebook_ads(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list){
+    async function smartcopy_write_facebook_ads(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language){
         const requestData = {
           "model": "gpt-3.5-turbo",
           "messages": [
                       {"role": "system", "content": "You are a facebook ads writer"},
                       {"role": "user", "content": "Write a " + tone + " facebook ads"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString() + ".  Style: " + emoji + bullet_list},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
                     ],
           "temperature": 0.7,
           "max_tokens": 2000,
@@ -310,13 +331,13 @@
         .catch(error => console.error(error));
     }
 
-    async function smartcopy_facebook_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list){
+    async function smartcopy_facebook_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language){
         const requestData = {
           "model": "gpt-3.5-turbo",
           "messages": [
                       {"role": "system", "content": "You are a social media manager"},
                       {"role": "user", "content": "Write a " + tone + " facebook post"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString() + ".  Style: " + emoji + bullet_list},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
                     ],
           "temperature": 0.7,
           "max_tokens": 2000,
@@ -352,16 +373,16 @@
     }
 
 
-    async function smartcopy_facebook_post_ideas(service_id, gpt, url, headers, topic, target_audience, keywords){
+    async function smartcopy_facebook_post_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language){
         const requestData = {
           "model": "gpt-3.5-turbo",
           "messages": [
                       {"role": "system", "content": "You are a social media manager"},
-                      {"role": "user", "content": "Make a list of 15 topics for a facebook post ideas" },
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords },
+                      {"role": "user", "content": "Make a list of 10 topics for a facebook post ideas" },
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords  + ". Language: " + language},
                     ],
           "temperature": 0.7,
-          "max_tokens": 300,
+          "max_tokens": 1000,
           "top_p": 1,
           "frequency_penalty":0,
           "presence_penalty":0,
@@ -389,9 +410,101 @@
         
     }
 
-    async function smartcopy_write_instagram_ads(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
+    async function smartcopy_write_instagram_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language){
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are a instagram post writer"},
+                      {"role": "user", "content": "Write a " + tone + " instagram post"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
+                    ],
+          "temperature": 0.7,
+          "max_tokens": 2000,
+          'n': parseInt(n_copies),
+          "top_p": 1,
+          "frequency_penalty":0,
+          "presence_penalty":0,
+        };
+
+        console.log(requestData)
+
+        await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)
+            multiple_copies_div = document.getElementById('multiple-copies')
+
+            data['choices'].forEach((option) => {
+                console.log(option)
+                multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
+            })
+            show_hide_loader()
+            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
+
+            //update_words(data)
+            
+        })
+        .catch(error => console.error(error));
+    }
+
+    async function smartcopy_write_instagram_tags(service_id, gpt, url, headers, topic, target_audience, keywords, language){
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are an expert social media manager"},
+                      {"role": "user", "content": "Write 20 instagram tags in a single line"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + ". Language: " + language },
+                    ],
+          "temperature": 0.7,
+          "max_tokens": 250,
+          "top_p": 1,
+          "frequency_penalty":0,
+          "presence_penalty":0,
+        };
+
+        console.log(requestData)
+
+        await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)
+            multiple_copies_div = document.getElementById('multiple-copies')
+
+            data['choices'].forEach((option) => {
+                console.log(option)
+                multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
+            })
+            show_hide_loader()
+            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
+
+            //update_words(data)
+            
+        })
+        .catch(error => console.error(error));
+    }
+
+    async function smartcopy_write_google_ads_title(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
         
     }
+
+    async function smartcopy_write_google_ads_description(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
+        
+    }
+
+
+
+
+
+
+
 
     function show_hide_loader(){
         let spinner = document.getElementById("loader-smartcopy")

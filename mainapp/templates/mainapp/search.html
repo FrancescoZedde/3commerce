@@ -11,8 +11,6 @@
     <body>
         
         <div class="standard-command-container">
-          <p style="margin-bottom:40px">Search through <b>millions of products</b> and import them to your <i>Inventory</i>.
-          </p>
 
 <!-- Tab navigation section -->
 <ul class="nav nav-pills mb-3" id="myTab" role="tablist">
@@ -35,6 +33,7 @@
       {% csrf_token %}
       {{ cj_search.category | as_crispy_field}}
       {{ cj_search.keywords | as_crispy_field}}
+      {{ cj_search.results_limit | as_crispy_field}}
       <div class="button" style="text-align: center;">
         <input class="standard-button" id='searchbycategory' type="submit" value="Search" name="search-by-category">
       </div>

@@ -25,45 +25,10 @@
             <a href="{% url 'inventory-list-view' %}">Printful</a>
         </li>-->
 
-        {% if user.shopify_store_name != '' %}
+        {% if user.store_name != '' %}
         <!-- SHOPIFY -->
         <li>
-            <a href="#shopifySubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Shopify</a>
-            <ul class="collapse list-unstyled" id="shopifySubmenu">
-                <li>
-                    <a href="{% url 'shopify-onsale' %}">On Sale</a>
-                </li>
-                <!--
-                <li>
-                    <a href="#">Promotions</a>
-                </li>
-                <li>
-                    
-                    <a href="#">Categories</a>
-                </li>
-                <li>
-                    <a href="#">Settings</a>
-                </li>-->
-            </ul>
-        </li>
-        {% elif user.woocommerce_store_name != '' %}
-        <li>
-            <a href="#woocommerceSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">WooCommerce</a>
-            <ul class="collapse list-unstyled" id="woocommerceSubmenu">
-                <li>
-                    <a href="{% url 'woocommerce-onsale' %}">On Sale</a>
-                </li>
-                <li>
-                    <a href="{% url 'woocommerce-categories' %}">Categories</a>
-                </li>
-                <!--
-                <li>
-                    <a href="#">Promotions</a>
-                </li>
-                <li>
-                    <a href="#">Settings</a>
-                </li>-->
-            </ul>
+            <a href="{% url 'store-onsale' %}">On Sale</a>
         </li>
         {% else %}
         <!-- CONNECT STORE -->

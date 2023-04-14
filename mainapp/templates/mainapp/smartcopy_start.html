@@ -122,8 +122,75 @@
           </div>
       </div>
     </div>
-    <div class="tab-pane fade" id="pills-instagram-ads" role="tabpanel" aria-labelledby="pills-instagram-ads-tab">...</div>
-    <div class="tab-pane fade" id="pills-google-ads" role="tabpanel" aria-labelledby="pills-google-ads-tab">...</div>
+    <!-- INSTAGRAM TAB CONTENT-->
+    <div class="tab-pane fade" id="pills-instagram-ads" role="tabpanel" aria-labelledby="pills-instagram-ads-tab">
+      <div class="card-deck">
+        <div class="shadow card">
+            <div class="card-body" style="">
+
+                <h5 class="index-card-title card-title" style=""><b>Instagram Post</b></h5>
+              <p class="index-card-text card-text" style="">Custom Instagram posts</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" >
+                  <input type="hidden" value="instagram-post" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body">
+
+                <h5 class="index-card-title card-title"><b>Instagram Tags</b></h5>
+              <p class="index-card-text card-text">Find popular tags by niche</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" >
+                  <input type="hidden" value="instagram-tags" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+
+      </div>
+    </div>
+    <!-- GOOGLE TAB CONTENT -->
+    <div class="tab-pane fade" id="pills-google-ads" role="tabpanel" aria-labelledby="pills-google-ads-tab">
+      <div class="card-deck">
+        <div class="shadow card">
+            <div class="card-body" style="">
+
+                <h5 class="index-card-title card-title" style=""><b>Google Ads Title</b></h5>
+              <p class="index-card-text card-text" style="">Custom Instagram posts</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" >
+                  <input type="hidden" value="google-ads-title" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+          <div class="shadow card">
+            <div class="card-body">
+
+                <h5 class="index-card-title card-title"><b>Google Ads Description</b></h5>
+              <p class="index-card-text card-text">Find popular tags by niche</p>
+              <form action="smartcopy-play" method="post">
+                {% csrf_token %}
+                <div class="button" style="text-align: center;">
+                  <input class="standard-button" id='syncebay' type="submit" value=">" >
+                  <input type="hidden" value="google-ads-description" name="service">
+                </div>
+                </form>
+            </div>
+          </div>
+
+      </div>
+    </div>
+    <!-- AMAZON TAB CONTENT -->
     <div class="tab-pane fade" id="pills-amazon-ads" role="tabpanel" aria-labelledby="pills-amazon-ads-tab">...</div>
     <div class="tab-pane fade" id="pills-ebay-ads" role="tabpanel" aria-labelledby="pills-ebay-ads-tab">...</div>
     <div class="tab-pane fade" id="pills-landing-page" role="tabpanel" aria-labelledby="pills-landing-page-tab">...</div>

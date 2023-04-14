@@ -12,6 +12,8 @@ from mainapp.ws_cj import cj_get_shipping_methods, cj_get_inventory_inquiry
 
 
 def connect_woocommerce_store(user, store_name, host, ck, cs):
+    user.store_type = 'woocommerce'
+    user.store_name = store_name
     user.woocommerce_store_name = store_name
     user.woocommerce_host = host = host
     user.woocommerce_consumer_key = ck
@@ -19,6 +21,7 @@ def connect_woocommerce_store(user, store_name, host, ck, cs):
     user.save()
 
 def reset_woocommerce_store(user):
+    user.store_type = 'none'
     user.woocommerce_store_name = ''
     user.woocommerce_host = host = ''
     user.woocommerce_consumer_key = ''
@@ -26,13 +29,21 @@ def reset_woocommerce_store(user):
     user.save()
 
 def connect_shopify_store(user, store_name, host, ck, cs):
+    user.store_type = 'shopify'
+    user.store_name = store_name
     user.shopify_store_name = store_name
     user.shopify_host = host = host
     user.shopify_consumer_key = ck
     user.shopify_secret_key = cs
     user.save()
 
+def connect_cj_account(user, cj_email, cj_key):
+    user.cjdropshipping_email = cj_email
+    user.cjdropshipping_api_key = cj_key
+    user.save()
+
 def reset_shopify_store(user):
+    user.store_type = 'none'
     user.shopify_store_name = ''
     user.shopify_host = host = ''
     user.shopify_consumer_key = ''
