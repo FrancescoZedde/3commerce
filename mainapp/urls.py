@@ -83,6 +83,11 @@ urlpatterns = [
     path('return-page/', views.return_page, name='return-page'),
     path('callback-endpoint/', views.callback_endpoint, name='callback-endpoint'),
     path('callback-endpoint-wc/', views.callback_endpoint_wc, name='callback-endpoint'),
+
+
+    path('store-onsale', views.store_onsale, name='store-onsale'),
+
+
     
     
 ]

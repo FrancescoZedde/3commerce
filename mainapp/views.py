@@ -234,7 +234,19 @@ def reset_store(request):
             reset_woocommerce_store(request.user)
         return redirect(profile)
 
+@login_required(login_url='/login')
+def store_onsale(request):
+    if request.method == 'GET':
+        #check if store is woo or shop
 
+        #retrieve products
+            #retrieve keys
+            #call to retrive
+
+        context = {'products': 'x'}
+        return render(request, 'mainapp/store_onsale.html', context)
+    if request.method == 'POST':
+        return redirect(profile)
 
 @login_required(login_url='/login')
 def trending(request):
