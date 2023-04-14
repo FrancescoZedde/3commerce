@@ -109,7 +109,7 @@ def profile(request):
 
         params = {
             "app_name": "SellFastApp",
-            "scope": "read_write",
+            "scope": "read_write,read_all_orders",
             "user_id": 123,
             "return_url": 'http://sellfast.app'  + '/return-page',
             "callback_url": 'https://sellfast.app' + '/callback-endpoint-wc'
