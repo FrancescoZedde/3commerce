@@ -28,7 +28,7 @@
         {% if user.store_name != '' %}
         <!-- SHOPIFY -->
         <li>
-            <a href="{% url 'store-onsale' %}">On Sale</a>
+            <a href="{% url 'store-onsale' %}">{{user.store_name}}</a>
         </li>
         {% else %}
         <!-- CONNECT STORE -->

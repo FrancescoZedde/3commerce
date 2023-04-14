@@ -225,6 +225,7 @@
 <div class="row">
     
 </div>
+<div style="overflow-x:auto;">
 <table class="inventory-table" id="inventory-table">
   <div style="text-align:right; margin-right:1em;">
     <button id='select-all-button' class="standard-button" onclick="select_deselect_all_rows()" >Select all</button> 
@@ -233,15 +234,11 @@
   <tr class="tr-header">
     <th></th>
     <th></th>
-    <th>SKU</th>
     <th>Name</th>
     <th>Supplier</th>
-    <th>Category</th>
     <th>Supplier price</th>
     <th>Sell price</th>
-    <th>Store</th>
-    <th>Ebay</th>
-    <th>Template</th>
+
     <th></th>
     <th></th>
     <th></th>
@@ -251,29 +248,10 @@
   <tr class="tr-standard">
     <td class="td-standard">{{item.id}}</td>
     <td class="td-standard"><img src={{item.productImage}} alt="" width="100" height="100"></td>
-    <td class="td-standard">{{item.sku}}</td>
     <td class="td-standard">{{item.itemName}}</td>
     <td class="td-standard">{{item.supplier}}</td>
-    <td class="td-standard">{{item.categoryThird}}  </td>
     <td class="td-standard">{{item.supplierSellPrice}}</td>
     <td class="td-standard">{{item.sellPrice}}</td>
-    <td class="td-standard">
-        {% if item.onsaleWoocommerce == False %}
-          <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
-        {% else %}
-          <img src="http://xzshop.eu/wp-content/uploads/2023/02/check.png" alt="Yes" width="25" height="25"> 
-        {% endif %}
-    </td>
-    <td class="td-standard">
-      <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
-    </td>  
-    <td class="td-standard">
-        {% if item.descriptionTemplate == '' %}
-          <img src="http://xzshop.eu/wp-content/uploads/2023/02/multiply.png" alt="No" width="25" height="25"> 
-        {% else %}
-          <img src="http://xzshop.eu/wp-content/uploads/2023/02/check.png" alt="Yes" width="25" height="25"> 
-        {% endif %}
-    </td>
     <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
     <td class="td-standard"><a style='color:rgb(65, 134, 255)' href="{% url 'inventory-item-detail-view' pk=item.id %}" target="_blank" rel="follow">View</a></td>
     <td class="td-standard"><a style='color:rgb(239, 57, 57)' href="">Delete</a></td>
@@ -282,6 +260,7 @@
   {% endfor %}
 
 </table>
+</div>
 
 <!--<input type="hidden" id="selecteditems" name="selected-items" value="{{selected_items}}">-->
   <!-- WOOCOMMERCE IMPORT MODAL  -->
