@@ -72,7 +72,7 @@ def callback_endpoint(request):
             access_token = response['access_token']
             user_instance = CustomUser.objects.get(email=request.user.email)
             user_instance.store_type = 'shopify'
-            user_instance.store_name
+            user_instance.store_name = shop
             user_instance.shopify_secret_key = access_token
             user_instance.shopify_host = 'https://' + str(shop)
             user_instance.shopify_store_name = shop
