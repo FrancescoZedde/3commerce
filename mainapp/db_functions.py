@@ -6,7 +6,6 @@ from ast import literal_eval
 import html
 import math
 from bs4 import BeautifulSoup
-from mainapp.ws_cj import cj_get_shipping_methods, cj_get_inventory_inquiry
 
 
 

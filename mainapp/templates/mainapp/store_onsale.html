@@ -5,12 +5,106 @@
 {% block content %}
 
 <div class="standard-command-container">
-    {{products}}
-    {% for product in products %}
-        {{product}}
-    {% endfor %}
+    <table style="font-size: 7px" class="inventory-table" id="inventory-table">
+        <div style="text-align:right; margin-right:1em;">
+        </div>
+          <tr class="tr-header">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        
+          {% for product in products %}
+          <tr class="tr-standard">
+            <td class="td-standard"><img src={{product.mainImage}} alt="" width="75" height="75"></td>
+            <td class="td-name">{{product.name}}</td>
+            <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
+            <td class="td-standard"><a style='color:rgb(65, 134, 255)' href={{product.url}} target="_blank" rel="follow">URL</a></td>
+            <td class="td-standard"><a id="{{product.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_product(this.id)">Edit</a></td>
+            <td class="td-standard"><a style='color:rgb(239, 57, 57)' href="">Delete from store</a></td>
+        
+          </tr>
+          {% endfor %}
+        
+        </table>
 
+        <div style="text-align: center;">
+            <button style="margin-top: 25px;" class="standard-button" id="" onclick="">
+                Load more
+            </button>
+            <button style="margin-top: 25px;" class="standard-button" id="" onclick="">
+                Load all
+            </button>
+        </div>
+        
 </div>
 
+<!-- PRODUCT MODAL -->
+    <div id="modal-product" class="modal-container">
+        <div class="modal-content">
+            <div hidden="hidden" id="loader-product" class="loader"></div>
+            <p id="close-modal-product" class="close">&times;</p>
+            <p id="product-name"></p>
+            <p id="product-sku"></p>
+            <p id="product-average-rating"></p>
+            <p id="product-status"></p>
+            <p id="product-price"></p>
+            <div style="text-align: center;">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                        <input class="standard-button" type="submit" value="Save">
+                    
+                </form>
+            </div>
+        </div>
+    </div>
 
+
+<script>
+
+    async function open_modal_product(product_id){
+        await wocommerceGetProduct(product_id)
+        //show modal
+        let modal = document.getElementById("modal-product");
+        let close = document.getElementById("close-modal-product");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
+        
+        //populate modal
+
+    }
+
+    async function wocommerceGetProduct(product_id) {   
+
+            const k = "{{user.woocommerce_consumer_key}}"+":"+"{{user.woocommerce_secret_key}}"
+            const url = "https://xzshop.eu/wp-json/wc/v3/products/" + product_id.toString();
+            const auth = btoa(k);
+
+            await fetch(url, {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + auth
+              }
+            })
+              .then(response => response.json())
+              .then((data) => {
+                    console.log(data)
+
+                    document.getElementById('product-name').innerText = data['name']
+                    document.getElementById('product-sku').innerText = data['sku']
+                    document.getElementById('product-average-rating').innerText = data['average_rating']
+                    document.getElementById('product-status').innerText = data['status']
+                    document.getElementById('product-price').innerText = data['price']
+
+                    })
+              .catch(error => console.error(error));
+            }
+</script>
 {% endblock %}

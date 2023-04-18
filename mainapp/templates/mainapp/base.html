@@ -160,6 +160,7 @@
       border-width: 2px; 
       border-radius: 2.5px; 
       padding:0.3em;
+      margin-bottom: 0.6em;
     }
 
     .simple-import-button:hover {
@@ -299,11 +300,11 @@
     }
 
     .tr-standard {
-      font-size: 12px; 
+      font-size: 10px; 
       
       text-align: center;
       border-bottom: 1px solid rgb(201, 201, 201);
-    } 
+    }
 
     .tr-standard-clickable-row {
       font-size: 12px; 
@@ -321,8 +322,15 @@
     }
 
     .td-standard {
-      max-width: 5em;
+      max-width: 3em;
     }
+
+    .tr-orders {
+      font-size: 12px; 
+      
+      text-align: left;
+      border-bottom: 1px solid rgb(201, 201, 201);
+    } 
 
 
     /* Modal (background) */
@@ -362,7 +370,16 @@
     }
     .card-title {
          word-wrap: break-word;
+         display: -webkit-box;
+         -webkit-line-clamp: 3;
+         -webkit-box-orient: vertical;
+         max-width: 200px;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         height:10px;
     }
+
+   
 
     .card-info-container{
       position: relative;

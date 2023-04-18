@@ -1,5 +1,5 @@
 from mainapp.db_functions import retrieveItemBySku, retrieveVariantsByItem, retrieveVariantBySku
-from mainapp.ws_cj import cj_get_inventory_inquiry
+from mainapp.ws_cj import CJDropshipping
 import base64
 import re
 
@@ -29,7 +29,7 @@ def ebay_create_json_inventory_item(item_sku):
    variants_item_list = []
 
    for variant in variants:
-      inventory_inquiry = cj_get_inventory_inquiry(variant.vid)
+      cj_get_inventory_inquiry(variant.vid)
       aspects = ebay_set_aspects(item, variant)
       #IN_STOCK,OUT_OF_STOCK,SHIP_TO_STORE
       json_inventory_item = {

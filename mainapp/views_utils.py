@@ -1,5 +1,5 @@
 from mainapp.db_functions import retrieveItemBySku, create_item_and_variants
-from mainapp.ws_cj import cj_products_by_category, cj_get_product_details
+from mainapp.ws_cj import CJDropshipping
 from mainapp.forms import InventoryItemForm, VariantForm
 import math
 from ast import literal_eval
@@ -205,7 +205,8 @@ def compare_lists_and_import_missing_products(inventory_sku_list, shop_sku_list)
         else:
             print('call cj to import item')
             try:
-                product_details = cj_get_product_details(sku)
+                class_instance = CJDropshipping(request.user)
+                product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
                 inventory_item = create_item_and_variants(product_details)
                 results.append({sku:'imported'})
             except:

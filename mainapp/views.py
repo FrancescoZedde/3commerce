@@ -23,7 +23,7 @@ from mainapp.models import InventoryItem, Variant
 from mainapp.ws_ebay_utils import ebay_create_json_inventory_item_group, ebay_create_json_inventory_item, ebay_create_json_offer
 from mainapp.ws_ebay import ebay_match_product_with_ebay_catalog, ebay_search_items_by_keywords, ebay_publish_by_inventory_item_group, create_inventory_items_group, ebay_publish_offer, ebay_bulk_publish_offer, ebay_create_inventory_location, ebay_get_inventory_location, refresh_access_token, get_all_inventory_items, create_inventory_item, ebay_delete_inventory_item, bulk_create_offer
 
-from mainapp.ws_cj import cj_products_by_category, cj_get_product_details, cj_authentication, CJDropshippingConnect
+from mainapp.ws_cj import CJDropshippingConnect, CJDropshipping
 from mainapp.ws_woocommerce import woocommerce_retrieve_product_by_id
 from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
 from mainapp.ws_shopify import Shopify, ShopifyConnect, shopify_exchange_code
@@ -36,7 +36,7 @@ from mainapp.db_functions import connect_cj_account, retrieveItemBySku, connect_
 
 
 
-from users.models import CustomUser
+from users.models import CustomUser, Order
 from users.forms import WooCommerceConnectForm, ShopifyConnectForm, CJDropshippingConnectForm
 
 #from mainapp.woocommerce_methods import woocommerce_massive_import
@@ -245,6 +245,9 @@ def orders(request):
     if request.method == 'GET':
         #check if store is woo or shop
         user_instance = CustomUser.objects.get(email=request.user.email)
+        class_instance = CJDropshipping(request.user)
+        cj_access_token = CJDropshipping.cj_get_access_token(class_instance)
+
         print(user_instance.store_type)
         if user_instance.store_type == 'shopify':
             class_instance = Shopify(user_instance)
@@ -253,11 +256,130 @@ def orders(request):
             context = {'response': response}
             return render(request, 'mainapp/orders.html', context)
         elif user_instance.store_type == 'woocommerce':
-            print('wooooo')
+            orders_pending = Order.objects.filter(user=user_instance, status='pending')
+            orders_submited = Order.objects.filter(user=user_instance, status='submited')
+            context = {'orders_pending': orders_pending, 
+                        'orders_submited': orders_submited, 
+                        'cj_access_token':cj_access_token}
+            return render(request, 'mainapp/orders.html', context)
         else:
             return redirect(inventory_list_view)
     if request.method == 'POST':
         return redirect(inventory_list_view)
+
+
+@login_required(login_url='/login')
+def orders_retrieve(request):
+    if request.method == 'GET':
+        #check if store is woo or shop
+        user_instance = CustomUser.objects.get(email=request.user.email)
+        user_orders = Order.objects.filter(user=user_instance)
+
+        order_ids = []
+        for order in user_orders:
+            order_ids.append(order.external_order_id)
+        print(order_ids)
+        if user_instance.store_type == 'shopify':
+            print('shopifuu')
+            return redirect(orders)
+        elif user_instance.store_type == 'woocommerce':
+            print('wooooo')
+            class_instance = WooCommerce(user_instance)
+            response = WooCommerce.woocommerce_retrieve_all_orders(class_instance)
+            for order in response:
+                print(order['id'])
+                if str(order['id']) in order_ids:
+                    print('order already present')
+                else:
+                    vids = []
+                    for product in order['line_items']:
+                        variant = Variant.objects.filter(variantSku=product['sku'])
+                        vids.append(variant[0].vid)
+                    new_order = Order(user=request.user,
+                                        external_order_id = order['id'],
+                                        order_info=order,
+                                        shipping_zip=order['shipping']['postcode'],
+                                        shipping_country_code=order['shipping']['country'],
+                                        shipping_country=order['shipping']['country'], 
+                                        shipping_province=order['shipping']['state'],
+                                        shipping_city=order['shipping']['city'],
+                                        shipping_address=order['shipping']['address_1'],
+                                        shipping_customer_name=order['shipping']['first_name'] + ' ' + order['shipping']['last_name'],
+                                        shipping_phone=order['shipping']['phone'],
+                                        remark=order['customer_note'],
+                                        from_country_code='CN',
+                                        logistic_name='Default(cheapest option)',
+                                        products=order['line_items'],
+                                        vids = ','.join(vids)
+                                    )
+                    new_order.save()
+            return redirect(orders)
+        else:
+            return redirect(inventory_list_view)
+    if request.method == 'POST':
+        return redirect(inventory_list_view)
+
+@login_required(login_url='/login')
+def orders_update_shipping_method(request):
+    if request.method == 'GET':
+        return redirect(orders)
+    elif request.method == 'POST':
+        
+        new_customer_name = request.POST.get('shipping_customer_name-modal', None)
+        new_phone = request.POST.get('shipping_phone-modal', None)
+        new_address = request.POST.get('shipping_address-modal', None)
+        new_zip = request.POST.get('shipping_zip-modal', None)
+        new_city = request.POST.get('shipping_city-modal', None)
+        new_province = request.POST.get('shipping_province-modal', None)
+        new_country = request.POST.get('shipping_country-modal', None)
+        new_country_code = request.POST.get('shipping_country_code-modal', None)
+        new_logistic_name = request.POST.get('shipping-options-dropdown', None)
+        new_products = request.POST.get('products-modal', None)
+        new_vids = request.POST.get('vids-modal', None)
+        order_id = request.POST.get('id-modal', None)
+        print(order_id)
+        print(new_zip)
+        order = Order.objects.get(id=int(order_id))
+
+        order.shipping_customer_name = new_customer_name
+        order.shipping_phone = new_phone
+        order.shipping_address = new_address
+        order.shipping_zip = new_zip
+        order.shipping_city = new_city
+        order.shipping_province = new_province
+        order.shipping_country = new_country
+        order.shipping_country_code = new_country_code
+        order.logistic_name = new_logistic_name
+        order.products = new_products
+        order.vids = new_vids
+        order.save()
+
+        messages.success(request, f"Shipping method <b>{new_logistic_name}</b> updated for order <b>{order.id}</b>")
+        return redirect(orders)
+
+
+def orders_submit(request):
+    if request.method == 'GET':
+        return redirect(orders)
+    elif request.method == 'POST':
+        class_instance = CJDropshipping(request.user)
+        orders_to_fulfill = re.split(',', request.POST.get('orders-to-fulfill-name', None))
+        print(orders_to_fulfill)
+        message = ''
+        for order in orders_to_fulfill:
+            try:
+                order_object = Order.objects.get(id=int(order))
+                products = literal_eval(order_object.products)
+                response = CJDropshipping.cj_create_order(class_instance, order_object, products)
+                message += 'Order <b>' + str(order) + '</b> succesfully send <br>'
+                order_object.status = 'submited'
+                order_object.save()
+            except:
+                message += 'Order <b>' + str(order) + 'Error <br>'
+
+        messages.success(request, f"{message}")
+        return redirect(orders)
+
 
 
 @login_required(login_url='/login')
@@ -274,10 +396,12 @@ def store_onsale(request):
             return render(request, 'mainapp/store_onsale.html', context)
         elif user_instance.store_type == 'woocommerce':
             class_instance = WooCommerce(request.user)
-            woocommerce_products = WooCommerce.woocommerce_retrieve_all_products(class_instance)
+            woocommerce_products = WooCommerce.woocommerce_retrieve_limited_products(class_instance)
+            print(woocommerce_products)
             products = make_woocommerce_on_sale_products_list(woocommerce_products)
             print(products)
-            context = {'products': products,
+            context = {
+                   'products': products,
                     }
             return render(request, 'mainapp/store_onsale.html', context)
         else:
@@ -329,26 +453,52 @@ def search_results(request):
     if request.method == 'GET':
         return redirect(request, 'mainapp/search.html', context)
     if request.method == 'POST':
-        category_id = request.POST.get('category', None)
-        pagenum = request.POST.get('pagenum', None)
-        pagesize = request.POST.get('pagesize', None)
-        keywords = request.POST.get('keywords', None)
-        results_limit = request.POST.get('results_limit', None)
-        if category_id != None:
-            #esegui ricerca
-            products = cj_products_by_category(category_id, results_limit)
-            if keywords != '':
-                products = filter_by_keywords(products, keywords)
-            #make a list of lists products grouped by 5
-            grouped_products = format_results(products, 6)
+        print(request.POST)
+
+        search_mode = request.POST.get('search-mode')
+
+        if search_mode == 'cj-by-category':
+            category_id = request.POST.get('category', None)
+            keywords = request.POST.get('keywords', None)
+            results_limit = request.POST.get('results_limit', None)
+            if category_id != None:
+                #esegui ricerca
+                class_instance = CJDropshipping(request.user)
+                products = CJDropshipping.cj_products_by_category(class_instance, category_id, results_limit)
+                if keywords != '':
+                    products = filter_by_keywords(products, keywords)
+                #make a list of lists products grouped by 5
+                grouped_products = format_results(products, 6)
+                context = {
+                    'grouped_products':grouped_products,
+                    'products' : products,
+                }
+                return render(request, 'mainapp/search_results.html', context)
+            else:
+                #pagina errore
+                return render(request, 'mainapp/search_results.html')
+        
+        elif search_mode == 'cj-by-sku':
+            sku = request.POST.get('search_by_sku', None)
+            class_instance = CJDropshipping(request.user)
+            product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
+            print(literal_eval(product_details['productImage'])[0])
+
+            description = remove_img_tags(product_details['description'])
+            img_main = literal_eval(product_details['productImage'])[0]
+            img_set = product_details['productImageSet']
+
+            class_instance = CJDropshipping(request.user)
+            access_token = CJDropshipping.cj_get_access_token(class_instance)
             context = {
-                'grouped_products':grouped_products,
-                'products' : products,
+                'product_details': product_details,
+                'img_main': img_main,
+                'img_set': img_set,
+                'description': description,
+                'access_token':access_token,
             }
-            return render(request, 'mainapp/search_results.html', context)
-        else:
-            #pagina errore
-            return render(request, 'mainapp/search_results.html')
+            return render(request, "mainapp/search_product_details.html", context)
+
 
 @login_required(login_url='/login')
 def search_product_details(request):
@@ -356,14 +506,16 @@ def search_product_details(request):
         return render(request, "mainapp/search_product_details.html")
     if request.method == 'POST':
         sku = request.POST.get("selected-item", None)
-        product_details = cj_get_product_details(sku)
+        class_instance = CJDropshipping(request.user)
+        product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
         print(literal_eval(product_details['productImage'])[0])
 
         description = remove_img_tags(product_details['description'])
         img_main = literal_eval(product_details['productImage'])[0]
         img_set = product_details['productImageSet']
         
-        access_token = cj_authentication()
+        class_instance = CJDropshipping(request.user)
+        access_token = CJDropshipping.cj_get_access_token(class_instance)
         context = {
             'product_details': product_details,
             'img_main': img_main,
@@ -399,7 +551,8 @@ def inventory_import(request):
                     import_results.append({'sku':sku, 'code': 'error' , 'message':'SKU already in Inventory'})
                 else:
                     try:
-                        product_details = cj_get_product_details(sku)
+                        class_instance = CJDropshipping(request.user)
+                        product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
                         inventory_item = create_item_and_variants(product_details, request.user)
                         import_results.append({'sku':sku, 'code': 'success' , 'message':'Success'})
                     except:
@@ -420,7 +573,8 @@ def inventory_import(request):
                     import_results.append({'sku':sku, 'code': 'error' , 'message':'SKU already in Inventory'})
                 else:
                     try:
-                        product_details = cj_get_product_details(sku)
+                        class_instance = CJDropshipping(request.user)
+                        product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
                         inventory_item = create_item_and_variants(product_details, request.user)
                         import_results.append({'sku':sku, 'code': 'success' , 'message':'Success'})
                     except:

@@ -30,7 +30,8 @@ class WooCommerce():
         self.wcapi = API(url= user.woocommerce_host,
                         consumer_key= user.woocommerce_consumer_key,
                         consumer_secret= user.woocommerce_secret_key,
-                        wp_api=True,version="wc/v3",
+                        wp_api=True,
+                        version="wc/v3",
                         timeout = 6000,)
     
     def start_woocommerce_products_batch(self, sku_list, categories):
@@ -97,14 +98,26 @@ class WooCommerce():
                             'per_page': '100',
                         }
                 response = self.wcapi.get(endpoint, params=params).json()
+                print(response)
                 products_list = products_list + response
                 print(len(products_list))
                 if len(response) < 100:
                     break
             except:
                 break
+        
         return products_list
     
+    def woocommerce_retrieve_limited_products(self):
+        products_list = []
+        endpoint = "products"
+        params = {  'page': 1,
+                    'per_page': '25',
+                  }
+        products_list = self.wcapi.get(endpoint, params=params).json()
+        print(products_list)
+        return products_list
+
     def woocommerce_retrieve_product_variations(self, woocommerce_id):
         endpoint = "products/" + str(woocommerce_id) + "/variations"
         response = self.wcapi.get("products/794").json()
@@ -140,6 +153,10 @@ class WooCommerce():
         woocommerce_categories = self.wcapi.get("products/categories", params=params).json()
 
         return woocommerce_categories
+
+    def woocommerce_retrieve_all_orders(self):
+        orders = self.wcapi.get("orders").json()
+        return orders
 
 
 

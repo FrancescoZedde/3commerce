@@ -23,7 +23,7 @@
                             <div class="card shadow" id="card-{{product.productSku}}">
                                 <img src={{product.productImage}} style="padding:0.5em;" height="auto" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                  <h5 class="card-title" style="font-size:12px !important; min-height:28%">{{ product.productNameEn }}</h5>
+                                  <p class="card-title" style="font-size:12px !important; min-height:28%">{{ product.productNameEn }}</p>
                                 
                                       <p class="card-text"><small class="text-muted"><!--Sku: {{ product.productSku}}<br> --> 
                                              Listings: {{ product.listedNum}} <br> 
@@ -34,7 +34,8 @@
                                             </form>
                                         </small>
                                       </p>
-                                      <p class="card-text" style="font-size:15px">Price: {{ product.sellPrice }}$</p>
+                                      <p class="card-text" style="font-size:12px">Price: {{ product.sellPrice }}$</p>
+                                      
                                       <form action="inventory-import" method="post">
                                         {% csrf_token %}
                                         <input class="simple-import-button" id='simple-import-inventory' type="submit" value="Import" name="import-inventory">

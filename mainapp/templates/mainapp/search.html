@@ -36,6 +36,8 @@
       {{ cj_search.results_limit | as_crispy_field}}
       <div class="button" style="text-align: center;">
         <input class="standard-button" id='searchbycategory' type="submit" value="Search" name="search-by-category">
+        <input type="hidden" name="search-mode" value="cj-by-category">
+
       </div>
     </form>
     <form action="search-results" method="post">
@@ -44,6 +46,7 @@
       {{ cj_search.search_by_sku | as_crispy_field}}
       <div class="button" style="text-align: center;">
         <input class="standard-button" id='searchbysku' type="submit" value="Search by SKU" name="search-by-sku">
+        <input type="hidden" name="search-mode" value="cj-by-sku">
       </div>
     </form>
   </div>

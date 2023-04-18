@@ -6,6 +6,9 @@ urlpatterns = [
     path('connect-store', views.connect_store, name='connect-store'),
     path('reset-store', views.reset_store, name='reset-store'),
     path('orders', views.orders, name='orders'),
+    path('orders-retrieve', views.orders_retrieve, name='orders-retrieve'),
+    path('orders-update-shipping-method', views.orders_update_shipping_method, name='orders-update-shipping-method'),
+    path('orders-submit', views.orders_submit, name='orders-submit'),
 
     # TRENDING
     path('trending', views.trending, name='trending'),

@@ -55,3 +55,31 @@ class CustomUser(AbstractUser):
 
     def _str_(self):
         return self.username
+
+
+
+class Order(models.Model):
+
+    order_status_choices = (
+        ('pending', 'Pending'),
+        ('submited', 'Submited'),
+        ('fulfilled', 'FulFilled')
+    )
+
+    user = models.ForeignKey(CustomUser, related_name='user',on_delete=models.CASCADE,)
+    external_order_id = models.TextField('External order id:', max_length=10000, default='', blank=True)
+    status = models.CharField(max_length=20, choices=order_status_choices, default="pending")
+    order_info =  models.TextField('Full JSON response:', max_length=10000, default='', blank=True)
+    shipping_zip = models.CharField('Shipping Zip', max_length=10, default='', blank=True)
+    shipping_country_code = models.CharField('Shipping Country Code', max_length=10, default='', blank=True)
+    shipping_country = models.CharField('Shipping Country', max_length=100, default='', blank=True)
+    shipping_province = models.CharField('Shipping Province', max_length=100, default='', blank=True)
+    shipping_city = models.CharField('Shipping City', max_length=100, default='', blank=True)
+    shipping_address = models.TextField('Shipping Address', max_length=500, default='', blank=True)
+    shipping_customer_name = models.CharField('Shipping Customer Name', max_length=100, default='', blank=True)
+    shipping_phone = models.CharField('Shipping Phone', max_length=20, default='', blank=True)
+    remark = models.TextField('Remark', max_length=500, default='', blank=True)
+    from_country_code = models.CharField('From Country Code', max_length=10, default='', blank=True)
+    logistic_name = models.CharField('Logistic Name', max_length=100, default='', blank=True)
+    products = models.TextField('Products', max_length=1000, default='', blank=True)
+    vids = models.TextField('Products', max_length=1000, default='', blank=True)
