@@ -381,6 +381,8 @@ def orders_submit(request):
         return redirect(orders)
 
 
+def verify_for_zoho(request):
+    return render(request, 'mainapp/verifyforzoho.html')
 
 @login_required(login_url='/login')
 def store_onsale(request):

@@ -10,6 +10,9 @@ urlpatterns = [
     path('orders-update-shipping-method', views.orders_update_shipping_method, name='orders-update-shipping-method'),
     path('orders-submit', views.orders_submit, name='orders-submit'),
 
+
+    path('zohoverify/verifyforzoho.html', views.verify_for_zoho, name='verifyforzoho'),
+
     # TRENDING
     path('trending', views.trending, name='trending'),
 
