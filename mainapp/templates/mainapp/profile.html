@@ -27,37 +27,34 @@
   </div>
   <!--WOOCOMMERCE CONNECTOR -->
   <div class="tab-pane fade" id="nav-connector" role="tabpanel" aria-labelledby="nav-connector-tab">
-     <div class="standard-command-container" style="margin-top:1em;">
+     <div style="margin-top:1em;">
       {% if user.woocommerce_store_name == '' and user.shopify_store_name == '' %}
-        <div class="card-deck">
-          <div class="card" style="border:none">
-            <div class="image-connect-store-container">
-              <button style="border:none; background: transparent;" id="open-modal-shopify" onclick="open_modal_connect(this.id)">
-              
-                <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/shopify-ar21.png" style="width: 100%; height: 250px; text-align:center; padding:8px">
-              
-                </button>
-          </div>
-          </div>
-         </div> 
-          <div class="card-deck">
-          <div class="card" style="border:none">
-            <div class="image-connect-store-container">
-              <button style="border:none; background: transparent;" id="open-modal-woocommerce" onclick="open_modal_connect(this.id)">
-                <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
+      <div class="card-deck">
+        <div class="card" style="border:none; background-color: #f3f3f3;">
+          <div class="image-connect-store-container">
+            <button style="border:none; background: transparent;" id="open-modal-shopify" onclick="open_modal_connect(this.id)">
+            
+              <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/shopify-ar21.png" style="width: 100%; height: 250px; text-align:center; padding:8px">
+            
               </button>
-          </div>
-          </div>
-          </div>
-        <div class="card-deck">
-          <div class="card" style="border:none;">
+        </div>
+        </div>
+        <div class="card" style="border:none; background-color: #f3f3f3;">
+          <div class="image-connect-store-container">
+            <button style="border:none; background: transparent;" id="open-modal-woocommerce" onclick="open_modal_connect(this.id)">
+              <img class="connect-store-image" src="http://xzshop.eu/wp-content/uploads/2023/03/woocommerce-logo-vector.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
+            </button>
+        </div>
+        </div>
+          <div class="card" style="border:none; background-color: #f3f3f3;">
             <div class="image-connect-store-container">
             <button style="border:none !important; background: transparent;" id="open-modal-cjdropshipping" onclick="open_modal_connect(this.id)">
               <img class="connect-store-image" src="https://www.naveedulhaq.com/wp-content/uploads/2021/11/cj-dropshipping.png" style="width: 95%; height: 250px; text-align:center; padding:8px">
             </button>
           </div>
           </div>
-        </div>
+          </div>
+        
         </div>
 
       {% elif user.woocommerce_store_name != '' %}

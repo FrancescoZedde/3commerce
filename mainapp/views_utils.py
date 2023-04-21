@@ -4,6 +4,7 @@ from mainapp.forms import InventoryItemForm, VariantForm
 import math
 from ast import literal_eval
 import re
+import datetime
 
 
 def remove_img_tags(description_string):
@@ -297,3 +298,76 @@ def format_results(list_of_products, elements_for_row):
             break
 
     return grouped_products_list
+
+
+
+def map_json_shopify_to_woocommerce(json_data):
+    # Map product data
+    product = {
+        "id": json_data["id"],
+        "name": json_data["title"],
+        "slug": json_data["handle"],
+        "mainImage":json_data["image"]['src'],
+        "permalink": f"https://example.com/product/{json_data['handle']}/",
+        "date_created": datetime.datetime.fromisoformat(json_data["created_at"][:-6]).strftime("%Y-%m-%dT%H:%M:%S"),
+        "date_created_gmt": json_data["created_at"],
+        "date_modified": datetime.datetime.fromisoformat(json_data["updated_at"][:-6]).strftime("%Y-%m-%dT%H:%M:%S"),
+        "date_modified_gmt": json_data["updated_at"],
+        "type": "simple",
+        "status": json_data["status"],
+        "featured": False,
+        "catalog_visibility": "visible",
+        "description": json_data["body_html"],
+        "short_description": "",
+        "sku": json_data["variants"][0]["sku"],
+        "price": json_data["variants"][0]["price"],
+        "regular_price": json_data["variants"][0]["price"],
+        "sale_price": None,
+        "date_on_sale_from": None,
+        "date_on_sale_from_gmt": None,
+        "date_on_sale_to": None,
+        "date_on_sale_to_gmt": None,
+        "price_html": "",
+        "on_sale": False,
+        "purchasable": True,
+        "total_sales": 0
+    }
+
+    # Map variations data
+    variations = []
+    for variant in json_data["variants"]:
+        variation = {
+            "id": variant["id"],
+            "sku": variant["sku"],
+            "price": variant["price"],
+            "regular_price": variant["price"],
+            "sale_price": None,
+            "date_on_sale_from": None,
+            "date_on_sale_from_gmt": None,
+            "date_on_sale_to": None,
+            "date_on_sale_to_gmt": None,
+            "on_sale": False,
+            "purchasable": True,
+            "attributes": [
+                {
+                    "id": option["id"],
+                    "name": option["name"],
+                    "option": variant[f"option{index + 1}"]
+                } for index, option in enumerate(json_data["options"])
+            ],
+            "image": {
+                "id": variant["image_id"],
+                "date_created": datetime.datetime.fromisoformat(json_data["created_at"][:-6]).strftime("%Y-%m-%dT%H:%M:%S"),
+                "date_created_gmt": json_data["created_at"],
+                "date_modified": datetime.datetime.fromisoformat(json_data["updated_at"][:-6]).strftime("%Y-%m-%dT%H:%M:%S"),
+                "date_modified_gmt": json_data["updated_at"],
+                "src": next((image["src"] for image in json_data["images"] if image["id"] == variant["image_id"]), None),
+                "name": None,
+                "alt": None
+            }
+        }
+        variations.append(variation)
+
+    product["variations"] = variations
+
+    return product

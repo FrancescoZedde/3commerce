@@ -141,12 +141,17 @@ class WooCommerce():
         print(response)
   
 
-    def woocommerce_delete_product(self, woocommerce_id):
-        endpoint = "products/" + str(woocommerce_id)
-        params = {"force": True}
+    def woocommerce_delete_product(self, woocommerce_id, force):
 
-        response = self.wcapi.get(endpoint, params=params).json()
+        endpoint = "products/" + str(woocommerce_id)
+        params = {"force": force}
+
+
+        response = self.wcapi.delete(endpoint, params=params).json()
+        print('product delete')
+        print(params)
         print(response)
+        return response
 
     def get_woocommerce_categories(self):
         params = {'per_page': '99'}
@@ -157,7 +162,6 @@ class WooCommerce():
     def woocommerce_retrieve_all_orders(self):
         orders = self.wcapi.get("orders").json()
         return orders
-
 
 
 

@@ -93,6 +93,7 @@ urlpatterns = [
 
 
     path('store-onsale', views.store_onsale, name='store-onsale'),
+    path('store-delete', views.store_delete, name='store-delete'),
 
 
     

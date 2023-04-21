@@ -23,12 +23,17 @@
     <div class="tab-pane fade show active" id="pending-fulfillment" role="tabpanel" aria-labelledby="pending-fulfillment-tab">
       <div class="standard-command-container">
         <p><b>Autopilot</b></p>
-        <small>Automates order placement</small>
+
+        
+        <div style="margin-left: 1em;" class="form-check form-switch">
+          <input class="form-check-input" default="False" type="checkbox" id="flex-switch">
+          <label class="form-check-label" for="flexSwitchCheckDefault"><small>Automates order placement</small></label>
+        </div>
       </div>
       <div class="row" style="text-align: center; margin-top: 5%;">
         <div class="col">
           <button id="" class="standard-button" onclick="open_modal_fulfill()">FulFill</button>
-          <p><small>Submit orders </small></p>
+          <p><small>Place orders </small></p>
         </div>
         <div class="col">
           <form action="orders-retrieve" method="GET">
@@ -95,7 +100,8 @@
             
             <td class="td-standard" style="color:greenyellow">{{order.status}}</td>
             <td class="td-standard">{{order.shipping_customer_name}}</td>
-            
+            <td class="td-standard">{{order.logistic_name}}</td>
+            <td class="td-standard">{{order.from_country_code}}</td>
             <td class="td-standard">{{order.shipping_country}}</td>
             
           </tr>
@@ -112,7 +118,9 @@
           
         <span id="tracker-response"></span>
 
+        <div>  
           <button class="standard-button" onclick="get_track_info()">Check</button>
+        </div>
       </div>
   </div>
 </div>
@@ -397,7 +405,10 @@
                   if (data['data'].length == 0){
                     document.getElementById('tracker-response').innerHTML += '<p>Looks like there is not shipping linked to this track code.</p><p>Please check if your code is correct.</p>'
                   }else{
-                    document.getElementById('tracker-response').innerHTML += data['data'][0].toString()
+                    data['data'].forEach((tracker)=>{
+                      console.log(tracker)
+                      document.getElementById('tracker-response').innerHTML += '<b>Logistic name:</b> ' + tracker['logisticName'] + '<br>' + '<b>Status: </b>'+ tracker['routes'][0]['remark']
+                    })
                   }
                 })
                 .catch(error => console.error(error));

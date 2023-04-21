@@ -5,6 +5,63 @@
 {% load static %}
 
 {% block content %}
+
+<div class="standard-command-container">
+    <div style="text-align: center; margin-bottom:1em;">
+        <button id="open-actions-panel-button" class="btn" onclick="control_actions_panel()">
+          <i class="fa fa-sort-desc fa-2x"></i>
+        </button>
+        <button id="close-actions-panel-button" class="btn" hidden="hidden" onclick="control_actions_panel()">
+          <i class="fa fa-sort-asc fa-2x"></i>
+        </button>
+      </div>
+
+    <div id="search-panel" hidden="hidden">
+    <!-- Tab navigation section -->
+    <ul class="nav nav-pills mb-3" id="myTab" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" id="cj-tab" data-toggle="tab" href="#cj" role="tab" aria-controls="cj" aria-selected="true">CJ Dropshipping</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="aliexpress-tab" data-toggle="tab" href="#aliexpress" role="tab" aria-controls="aliexpress" aria-selected="false">Aliexpress</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="europe-tab" data-toggle="tab" href="#europe" role="tab" aria-controls="europe" aria-selected="false">Europe</button>
+      </li>
+    </ul>
+    
+    <!-- Tab content section -->
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="cj" role="tabpanel" aria-labelledby="cj-tab" style="margin-top: 3em;">
+        <form action="search-results" method="post">
+          <p style="margin-top:5px;margin-bottom:20px;">
+          {% csrf_token %}
+          {{ cj_search.category | as_crispy_field}}
+          {{ cj_search.keywords | as_crispy_field}}
+          {{ cj_search.results_limit | as_crispy_field}}
+          <div class="button" style="text-align: center;">
+            <input class="standard-button" id='searchbycategory' type="submit" value="Search" name="search-by-category">
+            <input type="hidden" name="search-mode" value="cj-by-category">
+    
+          </div>
+        </form>
+        <form action="search-results" method="post">
+          <p style="margin-top:5px;margin-bottom:20px;">
+          {% csrf_token %}
+          {{ cj_search.search_by_sku | as_crispy_field}}
+          <div class="button" style="text-align: center;">
+            <input class="standard-button" id='searchbysku' type="submit" value="Search by SKU" name="search-by-sku">
+            <input type="hidden" name="search-mode" value="cj-by-sku">
+          </div>
+        </form>
+      </div>
+      <div class="tab-pane fade" id="aliexpress" role="tabpanel" aria-labelledby="aliexpress-tab">aliexpress</div>
+      <div class="tab-pane fade" id="europe" role="tabpanel" aria-labelledby="europe-tab">europe</div>
+    </div> 
+</div>
+</div>
+
+
 <div>
     <form action="inventory-import" method="post">
         {% csrf_token %}
@@ -98,6 +155,28 @@
          }
 
       }
+
+
+      function control_actions_panel() {
+          console.log('control_actions_panel')
+          let open_panel_button = document.getElementById("open-actions-panel-button");
+          let close_panel_button = document.getElementById("close-actions-panel-button");
+          let panel = document.getElementById("search-panel");
+          
+          let hidden = panel.getAttribute("hidden");
+
+          if (hidden) {
+            panel.removeAttribute("hidden");
+            close_panel_button.removeAttribute("hidden");
+            open_panel_button.setAttribute("hidden", "hidden");
+            
+         } else {
+            panel.setAttribute("hidden", "hidden");
+            close_panel_button.setAttribute("hidden", "hidden");
+            open_panel_button.removeAttribute("hidden");
+            
+         }
+        }
 </script>
 
 {% endblock %}

@@ -12,7 +12,7 @@ from urllib.parse import urlencode
 from django.urls import reverse
 
 
-from mainapp.views_utils import new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
+from mainapp.views_utils import map_json_shopify_to_woocommerce, new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
 
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
@@ -32,7 +32,7 @@ from mainapp.ws_printful import Printful
 
 from mainapp.ws_facebook import instagram_check_container_validity, instagram_create_container_media, instagram_create_container_carousel, instagram_publish_carousel
 
-from mainapp.db_functions import connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
+from mainapp.db_functions import retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
 
 
 
@@ -59,6 +59,9 @@ def callback_endpoint_wc(request):
         return JsonResponse({'message': 'API keys received'})
     else:
         return JsonResponse({'error': 'Invalid request'})
+
+
+
 def callback_endpoint(request):
     if request.method == 'GET':
         code = request.GET.get('code')
@@ -71,7 +74,8 @@ def callback_endpoint(request):
             # save access-token for the user
             access_token = response['access_token']
             user_instance = CustomUser.objects.get(email=request.user.email)
-            user_instance.store_type = 'shopify'
+            
+            user_instance.store_type = 'Shopify'
             user_instance.store_name = shop
             user_instance.shopify_secret_key = access_token
             user_instance.shopify_host = 'https://' + str(shop)
@@ -109,7 +113,7 @@ def profile(request):
 
         params = {
             "app_name": "SellFastApp",
-            "scope": "read_write,read_all_orders",
+            "scope": "read_write",
             "user_id": 123,
             "return_url": 'http://sellfast.app'  + '/return-page',
             "callback_url": 'https://sellfast.app' + '/callback-endpoint-wc'
@@ -127,7 +131,7 @@ def profile(request):
         shopify_store_url = "https://sellfast-development-store.myshopify.com/admin/oauth/authorize"
         shopify_params = {
             "client_id": "700418a025a1df4a02784f0ed03362da",
-            "scope": "write_products",
+            "scope": "write_products, read_orders",
             "redirect_uri" : "https://sellfast.app/callback-endpoint"
         }
 
@@ -252,7 +256,6 @@ def orders(request):
         if user_instance.store_type == 'shopify':
             class_instance = Shopify(user_instance)
             response = Shopify.shopify_retrieve_orders(class_instance)
-
             context = {'response': response}
             return render(request, 'mainapp/orders.html', context)
         elif user_instance.store_type == 'woocommerce':
@@ -393,8 +396,12 @@ def store_onsale(request):
         if user_instance.store_type == 'shopify':
             class_instance = Shopify(user_instance)
             products = Shopify.shopify_retrieve_all_products(class_instance)
-
-            context = {'products': products}
+            print(products)
+            list_products = []
+            for product in products:
+                list_products.append(map_json_shopify_to_woocommerce(product))
+            print('heere')
+            context = {'products': list_products}
             return render(request, 'mainapp/store_onsale.html', context)
         elif user_instance.store_type == 'woocommerce':
             class_instance = WooCommerce(request.user)
@@ -410,6 +417,42 @@ def store_onsale(request):
             return redirect(inventory_list_view)
     if request.method == 'POST':
         return redirect(inventory_list_view)
+
+
+@login_required(login_url='/login')
+def store_delete(request):
+    if request.method=='GET':
+        return redirect(store_onsale)
+    if request.method =='POST':
+        store_id = request.POST.get("store-product-id", None)
+        force = request.POST.get("force", False)
+        if force == "on" or force == True:
+            force = 'true'
+        elif force == None or force == False:
+            force = 'false'
+        else:
+            force = 'false'
+
+        
+        print(store_id)
+        #check store type
+        store_type = request.user.store_type
+        if store_type == 'shopify':
+            print("shop")
+        elif store_type == 'woocommerce':
+            print("shop")
+            try:
+                class_instance = WooCommerce(request.user)
+                response = WooCommerce.woocommerce_delete_product(class_instance, store_id, force)
+                print(response)
+                messages.success(request, f'Product removed!')
+                return redirect(store_onsale)
+            except:
+                messages.error(request, f'Error, note deleted')
+                return redirect(store_onsale)
+
+            
+
 
 @login_required(login_url='/login')
 def trending(request):
@@ -453,10 +496,10 @@ def search(request):
 @login_required(login_url='/login')
 def search_results(request):
     if request.method == 'GET':
-        return redirect(request, 'mainapp/search.html', context)
+        return redirect(search)
     if request.method == 'POST':
         print(request.POST)
-
+        cj_search = CJSearchProducts()
         search_mode = request.POST.get('search-mode')
 
         if search_mode == 'cj-by-category':
@@ -474,6 +517,7 @@ def search_results(request):
                 context = {
                     'grouped_products':grouped_products,
                     'products' : products,
+                    'cj_search':cj_search,
                 }
                 return render(request, 'mainapp/search_results.html', context)
             else:
@@ -694,6 +738,13 @@ def inventory_list_view_import_commands(request):
         if dropdown_value == 'import-shopify':
             print('import to shopify')
             print(selected_items)
+            percentage_increase = request.POST.get("pricepercentageincrease", None)
+            minimumprice = float(request.POST.get("minimumprice", None))
+            roundat = request.POST.get("roundat", None)
+            use_preset_price = request.POST.get("use_preset_price", None)
+            print(use_preset_price)
+            print(minimumprice)
+            update_items_offer(request.user, selected_items, percentage_increase, minimumprice, roundat,use_preset_price)
             items = InventoryItem.objects.filter(user=request.user, sku__in=selected_items)
             for item in items:
                 variants = Variant.objects.filter(item=item) 
@@ -706,15 +757,16 @@ def inventory_list_view_import_commands(request):
             return redirect(inventory_list_view)
         elif dropdown_value == 'import-woocommerce':
             print("import to woocommerc")
-            selected_items = request.POST.get("selected-items", None)
             percentage_increase = request.POST.get("pricepercentageincrease", None)
+            minimumprice = request.POST.get("minimumprice", None)
+            roundat = request.POST.get("roundat", None)
             categories = request.POST.get("wc-categories", None)
             #select_categories = request.POST.get("selectcategories", None)
 
             selected_items = re.split(',', selected_items,)
             categories = re.split(',', categories,)
             print(categories)
-            update_items_offer(request.user, selected_items, percentage_increase)
+            update_items_offer(request.user, selected_items, percentage_increase, minimumprice, roundat, use_preset_price)
             #start_woocommerce_products_batch(selected_items, categories)
             class_instance = WooCommerce(request.user)
             WooCommerce.start_woocommerce_products_batch(class_instance, selected_items, categories )
@@ -735,15 +787,28 @@ def inventory_item_detail_view(request, pk):
     print(pk)
     gpt_write_dscription_form = ChatGPTWriteDescriptionForm()
     item = retrieveInventoryItemById(pk)
+    variants = retrieveVariantsByItem(item)
+    class_instance = CJDropshipping(request.user)
+    cj_access_token = CJDropshipping.cj_get_access_token(class_instance)
+    print(cj_access_token)
     item_original_description = remove_img_tags(item.description)
     img_set = literal_eval(item.productImageSet)
+
     item_form = InventoryItemForm(instance=item)
+
+    variant_forms = []
+    for variant in variants:
+        variant_form = VariantForm(instance=variant)
+        variant_forms.append(variant_form)
+
     context = {'pk': pk, 
                 'item':item,
+                'variants':variants,
                 'item_form': item_form,
                 'item_original_description':item_original_description,
                 'img_set':img_set,
                 'gpt_write_dscription_form': gpt_write_dscription_form,
+                'cj_access_token':cj_access_token
                 }
     return render(request, 'mainapp/inventory_item_detail_view.html', context)
 

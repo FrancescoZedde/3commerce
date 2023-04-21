@@ -17,7 +17,9 @@ def index(request):
     if request.user.is_authenticated:
         return render(request, 'mainapp/dashboard.html')
     else:
-        return render(request, 'users/index.html')
+        registration_form = UserRegistrationForm()
+        context = {'registration_form':registration_form}
+        return render(request, 'users/index.html', context)
 
 def activate(request, uidb64, token):
     User = get_user_model()
@@ -86,6 +88,7 @@ def custom_login(request):
     if request.method == 'POST':
         login_form = AuthenticationForm(request=request, data=request.POST)
         if login_form.is_valid():
+            
             user = authenticate(
                 username=login_form.cleaned_data['username'],
                 password=login_form.cleaned_data['password'],

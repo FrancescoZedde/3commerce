@@ -15,8 +15,9 @@
                         </div>
                         <div class="card-body">
                             <form action="inventory-item-detail-view-save-changes" method="post">
-                                <h5 class="card-title"><div id="item-name-text">{{item_form.itemName}}</div></h5>
                                 <p class="card-text">
+                                  <b>Item Name</b>
+                                  {{item_form.itemName}}
                                   <b>Sell Price</b>
                                   {{item_form.sellPrice}}
                                   <b>SKU</b>
@@ -46,23 +47,6 @@
                             </form>
                         </div>
                       </div>
-                </div>
-                <!-- SEARCH SIMILAR ITEMS -->
-                <div class="standard-command-container">
-                    <div class="row">
-                        <h5><b>Search Similar Items</b></h5>
-                        <p>Search for similar items on Ebay, Amazon, etc.</p>
-                    </div>
-                    <div class="row">
-                        <form action="inventory-item-search-similar-items" method="post">
-                            {% csrf_token %}
-                                <div class="button">
-                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search" name="search-similar-item-name">
-                                </div>
-                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
-                                <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
-                            </form>
-                    </div>
                 </div>
                 <!-- IMAGES CONTROL PANEL -->
                 <div class="standard-command-container">
@@ -123,17 +107,131 @@
                     <h5><b>Title and Description Writer</b></h5> <small><i>Powered by GPT-4</i></small>
 
                     <p style="margin-top: 1em;"><b>Words left:</b> {{request.user.words}}</p>
-                    <p>Write SEO-optimized product titles for ecommerce websites. Generate titles that are optimized for search engine results in seconds, helping to increase visibility and drive more traffic to products.</p>
-                    <div style="margin-top:1em;">
+                    <p>Write optimized titles for search engine results in seconds.</p>
+                    <div style="margin-top:0.5em; margin-bottom:1em;">
                         <button class="standard-button" id="OpenModalTitleGPT" onclick="open_modal(this.id)">Generate Title</button>
                       </div>
-                    <p>Write product descriptions with optional features such as bullet points lists and SEO optimized content. It provides custom-tailored, high-quality d
-                        escriptions to help businesses enhance their product listings, improve SEO rankings, and increase sales. With its natural language processing and 
-                        advanced AI capabilities, it can provide accurate and engaging descriptions that capture the essence of a product and highlight its best features.</p>
-                    <div style="margin-top:1em;">
+                    <p>Write product descriptions with optional features such as bullet points lists, emojies and SEO optimized content. Improve SEO rankings and increase sales.</p>
+                    <div style="margin-top:0.5em; margin-bottom:1em;">
                       <button class="standard-button" id="OpenModalDescriptionGPT" onclick="open_modal(this.id)">Generate Description</button>
                     </div>
                 </div>
+                <!-- VARIANTS -->
+                <div class="standard-command-container">
+                  <div style="text-align:center">
+                    <button class="standard-button" id="show-variants" onclick="show_hide_variants()">Variants</button>
+                  </div>
+                  <div id="variants-div" hidden="hidden">
+                    {% for variant in variants %}
+                    <div class="card bg-light mb-3" style="max-width:100%; max-height: 20em;">
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group" style="text-align: center;">
+                              <img src="{{variant.variantImage}}" width="200px" height="200px" style="padding: 2px;">
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantNameEn}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.sellPrice}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantKey}}">
+                              <input type="hidden" id='variant-id' name="variant-id" value="{{variant.vid}}">
+                              
+                            </div>
+                          </div>
+                        </div>
+                  
+                      </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <!-- SHIPPING -->
+                <div class="standard-command-container" id="calc-shipping" style="font-family: Poppins">
+                  <label for="calc-shipping-options">Ship to:</label>
+                        <select class="country-select form-control" name="calc-shipping" id="calc-shipping-options">
+                          <option value="none" selected="selected"></option>
+                          <option value="AR" data-icon="https://www.countryflags.io/ar/flat/64.png">Argentina</option>
+                          <option value="AU" data-icon="https://www.countryflags.io/au/flat/64.png">Australia</option>
+                          <option value="AT" data-icon="https://www.countryflags.io/at/flat/64.png">Austria</option>
+                          <option value="BD" data-icon="https://www.countryflags.io/bd/flat/64.png">Bangladesh</option>
+                          <option value="BE" data-icon="https://www.countryflags.io/be/flat/64.png">Belgium</option>
+                          <option value="BR" data-icon="https://www.countryflags.io/br/flat/64.png">Brazil</option>
+                          <option value="CA" data-icon="https://www.countryflags.io/ca/flat/64.png">Canada</option>
+                          <option value="CL" data-icon="https://www.countryflags.io/cl/flat/64.png">Chile</option>
+                          <option value="CN" data-icon="https://www.countryflags.io/cn/flat/64.png">China</option>
+                          <option value="CO" data-icon="https://www.countryflags.io/co/flat/64.png">Colombia</option>
+                          <option value="CZ" data-icon="https://www.countryflags.io/cz/flat/64.png">Czech Republic</option>
+                          <option value="EG" data-icon="https://www.countryflags.io/eg/flat/64.png">Egypt</option>
+                          <option value="FR" data-icon="https://www.countryflags.io/fr/flat/64.png">France</option>
+                          <option value="DE" data-icon="https://www.countryflags.io/de/flat/64.png">Germany</option>
+                          <option value="GR" data-icon="https://www.countryflags.io/gr/flat/64.png">Greece</option>
+                          <option value="HU" data-icon="https://www.countryflags.io/hu/flat/64.png">Hungary</option>
+                          <option value="IN" data-icon="https://www.countryflags.io/in/flat/64.png">India</option>
+                          <option value="ID" data-icon="https://www.countryflags.io/id/flat/64.png">Indonesia</option>
+                          <option value="IR" data-icon="https://www.countryflags.io/ir/flat/64.png">Iran</option>
+                          <option value="IQ" data-icon="https://www.countryflags.io/iq/flat/64.png">Iraq</option>
+                          <option value="IE" data-icon="https://www.countryflags.io/ie/flat/64.png">Ireland</option>
+                          <option value="IL" data-icon="https://www.countryflags.io/il/flat/64.png">Israel</option>
+                          <option value="IT" data-icon="https://www.countryflags.io/it/flat/64.png">Italy</option>
+                          <option value="JP" data-icon="https://www.countryflags.io/jp/flat/64.png">Japan</option>
+                          <option value="KR" data-icon="https://www.countryflags.io/kr/flat/64.png">South Korea</option>
+                          <option value="MY" data-icon="https://www.countryflags.io/my/flat/64.png">Malaysia</option>
+                          <option value="MX" data-icon="https://www.countryflags.io/mx/flat/64.png">Mexico</option>
+                          <option value="NL" data-icon="https://www.countryflags.io/nl/flat/64.png">Netherlands</option>
+                          <option value="NG" data-icon="https://www.countryflags.io/ng/flat/64.png">Nigeria</option>
+                          <option value="NO" data-icon="https://www.countryflags.io/no/flat/64.png">Norway</option>
+                          <option value="PK" data-icon="https://www.countryflags.io/pk/flat/64.png">Pakistan</option>
+                          <option value="PE" data-icon="https://www.countryflags.io/pe/flat/64.png">Peru</option>
+                          <option value="PH" data-icon="https://www.countryflags.io/ph/flat/64.png">Philippines</option>
+                          <option value="PL" data-icon="https://www.countryflags.io/pl/flat/64.png">Poland</option>
+                          <option value="PT" data-icon="https://www.countryflags.io/pt/flat/64.png">Portugal</option>
+                          <option value="RO" data-icon="https://www.countryflags.io/ro/flat/64.png">Romania</option>
+                          <option value="RU" data-icon="https://www.countryflags.io/ru/flat/64.png">Russia</option>
+                          <option value="SA" data-icon="https://www.countryflags.io/sa/flat/64.png">Saudi Arabia</option>
+                          <option value="ZA" data-icon="https://www.countryflags.io/za/flat/64.png">South Africa</option>
+                          <option value="SG" data-icon="https://www.countryflags.io/sg/flat/64.png">Singapore</option>
+                          <option value="ES" data-icon="https://www.countryflags.io/es/flat/64.png">Spain</option>
+                          <option value="SE" data-icon="https://www.countryflags.io/se/flat/64.png">Sweden</option>
+                          <option value="CH" data-icon="https://www.countryflags.io/ch/flat/64.png">Switzerland</option>
+                          <option value="TH" data-icon="https://www.countryflags.io/th/flat/64.png">Thailand</option>
+                          <option value="TR" data-icon="https://www.countryflags.io/tr/flat/64.png">Turkey</option>
+                          <option value="UA" data-icon="https://www.countryflags.io/ua/flat/64.png">Ukraine</option>
+                          <option value="AE" data-icon="https://www.countryflags.io/ae/flat/64.png">United Arab Emirates</option>
+                          <option value="GB" data-icon="https://www.countryflags.io/gb/flat/64.png">United Kingdom</option>
+                          <option value="US" data-icon="https://www.countryflags.io/us/flat/64.png">United States</option>
+                          <option value="VE" data-icon="https://www.countryflags.io/ve/flat/64.png">Venezuela</option>
+                          <option value="VN" data-icon="https://www.countryflags.io/vn/flat/64.png">Vietnam</option>
+                        </select>
+                        <div style="text-align: center;margin-top:1em;">
+                          <button id="calc-shipping-button" class="standard-button" onclick="calc_shipping()">Estimate shipping</button>
+                        </div>
+              
+                        <ul id="shipping-options" class="list-group">
+                              <!-- SHIPPING OPTIONS -->
+                        </ul>
+              </div>
+              <!-- SEARCH SIMILAR ITEMS -->
+              <div class="standard-command-container">
+                <div class="row">
+                    <h5><b>Search Similar Items</b></h5>
+                    <p>Search for similar items on Ebay, Amazon, etc.</p>
+                </div>
+                <div class="row">
+                    <form action="inventory-item-search-similar-items" method="post">
+                        {% csrf_token %}
+                            <div class="button">
+                                <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search" name="search-similar-item-name">
+                            </div>
+                            <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
+                        </form>
+                </div>
+            </div>
                 <!-- INSTAGRAM -->
                 <div class="standard-command-container">
                     <div class="row">
@@ -155,6 +253,7 @@
                         </div>
                     </div>
                 </div>
+                
 <!-- WRITE TITLE MODAL -->
 <div id="modal-write-title-gpt" class="modal-container">
     <div class="modal-content">
@@ -234,6 +333,97 @@
 </main>
 <script>
 
+
+    window.onload = function() {
+          
+      
+      let at_from_js = cj_get_access_token()
+      
+      var img_urls = document.querySelectorAll("[name^=variant-img-url-]")
+      var img_tags = document.querySelectorAll("[name^=variant-img-url-]")
+
+      console.log(img_urls)
+      img_urls.forEach((url)=>{
+        console.log(url.value)
+      })
+
+        
+    }
+
+
+    async function cj_get_access_token() {
+                let url = 'https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken';
+                let data = {
+                  email: "{{user.cjdropshipping_email}}",
+                  password: "{{user.cjdropshipping_api_key}}"
+                };
+                let auth_resp = await fetch(url, {
+                  method: 'POST',
+                  body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data)
+                  return data['data']['accessToken'];
+                })
+                .catch(error => {
+                  console.error(error);
+                });
+              }
+    
+    function calc_shipping(){
+        document.getElementById('shipping-options').innerHTML = ''
+
+        var ship_to = document.getElementById("calc-shipping-options").value;
+        const access_token = "{{cj_access_token}}"
+        variants_ids = document.getElementsByName('variant-id')
+        const vid = variants_ids[0].value
+        const url = 'https://developers.cjdropshipping.com/api2.0/v1/logistic/freightCalculate';
+        const data = { 
+                        "startCountryCode": "CN",
+                        "endCountryCode": ship_to,
+                        "products": [
+                                    {
+                                        "quantity": 1,
+                                        "vid": vid
+                                    }
+                                ]
+                            };
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers:{
+            'Content-Type': 'application/json',
+            "CJ-Access-Token": access_token,
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          var shipping_options = data['data']
+          var options_list = document.getElementById('shipping-options')
+          console.log(options_list)
+
+          if (shipping_options.length == 0){
+            options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><p>No shipping methods found for this destination.</p></li>'  
+          }else{
+            shipping_options.forEach((option) => {
+              options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><p><b>'+ option['logisticName'] + '</b></p><p>' + option['logisticAging'] + ' days / ' + option['logisticPrice'] +' $</p></li>'        
+            })
+          }
+          
+          /*
+          console.log(shipping_options)
+          for (option in shipping_options){
+            console.log(option["logisticAging"])
+          }*/
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
     function open_modal(button_id){
           //var action = document.getElementById("action-options").value;
           //button_id
@@ -307,6 +497,16 @@
         let cleanText = rawHtml.replace(cleaner, '');
         cleanText = cleanText.slice(0, 600);
         return cleanText;
+    }
+
+    function show_hide_variants(){
+        variants_div = document.getElementById('variants-div')
+        is_hidden = variants_div.hidden
+        if (is_hidden == true){
+            variants_div.removeAttribute('hidden')
+        }else {
+            variants_div.setAttribute('hidden','hidden')
+        }
     }
 
     async function gpt_write_title(){
@@ -483,6 +683,7 @@
 
         spinner.setAttribute("hidden", "hidden")
     }
+
 </script>
 
 {% endblock %}

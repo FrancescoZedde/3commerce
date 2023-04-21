@@ -598,7 +598,10 @@ manipulation_options = (
 class ManipulationOptions(forms.Form):'''
 
 class woocommerceImportSetup(forms.Form):
-    pricepercentageincrease = forms.FloatField(label="Increase price by (%):", help_text="For a 100% increase write '100' ")
+    pricepercentageincrease = forms.FloatField(label="Increase price by (%):", help_text="For a 100% increase write '100' ", required=False)
+    minimumprice = forms.FloatField(label="Minimum price:", help_text="")
+    roundat = forms.FloatField(min_value=0.01, max_value=0.99, label="Round your prices:", help_text="Example: 0.99 or 0.90")
+
     #usepriceperproduct = forms.BooleanField(label='Uses sell prices set on a per-product basis', initial=False, required=False)
     #categories = forms.CharField(max_length = 200)
 
@@ -804,7 +807,7 @@ class InventoryItemForm(ModelForm):
 class VariantForm(ModelForm):
     class Meta:
         model = Variant
-        fields = ['variantNameEn', 'description','sellPrice', 'variantKey', 'variantSku','supplierSellPrice','variantImage','allShippingMethods','allLocations']
+        fields = ['variantNameEn', 'description','sellPrice', 'variantKey', 'variantSku','supplierSellPrice','variantImage']
         widgets = {
             'variantNameEn': TextInput(attrs={
                 'class': "form-control",
@@ -839,8 +842,6 @@ class VariantForm(ModelForm):
                 'style': 'max-width: 100%; font-size: 11px;',
                 'readonly': True,
                 }),
-            'allShippingMethods':Textarea(attrs={'cols': 100, 'rows': 5, 'style': 'max-width: 100%; font-size: 11px;','readonly': True,}),
-            'allLocations':Textarea(attrs={'cols': 100, 'rows': 5, 'style': 'max-width: 100%; font-size: 11px;','readonly': True,}),
         }
 
 

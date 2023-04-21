@@ -24,6 +24,7 @@
   
   <!--NEW COMMAND PANEL-->
 <div id="actions-panel" hidden="hidden">
+  <!--
   <div class="row">
     <div class="col-8">
     </div>
@@ -37,10 +38,18 @@
         <button class="csv-button" id='open-modal-csv-export' name="csv-modal-button">Export CSV</button>
       </div>
     </div>
+  </div>-->
+  <div class="row">
+    <div class="button" style="text-align: right; margin-top:2em; margin-right: 1em;">
+      <input class="standard-button" id='bulk-sync-button' type="submit" value="Sync" name="bulk-button">
+    </div>
   </div>
   <div class="row" style="margin-top:2em;">
-    <div class="col-4">
-          <label for="action-dropdown">Actions:</label>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="action-dropdown">Actions:</label>
             <select class="form-select" name="action-dropdown" id="action-options">
               <option value="none" selected="selected"></option>
               <option value="edit">Edit</option>
@@ -52,155 +61,31 @@
             <div style="text-align: center;margin-top:1em;">
               <button class="standard-button" id="OpenModalActions" onclick="open_modal_action()">Execute</button>
             </div>
-          
-    </div>
-    <div class="col-4">
-        <label for="import-dropdown">Import:</label>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="import-dropdown">Import:</label>
           <select class="form-select" name="import-dropdown" id="import-options">
             <option value="none" selected="selected"></option>
+            <!--
             <option value="shopify">Shopify</option>
-            <option value="woocommerce">WooCommerce</option>
+            <option value="woocommerce">WooCommerce</option>-->
+            <option id="user-store" value="{{user.store_type}}">{{user.store_name}}</option>
             <option value="ebay">Ebay</option>
           </select>
           <div style="text-align: center;margin-top:1em;">
             <button class="standard-button" id="OpenModalActions" onclick="open_modal_import()">Import</button>
           </div>
-    </div>
-    <div class="col-4">
-      <form action="inventory-list-view-sync-commands" method="post" style="text-align: left;">
-        {% csrf_token %}
-        <label for="sync-dropdown">Sync to:</label>
-          <select class="form-select" name="sync-dropdown" id="sync-options">
-            <option value="none" selected="selected"></option>
-            <option value="sync-all">Sync All</option>
-            <option value="woocommerce">WooCommerce</option>
-            <option value="ebay">Ebay</option>
-          </select>
-        <div class="button" style="text-align: center; margin-top:1em;">
-          <input class="standard-button" id='bulk-sync-button' type="submit" value="Sync" name="bulk-button">
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+      </div>
+
+
+
   </div>
 </div>
-  
-  <!--<div id="actions-panel" hidden="hidden">
-      <div class="standard-command-container">
-        <div class="row">
-          <p><b>Sync Actions</b></p>
-        </div>
-        <div class="row">
-          <div class="col-2">
-            <form action="inventory-sync" method="post">
-              {% csrf_token %}
-              <div class="button" style="text-align: center;">
-                <input class="sync-button" id='syncwoocommerce' type="submit" value="Sync with Woocommerce" name="sync-with-woocommerce">
-              </div>
-
-            </form>
-        </div>
-        <div class="col-2">
-          <form action="inventory-sync" method="post">
-            {% csrf_token %}
-            <div class="button" style="text-align: center;">
-              <input class="sync-button" id='syncebay' type="submit" value="Sync with Ebay" name="sync-with-ebay">
-            </div>
-            </form>
-        </div>
-        <div class="col-2">
-        </div>
-        <div class="col-2">
-        </div>
-        <div class="col-2">
-        </div>
-        <div class="col-2">
-          <div class="button" style="text-align: center;">
-            <button class="csv-button" id='open-modal-csv-import' name="csv-modal-button">Import CSV</button>
-          </div>
-          <div class="button" style="text-align: center;">
-            <button class="csv-button" id='open-modal-csv-export' name="csv-modal-button">Export CSV</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-      <div class="standard-command-container">
-        <div class="row">
-          <p><b>Bulk Import Actions</b></p>
-          <p>Action applies to all selected items.</p>
-        </div>
-        <div class="row">
-          <div class="col-2">
-
-            <div class="button" style="text-align: center;margin-bottom:1em;">
-              <button class="import-button" id="OpenModalImportWoocommerce">WooCommerce</button>
-            </div>
-              
-            
-        </div>
-        <div class="col-2">
-
-          <div class="button" style="text-align: center;">
-            <button class="import-button" id="OpenModalImportEbay">Ebay</button>
-          </div>
-
-        </div>
-        <div class="col-2">
-
-
-        </div>
-        <div class="col-2">
-        </div>
-        <div class="col-2">
-        </div>
-        <div class="col-2">
-        </div>
-      </div>
-    </div>
-      <div class="standard-command-container">
-       <div class="row">
-          <p><b>Bulk Manipulation Actions</b></p>
-          <p>Action applies to all selected items.</p>
-       </div>  
-        <div class="row">
-          <div class="col-2">
-            <form action="inventory-edit-items" method="post">
-              {% csrf_token %}
-              <div class="button" style="text-align: center;">
-                <input class="standard-button" id='editselecteditems' type="submit" value="Edit selected items" name="edit-selected-items">
-              </div>
-              <input type="hidden" id="selecteditems" name="selected-items" value="{{selected_items}}">
-            </form>
-        </div>
-        <div class="col-2">
-          <form action="inventory-delete-items" method="post">
-            {% csrf_token %}
-          <div class="button" style="text-align: center;">
-            <input class="standard-button" id='deleteselecteditems' type="submit" value="Delete selected items" name="delete-selected-items">
-          </div>
-          <input type="hidden" id="selecteditemsdelete" name="selected-items-delete" value="{{selected_items_delete}}">
-        </form>
-        </div>
-        <div class="col-2">
-          <form action="inventory-add-default-template" method="post">
-            {% csrf_token %}
-          <div class="button" style="text-align: center;">
-            <input class="standard-button" id='adddefaulttemplate' type="submit" value="Add default template" name="add-default-template">
-          </div>
-          <input type="hidden" id="selecteditemsadddefaulttemplate" name="selected-items-add-default-template" value="{{selected_items_add_default_template}}">
-          </form>
-        </div>
-        <div class="col-2">
-          
-        </div>
-        <div class="col-2">
-        </div>
-        <div class="col-2">
-               
-        </div>
-      </div>
-    </div>
-  </div>-->
 </div>
 <div class="standard-command-container">
   <div class="row">
@@ -292,7 +177,7 @@
             <div class="col-6" style="text-align:center;">
               <div class="form-check form-switch">
                 <input class="form-check-input" default="False" type="checkbox" id="flex-switch">
-                <label class="form-check-label" for="flexSwitchCheckDefault">Use the "Sell Price" setted for the product </label>
+                <label class="form-check-label" for="flexSwitchCheckDefault">Use the price set by individual product </label>
               </div>
             </div>
             <div class="col-6" style="text-align:center;">
@@ -328,7 +213,16 @@
         <form action="inventory-list-view-import-commands" method="post" style="text-align: left;">
           {% csrf_token %}
           <div class="row">
-
+            <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px;">
+              <input class="form-check-input" name="use_preset_price" default="False" type="checkbox" id="flex-switch" onchange="show_hide_increase_by_percentage()">
+              <label class="form-check-label" for="flexSwitchCheckDefault">Use the price set by individual product </label>
+            </div>
+            <div id="percentage-increase-div">
+              {{woocommerce_import_setup_form.pricepercentageincrease | as_crispy_field}}
+            </div>
+            {{woocommerce_import_setup_form.minimumprice | as_crispy_field}}
+            {{woocommerce_import_setup_form.roundat | as_crispy_field}}
+              
           </div>
           <!-- SHOPIFY IMPORT  BUTTON -->
           <div class="row">
@@ -347,7 +241,7 @@
   <!-- EBAY IMPORT MODAL  -->
   <div id="modalebay" class="modal-container">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span id="close-ebay" class="close">&times;</span>
       <div id="" style="margin-top: 1em">
         <!-- EBAY SETUP FORM-->
         <form action="ebay-start-export-batch" method="post">
@@ -543,20 +437,28 @@
         //let {WooCommerceRestApi} = require("woocommerce-rest-api");
 
         document.addEventListener("DOMContentLoaded", function(){
-          category_list = document.getElementById('category-list')
-          fetch('https://xzshop.eu/wp-json/wc/v3/products/categories?per_page=99', {
-              method: 'GET',
-              headers: {
-                'Authorization': 'Basic ' + btoa('ck_f7e2f705702d1ad6b8cb76a216329947e431a9a1:cs_8db2d0a442e9579465c0f3c9c7bfb1c80b461fd8')
-              }
-            })
-            .then(response => response.json())
-            .then(data => data.forEach(
-                function(element) {
-                  category_list.innerHTML += '<label><input id="wc-cat-' + element['id'] +'" style="position:absolute;top:-20px;" type="checkbox" value="1" onchange="select_woocommerce_categories()"><span>'+ element['name'] +'</span></label>'
-                })
-            )
-            .catch(error => console.error(error))
+
+          var store_type = document.getElementById('user-store').value
+
+          if (store_type == "shopify"){
+
+          }else if(store_type =="woocommerce"){
+                    category_list = document.getElementById('category-list')
+                    fetch('https://xzshop.eu/wp-json/wc/v3/products/categories?per_page=99', {
+                        method: 'GET',
+                        headers: {
+                          'Authorization': 'Basic ' + btoa('{{user.woocommerce_consumer_key}}:{{user.woocommerce_secret_key}}')
+                        }
+                      })
+                      .then(response => response.json())
+                      .then(data => data.forEach(
+                          function(element) {
+                            category_list.innerHTML += '<label><input id="wc-cat-' + element['id'] +'" style="position:absolute;top:-20px;" type="checkbox" value="1" onchange="select_woocommerce_categories()"><span>'+ element['name'] +'</span></label>'
+                          })
+                      )
+                      .catch(error => console.error(error))
+                    }
+          
         });
         
         
@@ -719,7 +621,7 @@
           // EBAY
           else if (import_to == "ebay"){
             let modalEbay = document.getElementById("modalebay");
-            let closetypemodal_1 = document.getElementsByClassName("close")[1];
+            let closetypemodal_1 = document.getElementById("close-ebay");
 
             closetypemodal_1.onclick = function() {
               modalEbay.style.display = "none";
@@ -829,6 +731,17 @@
         //console.log("{{selected_items}}")
           
       }
+
+      function show_hide_increase_by_percentage(){
+        percentage_increase_div = document.getElementById('percentage-increase-div')
+        console.log(percentage_increase_div)
+        is_hidden = percentage_increase_div.hidden
+        if (is_hidden == true){
+          percentage_increase_div.removeAttribute('hidden')
+        }else {
+          percentage_increase_div.setAttribute('hidden','hidden')
+        }
+    }
     
       </script>
       {% endblock %}

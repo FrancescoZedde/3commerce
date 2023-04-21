@@ -26,7 +26,7 @@
             <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
             <td class="td-standard"><a style='color:rgb(65, 134, 255)' href={{product.url}} target="_blank" rel="follow">URL</a></td>
             <td class="td-standard"><a id="{{product.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_product(this.id)">Edit</a></td>
-            <td class="td-standard"><a style='color:rgb(239, 57, 57)' href="">Delete from store</a></td>
+            <td class="td-standard"><a id="delete-{{product.id}}" style='color:rgb(239, 57, 57)' href="#" onclick="return open_modal_delete(this.id)">Delete from store</a></td>
         
           </tr>
           {% endfor %}
@@ -64,6 +64,47 @@
         </div>
     </div>
 
+    <!-- DELETE MODAL -->
+    <div id="modal-delete" class="modal-container">
+      <div class="modal-content">
+          <div hidden="hidden" id="loader-product" class="loader"></div>
+          <form action="store-delete" method="POST">
+            {% csrf_token %}
+          <p id="close-modal-delete" class="close">&times;</p>
+          <div style="text-align: center;">
+          <input type="hidden" name="store-product-id" id="delete-product-id">
+ 
+          <div class="row">
+            <div class="col-3">
+
+            </div>
+            <div class="col-6">
+              <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px;">
+                <input class="form-check-input" name="force" default="False" type="checkbox" id="flex-switch">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Delete permanently? </label>
+              </div>
+    
+              <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px;">
+                <input class="form-check-input" name="sync-inventory" default="False" type="checkbox" id="flex-switch">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Sync Inventory? This will delete the product if present in the Inventory app </label>
+                
+                
+              </div>
+            </div>
+            <div class="col-3">
+              
+            </div>
+          </div>
+          
+              
+                      <input class="standard-button" type="submit" value="Delete">
+                    </div>
+                  
+              </form>
+          </div>
+      </div>
+  </div>
+
 
 <script>
 
@@ -79,6 +120,20 @@
         
         //populate modal
 
+    }
+
+    function open_modal_delete(product_id){
+
+        var store_id = product_id.replace("delete-", '')
+        console.log(store_id)
+        document.getElementById("delete-product-id").value = store_id
+        
+        let modal = document.getElementById("modal-delete");
+        let close = document.getElementById("close-modal-delete");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
     }
 
     async function wocommerceGetProduct(product_id) {   

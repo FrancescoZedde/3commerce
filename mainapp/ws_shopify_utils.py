@@ -43,7 +43,7 @@ class ShopifyUtils:
                         variant_dict[option_position] = value
 
             variant_dict["sku"] = variant.variantSku
-            variant_dict["price"] = variant.supplierSellPrice
+            variant_dict["price"] = variant.sellPrice
 
             variants_set.append(variant_dict)
         print(variants_set)

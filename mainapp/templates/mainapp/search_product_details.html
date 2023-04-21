@@ -17,7 +17,7 @@
                     <input type="hidden" id="selected-item-sku" name="selected-item" value="{{ product_details.productSku}}">
                  
             </div>
-                <h5 class="card-title"><div id="item-name-text">{{product_details.productNameEn}}</div></h5>
+                <h5 class=""><div id="item-name-text">{{product_details.productNameEn}}</div></h5>
                 <div class="product-img">
                     <img class="card-img-top" src={{img_main}}>
                 </div>
@@ -75,7 +75,7 @@
             <div class="card bg-light mb-3" style="max-width:100%; max-height: 20em;">
                 <div class="card-header">{{variant.variantNameEn}}</div>
                 <div class="card-body">
-                    <img src="{{variant.variantImage}}" width="150px" height="150px">
+                    <img  src="{{ variant.variantImage }}" width="150px" height="150px">
                   <p class="card-text"><b>Price:</b> {{variant.variantSellPrice}} -- <b>Variant key:</b> {{variant.variantKey}} --</p>
                   <input type="hidden" name="variant-id" value="{{variant.vid}}">
                 </div>
@@ -145,10 +145,12 @@
         })
         .then(response => response.json())
         .then(data => {
+          console.log(data)
           var shipping_options = data['data']
           var options_list = document.getElementById('shipping-options')
+          console.log(options_list)
           shipping_options.forEach((option) => {
-            options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><b>'+ option['logisticName'] + '</b> => ' + option['logisticAging'] + ' days -- ' + option['logisticPrice'] +'$</li>'        
+            options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><p><b>'+ option['logisticName'] + '</b></p><p>' + option['logisticAging'] + ' days / ' + option['logisticPrice'] +' $</p></li>'        
         })
           /*
           console.log(shipping_options)

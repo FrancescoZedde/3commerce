@@ -177,19 +177,19 @@ def create_variant(inventory_item, variant):
 
     variant.save()
 
-def update_items_offer(user, selected_items, percentage_increase):
+def update_items_offer(user, selected_items, percentage_increase, minimumprice, roundat, use_preset_price):
     for sku in selected_items:
         print(sku)
         item_object = retrieve_item_by_user_and_sku(user, sku)
         print(item_object)
-        updated_item = set_item_price(item_object, percentage_increase)        
+        updated_item = set_item_price(item_object, percentage_increase, minimumprice, roundat, use_preset_price)        
         #updated_item.selectcategories = select_categories
         updated_item.save()
 
         variants_query_set = Variant.objects.filter(item=updated_item) 
         for variant in variants_query_set:
             #da aggiungere categorie + shipping options
-            variant = set_variant_price(variant, percentage_increase)
+            variant = set_variant_price(variant, percentage_increase, minimumprice, roundat, use_preset_price)
             variant.save()
             
 
@@ -236,15 +236,31 @@ def string_to_dict(string):
     return updates_dict
 
 
-def set_item_price(item_object, percentage_increase):
+def set_item_price(item_object, percentage_increase, minimumprice, roundat, use_preset_price):
     if '-' in item_object.supplierSellPrice or '--' in item_object.supplierSellPrice:
         if '-' in item_object.supplierSellPrice:
             min_and_max = item_object.supplierSellPrice.split("-")
         elif '--' in item_object.supplierSellPrice:
             min_and_max = item_object.supplierSellPrice.split("--")
         print(min_and_max)
-        min_price = float(min_and_max[0]) + float(min_and_max[0]) * ( float(percentage_increase)/float(100) )
-        max_price = float(min_and_max[1]) + float(min_and_max[1]) * ( float(percentage_increase)/float(100) )
+        print(use_preset_price)
+        if use_preset_price == 'on' or use_preset_price == True:
+            min_price = float(min_and_max[0])
+            max_price = float(min_and_max[1])
+        else:
+            min_price = float(min_and_max[0]) + float(min_and_max[0]) * ( float(percentage_increase)/float(100) )
+            max_price = float(min_and_max[1]) + float(min_and_max[1]) * ( float(percentage_increase)/float(100) )
+
+        # set minimumprice as minimum is the min_price is <
+        if float(min_price) < float(minimumprice):
+            min_price = float(minimumprice)
+            if max_price < min_price:
+                max_price = min_price*1.2
+
+        #round prices
+        min_price = math.modf(min_price)[1] + float(roundat)
+        max_price = math.modf(max_price)[1] + float(roundat)
+
 
         item_object.sellPrice = str(min_price) + '-' + str(max_price)
 
@@ -252,24 +268,41 @@ def set_item_price(item_object, percentage_increase):
     else:
         supplier_price = float(item_object.supplierSellPrice)
 
-        sell_price = supplier_price + supplier_price * ( float(percentage_increase)/float(100) )
+        if use_preset_price == 'on' or use_preset_price == True:
+            sell_price = supplier_price
+        else:
+            sell_price = supplier_price + supplier_price * ( float(percentage_increase)/float(100) )
 
         sell_price = math.modf(sell_price) # (0.5678000000000338, 1234.0)
 
-        sell_price = float(sell_price[1]) + 0.99
+        # set minimumprice as minimum is the min_price is <
+        if float(sell_price[1]) < float(minimumprice):
+            minimumprice = math.modf(minimumprice)
+            #round price
+            sell_price = float(minimumprice[1]) + float(roundat)
+        else:
+            sell_price = float(sell_price[1]) + float(roundat)
 
         item_object.sellPrice = str(sell_price)
 
         return item_object
 
-def set_variant_price(variant, percentage_increase):
+def set_variant_price(variant, percentage_increase, minimumprice, roundat, use_preset_price):
     supplier_price = float(variant.supplierSellPrice)
 
-    sell_price = supplier_price + supplier_price * ( float(percentage_increase)/float(100) )
-
+    if use_preset_price == 'on' or use_preset_price == True:
+        sell_price = supplier_price
+    else:
+        sell_price = supplier_price + supplier_price * ( float(percentage_increase)/float(100) )
+    
     sell_price = math.modf(sell_price) # (0.5678000000000338, 1234.0)
-
-    sell_price = float(sell_price[1]) + 0.99
+    # set minimumprice as minimum is the min_price is <
+    if float(sell_price[1]) < float(minimumprice):
+        minimumprice = math.modf(minimumprice)
+        #round price
+        sell_price = float(minimumprice[1]) + float(roundat)
+    else:
+        sell_price = float(sell_price[1]) + float(roundat)
 
     variant.sellPrice = float(sell_price)
 
