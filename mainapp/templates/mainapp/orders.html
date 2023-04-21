@@ -43,70 +43,85 @@
           </form>
         </div>
         </div>
-        <table style="font-size: 9px" class="inventory-table" id="inventory-table">
-            <div style="text-align:right; margin-right:1em;">
-            </div>
-              <tr class="tr-header">
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </tr>
-            
-              {% for order in orders_pending %}
-              <tr class="tr-orders">
-                
-                <td class="td-standard" style="color:rgb(222, 213, 41)">{{order.status}}</td>
-                <td class="td-standard">{{order.shipping_customer_name}}</td>
-                
-                <td class="td-standard">{{order.shipping_country}}</td>
-                <!--<td class="td-standard">{{order.logistic_name}}</td>-->
-                <td class="td-standard"><input type="checkbox" id="checkbox-{{order.id}}" name="order-checkbox" onchange="select_orders()"/></td>
-                <td class="td-standard"><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_order_setup(this.id)">Setup</a></td>
-                
-                <input type="hidden" id="id-{{order.id}}" value="{{order.id}}">
-                <input type="hidden" id="shipping_customer_name-{{order.id}}" value="{{order.shipping_customer_name}}">
-                <input type="hidden" id="shipping_country-{{order.id}}" value="{{order.shipping_country}}">
-                <input type="hidden" id="logistic_name-{{order.id}}" value="{{order.logistic_name}}">
-                <input type="hidden" id="shipping_zip-{{order.id}}" value="{{order.shipping_zip}}">
-                <input type="hidden" id="shipping_address-{{order.id}}" value="{{order.shipping_address}}">
-                <input type="hidden" id="shipping_country_code-{{order.id}}" value="{{order.shipping_country_code}}">
-                <input type="hidden" id="shipping_city-{{order.id}}" value="{{order.shipping_city}}">
-                <input type="hidden" id="shipping_province-{{order.id}}" value="{{order.shipping_province}}">
-                <input type="hidden" id="products-{{order.id}}" value="{{order.products}}">
-                <input type="hidden" id="shipping_phone-{{order.id}}" value="{{order.shipping_phone}}">
-                <input type="hidden" id="vids-{{order.id}}" value="{{order.vids}}">
-                <!--
-                <input type="hidden" id="remark-{{order.id}}" value="{{order.remark}}">
-                <input type="hidden" id="fromCountryCode-{{order.id}}" value="{{order.fromCountryCode}}">
-                <input type="hidden" id="logisticName-{{order.id}}" value="{{order.logisticName}}">-->
-              </tr>
-              {% endfor %}
+
+        <!-- ORDERS PENDING  TABLE-->
+        <div style="overflow-x:auto;">
+          <div class="table-responsive">
+            <table class="table">
+               <thead>
+                 <tr>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  
+                 </tr>
+               </thead>
+               <tbody>
+                 {% for order in orders_pending %}
+                  <tr>
+                    <td class="td-standard" style="color:rgb(222, 213, 41)">{{order.status}}</td>
+                    <td>{{order.shipping_customer_name}}</td>
+
+                    <td>{{order.shipping_country}}</td>
+                    <!--<td>{{order.logistic_name}}</td>-->
+                    <td><input type="checkbox" id="checkbox-{{order.id}}" name="order-checkbox" onchange="select_orders()"/></td>
+                    <td><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_order_setup(this.id)">Setup</a></td>
+
+                    <input type="hidden" id="id-{{order.id}}" value="{{order.id}}">
+                    <input type="hidden" id="shipping_customer_name-{{order.id}}" value="{{order.shipping_customer_name}}">
+                    <input type="hidden" id="shipping_country-{{order.id}}" value="{{order.shipping_country}}">
+                    <input type="hidden" id="logistic_name-{{order.id}}" value="{{order.logistic_name}}">
+                    <input type="hidden" id="shipping_zip-{{order.id}}" value="{{order.shipping_zip}}">
+                    <input type="hidden" id="shipping_address-{{order.id}}" value="{{order.shipping_address}}">
+                    <input type="hidden" id="shipping_country_code-{{order.id}}" value="{{order.shipping_country_code}}">
+                    <input type="hidden" id="shipping_city-{{order.id}}" value="{{order.shipping_city}}">
+                    <input type="hidden" id="shipping_province-{{order.id}}" value="{{order.shipping_province}}">
+                    <input type="hidden" id="products-{{order.id}}" value="{{order.products}}">
+                    <input type="hidden" id="shipping_phone-{{order.id}}" value="{{order.shipping_phone}}">
+                    <input type="hidden" id="vids-{{order.id}}" value="{{order.vids}}">
+                    <!--
+                    <input type="hidden" id="remark-{{order.id}}" value="{{order.remark}}">
+                    <input type="hidden" id="fromCountryCode-{{order.id}}" value="{{order.fromCountryCode}}">
+                    <input type="hidden" id="logisticName-{{order.id}}" value="{{order.logisticName}}">-->
+        
+                   </tr>
+                   {% endfor %}
+               </tbody>
             </table>
+          </div>
+        </div>
     </div>
     <div class="tab-pane fade" id="fulfilled" role="tabpanel" aria-labelledby="fulfilled-tab">
-      <table style="font-size: 9px" class="inventory-table" id="inventory-table">
-        <div style="text-align:right; margin-right:1em;">
+      <div style="overflow-x:auto;">
+        <div class="table-responsive">
+          <table class="table">
+             <thead>
+               <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                
+               </tr>
+             </thead>
+             <tbody>
+               {% for order in orders_submited %}
+                <tr>
+                  <td style="color:greenyellow">{{order.status}}</td>
+                  <td>{{order.shipping_customer_name}}</td>
+                  <td>{{order.logistic_name}}</td>
+                  <td>{{order.from_country_code}}</td>
+                  <td>{{order.shipping_country}}</td>
+      
+                 </tr>
+                 {% endfor %}
+             </tbody>
+          </table>
         </div>
-          <tr class="tr-header">
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        
-          {% for order in orders_submited %}
-          <tr class="tr-orders">
-            
-            <td class="td-standard" style="color:greenyellow">{{order.status}}</td>
-            <td class="td-standard">{{order.shipping_customer_name}}</td>
-            <td class="td-standard">{{order.logistic_name}}</td>
-            <td class="td-standard">{{order.from_country_code}}</td>
-            <td class="td-standard">{{order.shipping_country}}</td>
-            
-          </tr>
-          {% endfor %}
-        </table>
+      </div>
 
     </div>
     <div class="tab-pane fade" id="tracker" role="tabpanel" aria-labelledby="tracker-tab">

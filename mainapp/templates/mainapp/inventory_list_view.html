@@ -111,44 +111,49 @@
     
 </div>
 <div style="overflow-x:auto;">
-<table class="inventory-table" id="inventory-table">
-  <div style="text-align:right; margin-right:1em;">
-    <button id='select-all-button' class="standard-button" onclick="select_deselect_all_rows()" >Select all</button> 
-    <button id='deselect-all-button' class="standard-button" hidden='hidden'  onclick="select_deselect_all_rows()" >Deselect all</button> 
+  <div class="table-responsive">
+    <table class="table">
+       <caption>List of users</caption>
+       <thead>
+         <tr>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col">SKU</th>
+          <th scope="col">Name</th>
+          <th scope="col">Supplier</th>
+          <th scope="col">Supplier price</th>
+          <th scope="col">Sell price</th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr>
+           <th scope="row">1</th>
+           <td>Mark</td>
+           <td>Otto</td>
+           <td>@mdo</td>
+         </tr>
+          {% for item in all_inventory_items %}
+          <tr>
+             <th scope="row">{{item.id}}</td>
+             <td><img src={{item.productImage}} alt="" width="100" height="100"></td>
+             <td>{{item.sku}}</td>
+             <td>{{item.itemName}}</td>
+             <td>{{item.supplier}}</td>
+
+             <td>{{item.supplierSellPrice}}</td>
+             <td>{{item.sellPrice}}</td>
+             <td><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
+             <td><a style='color:rgb(65, 134, 255)' href="{% url 'inventory-item-detail-view' pk=item.id %}" target="_blank" rel="follow">View</a></td>
+             <td><a style='color:rgb(239, 57, 57)' href="">Delete</a></td>
+
+           </tr>
+           {% endfor %}
+       </tbody>
+    </table>
   </div>
-  <tr class="tr-header">
-    <th></th>
-    <th></th>
-    <th>SKU</th>
-    <th>Name</th>
-    <th>Supplier</th>
- 
-    <th>Supplier price</th>
-    <th>Sell price</th>
-
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-  {% for item in all_inventory_items %}
-  <tr class="tr-standard">
-    <td class="td-standard">{{item.id}}</td>
-    <td class="td-standard"><img src={{item.productImage}} alt="" width="100" height="100"></td>
-    <td class="td-standard">{{item.sku}}</td>
-    <td class="td-standard">{{item.itemName}}</td>
-    <td class="td-standard">{{item.supplier}}</td>
- 
-    <td class="td-standard">{{item.supplierSellPrice}}</td>
-    <td class="td-standard">{{item.sellPrice}}</td>
-    <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
-    <td class="td-standard"><a style='color:rgb(65, 134, 255)' href="{% url 'inventory-item-detail-view' pk=item.id %}" target="_blank" rel="follow">View</a></td>
-    <td class="td-standard"><a style='color:rgb(239, 57, 57)' href="">Delete</a></td>
-
-  </tr>
-  {% endfor %}
-
-</table>
 </div>
 
 <!--<input type="hidden" id="selecteditems" name="selected-items" value="{{selected_items}}">-->
