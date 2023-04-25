@@ -30,6 +30,7 @@ urlpatterns = [
     path('inventory-list-view-manipulation-commands', views.inventory_list_view_manipulation_commands, name='inventory-list-view-manipulation-commands'),
     path('inventory-list-view-import-commands', views.inventory_list_view_import_commands, name='inventory-list-view-import-commands'),
     path('inventory-list-view-sync-commands', views.inventory_list_view_sync_commands, name='inventory-list-view-sync-commands'),
+    path('inventory-list-view-delete/<int:pk>', views.inventory_list_view_delete, name='inventory-list-view-delete'),
 
     # INVENTORY ITEM DETAIL VIEW
     path('inventory-item-detail-view/<int:pk>', views.inventory_item_detail_view, name='inventory-item-detail-view'),
@@ -41,6 +42,7 @@ urlpatterns = [
     path('inventory-item-detail-view/gpt-generate-description', views.gpt_generate_description, name='gpt-generate-description'),
     path('inventory-item-detail-view/inventory-item-save-gpt-title', views.inventory_item_save_gpt_title, name='inventory-item-save-gpt-title'),
     path('inventory-item-detail-view/inventory-item-save-gpt-description', views.inventory_item_save_gpt_description, name='inventory-item-save-gpt-description'),
+    path('inventory-item-detail-view/gpt-write', views.gpt_write, name='gpt-write'),
     
     # WOOCOMMERCE
     path('woocommerce-categories', views.woocommerce_categories, name='woocommerce-categories'),
@@ -81,6 +83,7 @@ urlpatterns = [
     # SMAARTCOPY
     path('smartcopy-start', views.smartcopy_start, name='smartcopy-start'),
     path('smartcopy-play', views.smartcopy_play, name='smartcopy-play'),
+    path('smartcopy-write', views.smartcopy_write, name='smartcopy-write'),
     
     
 

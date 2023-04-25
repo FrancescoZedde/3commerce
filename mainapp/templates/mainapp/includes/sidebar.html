@@ -9,9 +9,6 @@
             <a href="{% url 'index' %}">Dashboard</a>
         </li>
         <li>
-            <a href="{% url 'trending' %}">Trending</a>
-        </li>
-        <li>
             <a href="{% url 'search' %}">Search</a>
         </li>
         <li>
@@ -37,10 +34,13 @@
         </li>
         {% endif %}
         <li>
-            <a href="{% url 'smartcopy-start' %}"><i class="fa fa-pencil" aria-hidden="true"></i> SmartCopy</a>
+            <a href="{% url 'trending' %}"><i class="fa fa-arrow-trend-up" aria-hidden="true"></i> Trends Explorer</a>
         </li>
         <li>
-            <a href="{% url 'profile' %}"> <i class="fa fa-paint-brush" aria-hidden="true"></i> SmartImage</a>
+            <a href="{% url 'smartcopy-start' %}"><i class="fa fa-pencil" aria-hidden="true"></i> Smart Copy</a>
+        </li>
+        <li>
+            <a href="{% url 'profile' %}"> <i class="fa fa-image" aria-hidden="true"></i> Smart Image</a>
         </li>
     </ul>
 

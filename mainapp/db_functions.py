@@ -2,6 +2,7 @@ import pandas as pd
 import re
 import json
 from mainapp.models import InventoryItem, Variant, WoocommerceStore
+from users.models import CustomUser
 from ast import literal_eval
 import html
 import math
@@ -26,6 +27,11 @@ def reset_woocommerce_store(user):
     user.woocommerce_host = host = ''
     user.woocommerce_consumer_key = ''
     user.woocommerce_secret_key = ''
+    user.save()
+
+def reset_cjdropshipping(user):
+    user.cjdropshipping_api_key = ''
+    user.cjdropshipping_email = ''
     user.save()
 
 def connect_shopify_store(user, store_name, host, ck, cs):
@@ -116,8 +122,9 @@ def deleteItemBySku(user, sku):
 
 def create_item_and_variants(product_details, user):
     categories_dict = parse_cj_categories(product_details)
+    print('create_item_and_variants')
     inventory_item = InventoryItem( user = user,
-                                    sku = 'XZ' + product_details['productSku'],
+                                    sku = product_details['productSku'],
                                     itemName = product_details['productNameEn'],
                                     description = product_details['description'],
                                     supplierSellPrice = product_details['sellPrice'],
@@ -148,6 +155,7 @@ def create_item_and_variants(product_details, user):
     
     variants = product_details['variants']
     for variant in variants:
+        print('create_variant')
         create_variant(inventory_item, variant)
     return inventory_item
     
@@ -155,7 +163,7 @@ def create_item_and_variants(product_details, user):
 def create_variant(inventory_item, variant):
     variant = Variant(item = inventory_item,
                                         vid = variant['vid'],
-                                        variantSku = 'XZ' + variant['variantSku'],
+                                        variantSku = variant['variantSku'],
                                         variantNameEn = str(variant['variantNameEn']),
                                         description = 'variant description',
                                         supplierSellPrice = variant['variantSellPrice'],
@@ -323,3 +331,11 @@ def parse_cj_categories(product_details):
         elif i == 2:
             categories_dict['third'] = categories[2]
     return categories_dict
+
+
+def updateUserWords(user, tokens_used):
+    words_used = int(round((int(tokens_used)/0.80), 0))
+    #user_instance = CustomUser.objects.get(email=user.email)
+    words = user.words
+    user.words = words - words_used
+    user.save()

@@ -1,7 +1,9 @@
 from django import forms 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.forms import ModelForm
 from django.contrib.auth import get_user_model
 from crispy_forms.helper import FormHelper
+from users.models import CustomUser
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -9,13 +11,14 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'password1']
+        fields = ['email', 'password1']
     
     def __init__(self, *args, **kwargs):
         #super().__init__(*args, **kwargs)
         super(UserRegistrationForm, self).__init__(*args, **kwargs)
         del self.fields['password2']
-        self.fields['username'].help_text = None
+        #self.fields['username'].help_text = None
+        #self.fields['username'].label = 'Email'
         self.fields['password1'].help_text = None
         #self.fields['password2'].help_text = None
 
@@ -25,6 +28,14 @@ class UserRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+from django.contrib.auth.forms import AuthenticationForm
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request=None, *args, **kwargs)
+        self.fields['username'].label = 'Email'
+        self.fields['password'].label = 'Password'
 
 
 class WhitelistForm(forms.Form):

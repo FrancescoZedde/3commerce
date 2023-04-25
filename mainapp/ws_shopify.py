@@ -69,6 +69,7 @@ class Shopify:
                         "options" : options_set,
                         "variants": variants_set,
                         "images": image_set,
+                        "tags": item.sku,
                         }
                     
                     }

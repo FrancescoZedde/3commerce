@@ -67,7 +67,7 @@
                     <td>{{order.shipping_country}}</td>
                     <!--<td>{{order.logistic_name}}</td>-->
                     <td><input type="checkbox" id="checkbox-{{order.id}}" name="order-checkbox" onchange="select_orders()"/></td>
-                    <td><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_order_setup(this.id)">Setup</a></td>
+                    <td><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_order_setup(this.id, false)">Setup</a></td>
 
                     <input type="hidden" id="id-{{order.id}}" value="{{order.id}}">
                     <input type="hidden" id="shipping_customer_name-{{order.id}}" value="{{order.shipping_customer_name}}">
@@ -115,7 +115,20 @@
                   <td>{{order.logistic_name}}</td>
                   <td>{{order.from_country_code}}</td>
                   <td>{{order.shipping_country}}</td>
-      
+                  <td><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="##" onclick="return open_modal_order_setup(this.id, true)">Details</a></td>
+                  
+                  <input type="hidden" id="id-{{order.id}}" value="{{order.id}}">
+                  <input type="hidden" id="shipping_customer_name-{{order.id}}" value="{{order.shipping_customer_name}}">
+                    <input type="hidden" id="shipping_country-{{order.id}}" value="{{order.shipping_country}}">
+                    <input type="hidden" id="logistic_name-{{order.id}}" value="{{order.logistic_name}}">
+                    <input type="hidden" id="shipping_zip-{{order.id}}" value="{{order.shipping_zip}}">
+                    <input type="hidden" id="shipping_address-{{order.id}}" value="{{order.shipping_address}}">
+                    <input type="hidden" id="shipping_country_code-{{order.id}}" value="{{order.shipping_country_code}}">
+                    <input type="hidden" id="shipping_city-{{order.id}}" value="{{order.shipping_city}}">
+                    <input type="hidden" id="shipping_province-{{order.id}}" value="{{order.shipping_province}}">
+                    <input type="hidden" id="products-{{order.id}}" value="{{order.products}}">
+                    <input type="hidden" id="shipping_phone-{{order.id}}" value="{{order.shipping_phone}}">
+                    <input type="hidden" id="vids-{{order.id}}" value="{{order.vids}}">
                  </tr>
                  {% endfor %}
              </tbody>
@@ -168,7 +181,7 @@
         
         <form action="orders-update-shipping-method" method="POST">
                 {% csrf_token %}
-                <div class="form-group">
+                <div id="order-details-form" class="form-group">
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
@@ -260,12 +273,14 @@
                   </div>
                   </div>
             
-            
-          
 
-            <label for="sync-dropdown">Shipping method:</label>
+                  {% csrf_token %}
+
             
-                {% csrf_token %}
+            <div id="update-order-div">
+
+              <label for="sync-dropdown">Shipping method:</label>
+            
                 <select class="form-select" name="shipping-options-dropdown" id="shipping-options-dropdown" >
                   <option id="shipping-method-in-use" value="" selected="selected"></option>
       
@@ -273,6 +288,7 @@
                   <div class="button" style="text-align: center; margin-top: 20px;">
                     <input class="standard-button" type="submit" value="Update">
                   </div>
+               </div>
                   
             </form>
             
@@ -298,7 +314,7 @@
     document.getElementById('orders-to-fulfill').value = orders_to_fulfill
   }
 
-    function open_modal_order_setup(order_id){
+    function open_modal_order_setup(order_id, read_only_order){
         console.log(order_id)
 
         id = document.getElementById('id-'+ order_id).value
@@ -328,6 +344,23 @@
         document.getElementById("shipping_province-modal").value = shipping_province;
         document.getElementById("products-modal").value = products;
         document.getElementById("vids-modal").value = vids.join();
+
+        if (read_only_order == true){
+          document.getElementById("id-modal").readOnly = true;
+          document.getElementById("shipping_customer_name-modal").readOnly = true;
+          document.getElementById("shipping_country-modal").readOnly = true;
+          document.getElementById("shipping_phone-modal").readOnly = true;
+          document.getElementById("shipping_zip-modal").readOnly = true;
+          document.getElementById("logistic_name-modal").readOnly = true;
+          document.getElementById("shipping_address-modal").readOnly = true;
+          document.getElementById("shipping_country_code-modal").readOnly = true;
+          document.getElementById("shipping_city-modal").readOnly = true;
+          document.getElementById("shipping_province-modal").readOnly = true;
+          document.getElementById("products-modal").readOnly = true;
+          document.getElementById("vids-modal").readOnly = true;
+
+          document.getElementById('update-order-div').setAttribute('hidden', 'hidden')
+        }
         
 
         get_shipping_options(shipping_country_code, vids, logistic_name)
@@ -350,6 +383,22 @@
         modal.style.display = "none";
         }
         modal.style.display = "block";
+    }
+
+
+    function open_modal_order_fulfilled(){
+      document.getElementById("id-modal").value = id;
+        document.getElementById("shipping_customer_name-modal").value = shipping_customer_name;
+        document.getElementById("shipping_country-modal").value = shipping_country;
+        document.getElementById("shipping_phone-modal").value = shipping_phone;
+        document.getElementById("shipping_zip-modal").value = shipping_zip;
+        document.getElementById("logistic_name-modal").value = logistic_name;
+        document.getElementById("shipping_address-modal").value = shipping_address;
+        document.getElementById("shipping_country_code-modal").value = shipping_country_code;
+        document.getElementById("shipping_city-modal").value = shipping_city;
+        document.getElementById("shipping_province-modal").value = shipping_province;
+        document.getElementById("products-modal").value = products;
+        document.getElementById("vids-modal").value = vids.join();
     }
 
 

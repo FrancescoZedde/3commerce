@@ -1,5 +1,6 @@
-from mainapp.db_functions import retrieveItemBySku, create_item_and_variants
+from mainapp.db_functions import retrieveItemBySku, create_item_and_variants, retrieveVariantBySku
 from mainapp.ws_cj import CJDropshipping
+from mainapp.models import Variant, InventoryItem
 from mainapp.forms import InventoryItemForm, VariantForm
 import math
 from ast import literal_eval
@@ -188,17 +189,28 @@ def make_sku_list(items_list, sync_id):
     skus = []
     if sync_id == 'app-inventory':
         for item in items_list:
-            skus.append(item.sku[2:])
+            skus.append(item.sku)
     elif sync_id == 'sync-woocommerce':
-        #print(len(items_list))
+        print(len(items_list))
         for item in items_list:
-            skus.append(item['sku'][2:])
+            skus.append(item['sku'])
+    elif sync_id == 'sync-shopify':
+        print(len(items_list))
+        for item in items_list:
+            skus.append(item['tags'])
+            '''
+            variant_sku = item['variants'][0]['sku']
+            #Variant. retrieveVariantBySku(sku=variant_sku)
+            variants = Variant.objects.filter(variantSku=variant_sku)
+            item = variants[0].item
+            print(item.sku)
+            skus.append(item.sku[2:])'''
     elif sync_id == 'sync-ebay':
         print(items_list)
 
     return skus
 
-def compare_lists_and_import_missing_products(inventory_sku_list, shop_sku_list):
+def compare_lists_and_import_missing_products(user, inventory_sku_list, shop_sku_list, full_sync):
     results = []
     for sku in shop_sku_list:
         if sku in inventory_sku_list:
@@ -206,15 +218,22 @@ def compare_lists_and_import_missing_products(inventory_sku_list, shop_sku_list)
         else:
             print('call cj to import item')
             try:
-                class_instance = CJDropshipping(request.user)
+                class_instance = CJDropshipping(user)
                 product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
-                inventory_item = create_item_and_variants(product_details)
+                inventory_item = create_item_and_variants(product_details, user)
                 results.append({sku:'imported'})
             except:
                 #print('prodotto non trovato')
                 results.append({sku:'not found'})
     
+    if full_sync == 'on':
+        for sku in inventory_sku_list:
+            if sku not in shop_sku_list:
+                item = InventoryItem.objects.filter(user=user, sku=sku)
+                item[0].delete()
+    
     print(results)
+    return results
 
 
 def filter_by_keywords(products, keywords):
@@ -299,7 +318,23 @@ def format_results(list_of_products, elements_for_row):
 
     return grouped_products_list
 
-
+def check_order(order):
+    if order.shipping_address == '':
+        return True
+    elif order.shipping_city == '':
+        return True
+    elif order.shipping_province == '':
+        return True
+    elif order.shipping_zip == '':
+        return True
+    elif order.shipping_country == '':
+        return True
+    elif order.shipping_country_code == '':
+        return True
+    elif order.shipping_city == '':
+        return True
+    else:
+        return False
 
 def map_json_shopify_to_woocommerce(json_data):
     # Map product data

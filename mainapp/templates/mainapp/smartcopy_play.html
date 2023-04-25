@@ -1,6 +1,6 @@
 
 
-{% extends 'mainapp/base.html' %}
+{% extends 'mainapp/base_2.html' %}
 
 {% load crispy_forms_tags %}
 
@@ -8,14 +8,241 @@
 
 {% block content %}
 
+
+
     
+<div class="standard-command-container" style="padding: 0.05em !important;">
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-blog-article-tab" data-bs-toggle="pill" data-bs-target="#pills-blog-article" type="button" role="tab" aria-controls="pills-blog-article" aria-selected="true">Blog</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-facebook-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-facebook-ads" type="button" role="tab" aria-controls="pills-facebook-ads" aria-selected="false">Facebook</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-instagram-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-instagram-ads" type="button" role="tab" aria-controls="pills-instagram-ads" aria-selected="false">Instagram</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-google-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-google-ads" type="button" role="tab" aria-controls="pills-google-ads" aria-selected="false">Google</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-amazon-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-amazon-ads" type="button" role="tab" aria-controls="pills-amazon-ads" aria-selected="false">Amazon</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-ebay-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-ebay-ads" type="button" role="tab" aria-controls="pills-ebay-ads" aria-selected="false">Ebay</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-landing-page-tab" data-bs-toggle="pill" data-bs-target="#pills-landing-page" type="button" role="tab" aria-controls="pills-landing-page" aria-selected="false">Landing Page</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+      <div class="tab-pane fade" id="pills-blog-article" role="tabpanel" aria-labelledby="pills-blog-article-tab">
+        <div class="card-deck">
+          <div class="shadow card">
+              <div class="card-body" >
+  
+                  <h5 class="index-card-title" ><b>Blog Writing</b></h5>
+                <p class="index-card-text card-text" >Blog articles tailored to your niche</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="blog-article" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Blog Ideas</b></h5>
+                <p class="index-card-text card-text">Ideas for your blog articles</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="blog-ideas" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Blog Plagiarism</b></h5>
+                <p class="index-card-text card-text">Check if your content is unique</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="blog-plagiarism" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+        </div>
+      </div>
+      <!-- FACEBOOK -->
+      <div class="tab-pane fade" id="pills-facebook-ads" role="tabpanel" aria-labelledby="pills-facebook-ads-tab">
+        <div class="card-deck">
+          <div class="shadow card">
+              <div class="card-body" >
+  
+                  <h5 class="index-card-title" ><b>Facebook Ads</b></h5>
+                <p class="index-card-text card-text" >High converting custom ads</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="facebook-ads" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Facebook Post</b></h5>
+                <p class="index-card-text card-text">Posts to engage your followers</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="facebook-post" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Facebook Post Ideas</b></h5>
+                <p class="index-card-text card-text">Ideas for Facebook posts based on analytics </p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="facebook-post-ideas" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+        </div>
+      </div>
+      <!-- INSTAGRAM TAB CONTENT-->
+      <div class="tab-pane fade" id="pills-instagram-ads" role="tabpanel" aria-labelledby="pills-instagram-ads-tab">
+        <div class="card-deck">
+          <div class="shadow card">
+              <div class="card-body" >
+  
+                  <h5 class="index-card-title" ><b>Instagram Post</b></h5>
+                <p class="index-card-text card-text" >Custom Instagram posts</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="instagram-post" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Instagram Tags</b></h5>
+                <p class="index-card-text card-text">Find popular tags by niche</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="instagram-tags" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+  
+        </div>
+      </div>
+      <!-- GOOGLE TAB CONTENT -->
+      <div class="tab-pane fade" id="pills-google-ads" role="tabpanel" aria-labelledby="pills-google-ads-tab">
+        <div class="card-deck">
+          <div class="shadow card">
+              <div class="card-body" >
+  
+                  <h5 class="index-card-title" ><b>Google Ads Title</b></h5>
+                <p class="index-card-text card-text" >Custom Instagram posts</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="google-ads-title" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Google Ads Description</b></h5>
+                <p class="index-card-text card-text">Find popular tags by niche</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="google-ads-description" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body">
+  
+                  <h5 class="index-card-title"><b>Google Ads Description</b></h5>
+                <p class="index-card-text card-text">Find popular tags by niche</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="google-ads-description" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+            <div class="shadow card">
+              <div class="card-body" >
+  
+                  <h5 class="index-card-title" ><b>Google SEO Meta Description</b></h5>
+                <p class="index-card-text card-text" >Optimized meta-descriptions for your web pages</p>
+                <form action="smartcopy-play" method="post">
+                  {% csrf_token %}
+                  <div class="button" style="text-align: center;">
+                    <input class="standard-button" id='syncebay' type="submit" value=">" >
+                    <input type="hidden" value="google-ads-title" name="service">
+                  </div>
+                  </form>
+              </div>
+            </div>
+  
+        </div>
+      </div>
+      <!-- AMAZON TAB CONTENT -->
+      <div class="tab-pane fade" id="pills-amazon-ads" role="tabpanel" aria-labelledby="pills-amazon-ads-tab">...</div>
+      <div class="tab-pane fade" id="pills-ebay-ads" role="tabpanel" aria-labelledby="pills-ebay-ads-tab">...</div>
+      <div class="tab-pane fade" id="pills-landing-page" role="tabpanel" aria-labelledby="pills-landing-page-tab">...</div>
+      
+    </div>
+  </div>
 
+<div class="container-smartcopy">
+<div class="part1">
 <div class="standard-command-container">
-
     
     <h3 style="font-family:'Raleway', sans-serif; color:rgb(64, 106, 212)">
         {{service_title}}
     </h3>
+    <div class="row">
+        <p>Words: {{user.words}}</p>
+    </div>
     
 
     {% if service in 'blog-plagiarism' %}
@@ -57,7 +284,11 @@
     </div>
 
     {% endif %}
+
 </div>
+</div>
+
+<div class="part2">
 
 <div class="standard-command-container">
         <div>
@@ -67,6 +298,8 @@
         <div id="multiple-copies">
             
         </div>
+</div>
+</div>
 </div>
 
 <!-- SPINNER -->
@@ -78,17 +311,20 @@
     function smartcopy_write(service_id){
         console.log(service_id)
 
-        document.getElementById('multiple-copies').innerHTML = ''
-
+        if (parseInt("{{user.words}}") <= 0){
+            alert('Words finished')
+        }else{
+            document.getElementById('multiple-copies').innerHTML = ''
+/*
         const url = "https://api.openai.com/v1/chat/completions";
         const gpt = "{{GPT_KEY}}"
         const headers = {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${gpt}`
-        };
+        };*/
         let spinner = document.getElementById("loader-smartcopy")
         spinner.removeAttribute("hidden");
-
+        let csrftoken = "{{csrf_token}}"
         // BLOG WRITING
         if (service_id == 'blog-article'){
             let topic = document.getElementById('id_topic').value
@@ -97,7 +333,18 @@
             let tone = document.getElementById('id_tone').value
             let word_count = document.getElementById('id_word_count').value
             let language = document.getElementById('id_language').value
-            smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "blog-article",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language
+                        }
+            call_backend(data_json)
+            //smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, language)
         }
         // BLOG IDEAS
         else if(service_id == 'blog-ideas'){
@@ -105,12 +352,25 @@
             let target_audience = document.getElementById('id_target_audience').value
             let keywords = document.getElementById('id_keywords').value
             let language = document.getElementById('id_language').value
-            smartcopy_blog_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "blog-ideas",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "language": language
+                        }
+            call_backend(data_json)
         }
         // BLOG PLAGIARISM
         else if(service_id == 'blog-plagiarism'){
             let text = document.getElementById('id_text').value
-            smartcopy_check_plagiarism(service_id, gpt, url, headers, text)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "blog-plagiarism",
+                            "text": text,
+                        }
+            call_backend(data_json)
         }
         // FACEBOOK ADS
         else if(service_id == 'facebook-ads'){
@@ -123,7 +383,20 @@
             let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
             let n_copies = document.getElementById('id_n_copies').value
             let language = document.getElementById('id_language').value
-            text = smartcopy_write_facebook_ads(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "facebook-ads",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language,
+                            "emoji": emoji,
+                            "bullet_list": bullet_list,
+                            "n_copies": n_copies,
+                        }
+            call_backend(data_json)
         }
         // FACEBOOK POST
         else if(service_id == 'facebook-post'){
@@ -136,7 +409,20 @@
             let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
             let n_copies = document.getElementById('id_n_copies').value
             let language = document.getElementById('id_language').value
-            text = smartcopy_facebook_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "facebook-post",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language,
+                            "emoji": emoji,
+                            "bullet_list": bullet_list,
+                            "n_copies": n_copies,
+                        }
+            call_backend(data_json)
         }
         // FACEBOOK POST IDEAS
         else if(service_id == 'facebook-post-ideas'){
@@ -144,7 +430,15 @@
             let target_audience = document.getElementById('id_target_audience').value
             let keywords = document.getElementById('id_keywords').value
             let language = document.getElementById('id_language').value
-            smartcopy_facebook_post_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "facebook-post-ideas",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "language": language,
+                        }
+            call_backend(data_json)
         }
         else if(service_id == 'instagram-post'){
             let topic = document.getElementById('id_topic').value
@@ -157,14 +451,35 @@
             let n_copies = document.getElementById('id_n_copies').value
             let language = document.getElementById('id_language').value
 
-            smartcopy_write_instagram_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "instagram-post",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language,
+                            "emoji": emoji,
+                            "bullet_list": bullet_list,
+                            "n_copies": n_copies,
+                        }
+            call_backend(data_json)
         }
         else if(service_id == 'instagram-tags'){
             let topic = document.getElementById('id_topic').value
             let target_audience = document.getElementById('id_target_audience').value
             let keywords = document.getElementById('id_keywords').value
             let language = document.getElementById('id_language').value
-            smartcopy_write_instagram_tags(service_id, gpt, url, headers, topic, target_audience, keywords, language)
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "instagram-tags",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "language": language,
+                        }
+            call_backend(data_json)
         }
         else if(service_id == 'google-ads-title'){
         }
@@ -175,333 +490,40 @@
         }else if(service_id == 'amazon-description'){
 
         }
+        }
 
     }
 
-    async function smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a blog article writer"},
-                      {"role": "user", "content": "Write a " + tone + " blog article"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString() + ". Language: " + language},
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 2000,
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
+    function call_backend(data_json){
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'smartcopy-write' %}",
+            data: data_json,
+            beforeSend: function() {
+              let spinner = document.getElementById("loader-smartcopy")
+              spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+                let spinner_close = document.getElementById("loader-smartcopy")
+                spinner_close.setAttribute("hidden", "hidden")
+                console.log(data)
+                multiple_copies_div = document.getElementById('multiple-copies')
 
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            document.getElementById('generated-text').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
-            document.getElementById('generated-text').removeAttribute("hidden");
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-        
-    }
-
-    // BLOG-IDEAS
-    async function smartcopy_blog_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a blog writer"},
-                      {"role": "user", "content": "Make a list of 15 blog article ideas" },
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords  + ". Language: " + language},
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 300,
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            document.getElementById('generated-text').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
-            document.getElementById('generated-text').removeAttribute("hidden");
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-        
-    }
-    async function smartcopy_check_plagiarism(service_id, gpt, url, headers, text){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a plagiarism checker"},
-                      {"role": "user", "content": "check plagiarism in this text and highlight parts that are plagiarized:" },
-                      {"role": "user", "content": text },
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 200,
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            document.getElementById('generated-text').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
-            document.getElementById('generated-text').removeAttribute("hidden");
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-        
-    }
-
-
-    async function smartcopy_write_facebook_ads(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a facebook ads writer"},
-                      {"role": "user", "content": "Write a " + tone + " facebook ads"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 2000,
-          'n': parseInt(n_copies),
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            multiple_copies_div = document.getElementById('multiple-copies')
-
-            data['choices'].forEach((option) => {
+                data['choices'].forEach((option) => {
                 console.log(option)
                 multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
             })
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
+                
+            },
+            error: function (data) {
+                console.log(data);
+                let spinner_close = document.getElementById("loader-smartcopy")
+                spinner_close.setAttribute("hidden", "hidden")
+            }
+        });
     }
-
-    async function smartcopy_facebook_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a social media manager"},
-                      {"role": "user", "content": "Write a " + tone + " facebook post"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 2000,
-          'n': parseInt(n_copies),
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            multiple_copies_div = document.getElementById('multiple-copies')
-
-            data['choices'].forEach((option) => {
-                console.log(option)
-                multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
-            })
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-    }
-
-
-    async function smartcopy_facebook_post_ideas(service_id, gpt, url, headers, topic, target_audience, keywords, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a social media manager"},
-                      {"role": "user", "content": "Make a list of 10 topics for a facebook post ideas" },
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords  + ". Language: " + language},
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 1000,
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            document.getElementById('generated-text').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
-            document.getElementById('generated-text').removeAttribute("hidden");
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-        
-    }
-
-    async function smartcopy_write_instagram_post(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a instagram post writer"},
-                      {"role": "user", "content": "Write a " + tone + " instagram post"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + word_count.toString()  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 2000,
-          'n': parseInt(n_copies),
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            multiple_copies_div = document.getElementById('multiple-copies')
-
-            data['choices'].forEach((option) => {
-                console.log(option)
-                multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
-            })
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-    }
-
-    async function smartcopy_write_instagram_tags(service_id, gpt, url, headers, topic, target_audience, keywords, language){
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are an expert social media manager"},
-                      {"role": "user", "content": "Write 20 instagram tags in a single line"},
-                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + ". Language: " + language },
-                    ],
-          "temperature": 0.7,
-          "max_tokens": 250,
-          "top_p": 1,
-          "frequency_penalty":0,
-          "presence_penalty":0,
-        };
-
-        console.log(requestData)
-
-        await fetch(url, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)
-            multiple_copies_div = document.getElementById('multiple-copies')
-
-            data['choices'].forEach((option) => {
-                console.log(option)
-                multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
-            })
-            show_hide_loader()
-            //document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
-
-            //update_words(data)
-            
-        })
-        .catch(error => console.error(error));
-    }
-
-    async function smartcopy_write_google_ads_title(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
-        
-    }
-
-    async function smartcopy_write_google_ads_description(service_id, gpt, headers, topic, target_audience, keywords, tone, word_count){
-        
-    }
-
-
-
-
 
 
 

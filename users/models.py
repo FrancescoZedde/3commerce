@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 # Create your models here.
 class CustomUser(AbstractUser):
 
@@ -16,6 +17,7 @@ class CustomUser(AbstractUser):
         ('shopify', 'Shopify')
         )
 
+   
     email = models.EmailField(unique=True)
     status = models.CharField(max_length=100, choices=status, default='regular')
 
@@ -57,7 +59,6 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-
 class Order(models.Model):
 
     order_status_choices = (
@@ -68,7 +69,8 @@ class Order(models.Model):
 
     user = models.ForeignKey(CustomUser, related_name='user',on_delete=models.CASCADE,)
     external_order_id = models.TextField('External order id:', max_length=10000, default='', blank=True)
-    status = models.CharField(max_length=20, choices=order_status_choices, default="pending")
+    store_name = models.CharField('Store Name', max_length=255, default='', blank=True)
+    status = models.CharField(max_length=20, choices=order_status_choices, default="Pending")
     order_info =  models.TextField('Full JSON response:', max_length=10000, default='', blank=True)
     shipping_zip = models.CharField('Shipping Zip', max_length=10, default='', blank=True)
     shipping_country_code = models.CharField('Shipping Country Code', max_length=10, default='', blank=True)

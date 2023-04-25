@@ -90,12 +90,7 @@
 <div class="standard-command-container" id="calc-shipping" style="font-family: Poppins">
     <label for="calc-shipping-options">Ship to:</label>
           <select class="form-select" name="calc-shipping" id="calc-shipping-options">
-            <option value="none" selected="selected"></option>
-            <option value="GB">United Kingdom</option>
-            <option value="BE">Belgium</option>
-            <option value="IT">Italy</option>
-            <option value="DE">Germany</option>
-            <option value="FR">France</option>
+            {% include 'mainapp/includes/languages.html' %}
           </select>
           <div style="text-align: center;margin-top:1em;">
             <button id="calc-shipping-button" class="standard-button" onclick="calc_shipping()">Estimate shipping</button>

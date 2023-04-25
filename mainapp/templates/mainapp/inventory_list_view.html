@@ -40,8 +40,8 @@
     </div>
   </div>-->
   <div class="row">
-    <div class="button" style="text-align: right; margin-top:2em; margin-right: 1em;">
-      <input class="standard-button" id='bulk-sync-button' type="submit" value="Sync" name="bulk-button">
+    <div style="text-align: right; margin-top:2em;">
+      <button class="standard-button" id="OpenModalActions" onclick="open_modal_sync()">Sync</button>
     </div>
   </div>
   <div class="row" style="margin-top:2em;">
@@ -53,9 +53,10 @@
             <select class="form-select" name="action-dropdown" id="action-options">
               <option value="none" selected="selected"></option>
               <option value="edit">Edit</option>
+              <!--
               <option value="add-ai-description">Add description</option>
               <option value="add-template">Add template</option>
-              <option value="add-ai-description-and-template">Add description and template</option>
+              <option value="add-ai-description-and-template">Add description and template</option>-->
               <option value="delete">Delete</option> 
             </select>
             <div style="text-align: center;margin-top:1em;">
@@ -129,12 +130,6 @@
          </tr>
        </thead>
        <tbody>
-         <tr>
-           <th scope="row">1</th>
-           <td>Mark</td>
-           <td>Otto</td>
-           <td>@mdo</td>
-         </tr>
           {% for item in all_inventory_items %}
           <tr>
              <th scope="row">{{item.id}}</td>
@@ -147,7 +142,7 @@
              <td>{{item.sellPrice}}</td>
              <td><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
              <td><a style='color:rgb(65, 134, 255)' href="{% url 'inventory-item-detail-view' pk=item.id %}" target="_blank" rel="follow">View</a></td>
-             <td><a style='color:rgb(239, 57, 57)' href="">Delete</a></td>
+             <td><a style='color:rgb(239, 57, 57)' href="{% url 'inventory-list-view-delete' pk=item.id %}">Delete</a></td>
 
            </tr>
            {% endfor %}
@@ -163,31 +158,24 @@
       <span class="close">&times;</span>
       <div class="modal-description">
         <h5><b>WooCommerce Import Setup</b></h5>
-        <p>Set the product <b>price increment</b> (relative to supplier prices) and enter <b>WooCommerce category IDs</b>. 
-          Enter IDs one at a time separating them with a comma [12, 43, 56, etc.]. <a href="/woocommerce-categories" target="_blank" rel="follow">Show categories</a></p>
+        <p></p>
       </div>
       <div id="" style="margin-top: 1em">
         <!-- WOOCOMMERCE SETUP FORM-->
         <form action="inventory-list-view-import-commands" method="post">
-        {% csrf_token %}
+          {% csrf_token %}
           <div class="row">
-            <div class="col-6" style="text-align:center;">
-              {{woocommerce_import_setup_form | crispy}}
+            <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px;">
+              <input class="form-check-input" name="use_preset_price" default="False" type="checkbox" id="flex-switch" onchange="show_hide_increase_by_percentage()">
+              <label class="form-check-label" for="flexSwitchCheckDefault">Use the price set by individual product </label>
             </div>
-            <div class="col-6" style="text-align:center;">
+            <div id="percentage-increase-div">
+              {{woocommerce_import_setup_form.pricepercentageincrease | as_crispy_field}}
+            </div>
+            {{woocommerce_import_setup_form.minimumprice | as_crispy_field}}
+            {{woocommerce_import_setup_form.roundat | as_crispy_field}}
               
-            </div>
           </div>
-          <div class="row">
-            <div class="col-6" style="text-align:center;">
-              <div class="form-check form-switch">
-                <input class="form-check-input" default="False" type="checkbox" id="flex-switch">
-                <label class="form-check-label" for="flexSwitchCheckDefault">Use the price set by individual product </label>
-              </div>
-            </div>
-            <div class="col-6" style="text-align:center;">
-              
-            </div>
           </div>
           <h5 style="margin-top:2em; margin-bottom:5px;"><b>Select categories</b></h5>
           <!-- WOOCOMMERCE CATEGORIES -->
@@ -421,6 +409,28 @@
       </div>
     </div>
   </div>
+
+  <!-- SYNC MODAL -->
+  <div id="modal-sync" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-sync" class="close">&times;</span>
+      <div id="" style="margin-top: 1em">
+        <!-- SYNC  FORM-->
+        <p></p>
+        <form action="inventory-sync" method="POST">
+          <p>From here you can synchronize your Inventory with your Store. Currently, synchronization is only possible from the Store to Inventory. It means that you will have in your Inventory all products published in your store at the time of synchronization.</p>
+          <div style="text-align: center;" class="form-check form-switch">
+            <input name="full-sync" class="form-check-input" default="False" type="checkbox" id="flex-switch">
+            <label class="form-check-label" for="flexSwitchCheckDefault"><small>Full Synchronization: Removes from Inventory all products that are not also on the store. This will make Inventory and Store identical.</small></label>
+          </div>
+          <div class="button" style="text-align: center; margin-top:2em;">
+            {% csrf_token %}
+            <input class="standard-button" id='bulk-sync-button' type="submit" value="Sync" name="bulk-button">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <div id="category-div">
     
   </div>
@@ -638,6 +648,17 @@
             }
               modalEbay.style.display = "block";
           }
+        }
+
+
+        function open_modal_sync(){
+            let modalShopify = document.getElementById("modal-sync");
+            let close_modal = document.getElementById("close-modal-sync");
+
+            close_modal.onclick = function() {
+              modalShopify.style.display = "none";
+            }
+            modalShopify.style.display = "block";
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         

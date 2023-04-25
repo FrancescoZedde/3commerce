@@ -9,10 +9,13 @@
     <input type="hidden" id="item" name="item" value="{{item}}">
                 <!-- PRODUCT INFORMATION -->
                 <div class="standard-command-container">
-                    <div class="card">
+                    <div class="card-deck">
+                      <div class="card" style="border: None !important;">
                         <div class="product-img">
-                            <img class="card-img-top" src={{item.productImage}}>
-                        </div>
+                          <img class="card-img-top" src={{item.productImage}}>
+                      </div>
+                      </div>
+                    <div class="card"  style="border: None !important;">
                         <div class="card-body">
                             <form action="inventory-item-detail-view-save-changes" method="post">
                                 <p class="card-text">
@@ -32,12 +35,8 @@
                                   {{item_form.attributes}}
                                   <b>Material</b>
                                   {{item_form.materialNameEn}}
-                                  <b>Original description</b>
-                                  <div id="original-description" style="font-size: 12px;">
-                                      {% autoescape off %}
-                                      {{item_original_description}}
-                                      {% endautoescape %}
-                                  </div>  
+                                  
+                                   
                                 </p>
                                 {% csrf_token %}
                                 <div class="button" style="text-align: center;">
@@ -47,7 +46,90 @@
                             </form>
                         </div>
                       </div>
+                      </div>
+                      <div class="card-deck">
+                        <div class="card" style="border: None !important;">
+                          <b>Original description</b>
+                          <div id="original-description" style="font-size: 12px;">
+                              {% autoescape off %}
+                            {{item_original_description}}
+                            {% endautoescape %}
+                    
+                        </div>
+                        </div>
+                        <div class="card" style="border: None !important;">
+                          <b>Custom description</b>
+                          {{item_form.descriptionChatGpt }}
+                        </div>
+                      </div>
                 </div>
+                <!-- VARIANTS -->
+                <div class="standard-command-container">
+                  <div style="text-align:center">
+                    <button class="standard-button" id="show-variants" onclick="show_hide_variants()">Variants</button>
+                  </div>
+                  <div id="variants-div" hidden="hidden">
+                    {% for variant in variants %}
+                    <div class="card bg-light mb-3" style="max-width:100%; max-height: 20em;">
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group" style="text-align: center;">
+                              <img src="{{variant.variantImage}}" width="200px" height="200px" style="padding: 2px;">
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantNameEn}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Supplier sell price</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.supplierSellPrice}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Sell price</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.sellPrice}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant key</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantKey}}">
+                              <input type="hidden" id='variant-id' name="variant-id" value="{{variant.vid}}">
+                              
+                            </div>
+                          </div>
+                        </div>
+                  
+                      </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <!-- SEARCH SIMILAR ITEMS -->
+              <div class="standard-command-container">
+                <div class="row" style="text-align: center; margin-bottom: 3em;">
+                    <h5><b>Search Similar Items And Spy Your Competitors</b><img src="http://xzshop.eu/wp-content/uploads/2023/04/743607.png" height="40px" width="40px"></a></h5>
+                </div>
+                <div class="row" style="text-align: center;">
+                  <div class="col-sm-6">
+                    <form action="inventory-item-search-similar-items" method="post">
+                      {% csrf_token %}
+                          <div class="button">
+                              <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search by Name" name="search-similar-item-name">
+                          </div>
+                          <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                          <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
+                          <input type="hidden" id="searchbyname" name="search-by" value="item-name">
+                      </form>
+                  </div>
+                  <div class="col-sm-6">
+                    <form action="inventory-item-search-similar-items" method="post">
+                      {% csrf_token %}
+                          <div class="button">
+                              <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search by Image" name="search-similar-item-name">
+                          </div>
+                          <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                          <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
+                          <input type="hidden" id="searchbyimage" name="search-by" value="item-image">
+                      </form>
+                  </div>
+                    
+                </div>
+            </div>
                 <!-- IMAGES CONTROL PANEL -->
                 <div class="standard-command-container">
                     <div class="row">
@@ -106,7 +188,7 @@
                     <!-- MAIN DESCRIPTION-->
                     <h5><b>Title and Description Writer</b></h5> <small><i>Powered by GPT-4</i></small>
 
-                    <p style="margin-top: 1em;"><b>Words left:</b> {{request.user.words}}</p>
+                    <p style="margin-top: 1em;"><b>Words:</b> {{request.user.words}}</p>
                     <p>Write optimized titles for search engine results in seconds.</p>
                     <div style="margin-top:0.5em; margin-bottom:1em;">
                         <button class="standard-button" id="OpenModalTitleGPT" onclick="open_modal(this.id)">Generate Title</button>
@@ -116,96 +198,12 @@
                       <button class="standard-button" id="OpenModalDescriptionGPT" onclick="open_modal(this.id)">Generate Description</button>
                     </div>
                 </div>
-                <!-- VARIANTS -->
-                <div class="standard-command-container">
-                  <div style="text-align:center">
-                    <button class="standard-button" id="show-variants" onclick="show_hide_variants()">Variants</button>
-                  </div>
-                  <div id="variants-div" hidden="hidden">
-                    {% for variant in variants %}
-                    <div class="card bg-light mb-3" style="max-width:100%; max-height: 20em;">
-                      <div class="form-group">
-                        <div class="row">
-                          <div class="col-sm-6">
-                            <div class="form-group" style="text-align: center;">
-                              <img src="{{variant.variantImage}}" width="200px" height="200px" style="padding: 2px;">
-                            </div>
-                          </div>
-                          <div class="col-sm-6">
-                            <div class="form-group">
-                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
-                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantNameEn}}">
-                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
-                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.sellPrice}}">
-                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
-                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantKey}}">
-                              <input type="hidden" id='variant-id' name="variant-id" value="{{variant.vid}}">
-                              
-                            </div>
-                          </div>
-                        </div>
-                  
-                      </div>
-                      </div>
-                    {% endfor %}
-                  </div>
-                </div>
+                
                 <!-- SHIPPING -->
                 <div class="standard-command-container" id="calc-shipping" style="font-family: Poppins">
                   <label for="calc-shipping-options">Ship to:</label>
                         <select class="country-select form-control" name="calc-shipping" id="calc-shipping-options">
-                          <option value="none" selected="selected"></option>
-                          <option value="AR" data-icon="https://www.countryflags.io/ar/flat/64.png">Argentina</option>
-                          <option value="AU" data-icon="https://www.countryflags.io/au/flat/64.png">Australia</option>
-                          <option value="AT" data-icon="https://www.countryflags.io/at/flat/64.png">Austria</option>
-                          <option value="BD" data-icon="https://www.countryflags.io/bd/flat/64.png">Bangladesh</option>
-                          <option value="BE" data-icon="https://www.countryflags.io/be/flat/64.png">Belgium</option>
-                          <option value="BR" data-icon="https://www.countryflags.io/br/flat/64.png">Brazil</option>
-                          <option value="CA" data-icon="https://www.countryflags.io/ca/flat/64.png">Canada</option>
-                          <option value="CL" data-icon="https://www.countryflags.io/cl/flat/64.png">Chile</option>
-                          <option value="CN" data-icon="https://www.countryflags.io/cn/flat/64.png">China</option>
-                          <option value="CO" data-icon="https://www.countryflags.io/co/flat/64.png">Colombia</option>
-                          <option value="CZ" data-icon="https://www.countryflags.io/cz/flat/64.png">Czech Republic</option>
-                          <option value="EG" data-icon="https://www.countryflags.io/eg/flat/64.png">Egypt</option>
-                          <option value="FR" data-icon="https://www.countryflags.io/fr/flat/64.png">France</option>
-                          <option value="DE" data-icon="https://www.countryflags.io/de/flat/64.png">Germany</option>
-                          <option value="GR" data-icon="https://www.countryflags.io/gr/flat/64.png">Greece</option>
-                          <option value="HU" data-icon="https://www.countryflags.io/hu/flat/64.png">Hungary</option>
-                          <option value="IN" data-icon="https://www.countryflags.io/in/flat/64.png">India</option>
-                          <option value="ID" data-icon="https://www.countryflags.io/id/flat/64.png">Indonesia</option>
-                          <option value="IR" data-icon="https://www.countryflags.io/ir/flat/64.png">Iran</option>
-                          <option value="IQ" data-icon="https://www.countryflags.io/iq/flat/64.png">Iraq</option>
-                          <option value="IE" data-icon="https://www.countryflags.io/ie/flat/64.png">Ireland</option>
-                          <option value="IL" data-icon="https://www.countryflags.io/il/flat/64.png">Israel</option>
-                          <option value="IT" data-icon="https://www.countryflags.io/it/flat/64.png">Italy</option>
-                          <option value="JP" data-icon="https://www.countryflags.io/jp/flat/64.png">Japan</option>
-                          <option value="KR" data-icon="https://www.countryflags.io/kr/flat/64.png">South Korea</option>
-                          <option value="MY" data-icon="https://www.countryflags.io/my/flat/64.png">Malaysia</option>
-                          <option value="MX" data-icon="https://www.countryflags.io/mx/flat/64.png">Mexico</option>
-                          <option value="NL" data-icon="https://www.countryflags.io/nl/flat/64.png">Netherlands</option>
-                          <option value="NG" data-icon="https://www.countryflags.io/ng/flat/64.png">Nigeria</option>
-                          <option value="NO" data-icon="https://www.countryflags.io/no/flat/64.png">Norway</option>
-                          <option value="PK" data-icon="https://www.countryflags.io/pk/flat/64.png">Pakistan</option>
-                          <option value="PE" data-icon="https://www.countryflags.io/pe/flat/64.png">Peru</option>
-                          <option value="PH" data-icon="https://www.countryflags.io/ph/flat/64.png">Philippines</option>
-                          <option value="PL" data-icon="https://www.countryflags.io/pl/flat/64.png">Poland</option>
-                          <option value="PT" data-icon="https://www.countryflags.io/pt/flat/64.png">Portugal</option>
-                          <option value="RO" data-icon="https://www.countryflags.io/ro/flat/64.png">Romania</option>
-                          <option value="RU" data-icon="https://www.countryflags.io/ru/flat/64.png">Russia</option>
-                          <option value="SA" data-icon="https://www.countryflags.io/sa/flat/64.png">Saudi Arabia</option>
-                          <option value="ZA" data-icon="https://www.countryflags.io/za/flat/64.png">South Africa</option>
-                          <option value="SG" data-icon="https://www.countryflags.io/sg/flat/64.png">Singapore</option>
-                          <option value="ES" data-icon="https://www.countryflags.io/es/flat/64.png">Spain</option>
-                          <option value="SE" data-icon="https://www.countryflags.io/se/flat/64.png">Sweden</option>
-                          <option value="CH" data-icon="https://www.countryflags.io/ch/flat/64.png">Switzerland</option>
-                          <option value="TH" data-icon="https://www.countryflags.io/th/flat/64.png">Thailand</option>
-                          <option value="TR" data-icon="https://www.countryflags.io/tr/flat/64.png">Turkey</option>
-                          <option value="UA" data-icon="https://www.countryflags.io/ua/flat/64.png">Ukraine</option>
-                          <option value="AE" data-icon="https://www.countryflags.io/ae/flat/64.png">United Arab Emirates</option>
-                          <option value="GB" data-icon="https://www.countryflags.io/gb/flat/64.png">United Kingdom</option>
-                          <option value="US" data-icon="https://www.countryflags.io/us/flat/64.png">United States</option>
-                          <option value="VE" data-icon="https://www.countryflags.io/ve/flat/64.png">Venezuela</option>
-                          <option value="VN" data-icon="https://www.countryflags.io/vn/flat/64.png">Vietnam</option>
+                                {% include 'mainapp/includes/languages.html' %}
                         </select>
                         <div style="text-align: center;margin-top:1em;">
                           <button id="calc-shipping-button" class="standard-button" onclick="calc_shipping()">Estimate shipping</button>
@@ -215,23 +213,6 @@
                               <!-- SHIPPING OPTIONS -->
                         </ul>
               </div>
-              <!-- SEARCH SIMILAR ITEMS -->
-              <div class="standard-command-container">
-                <div class="row">
-                    <h5><b>Search Similar Items</b></h5>
-                    <p>Search for similar items on Ebay, Amazon, etc.</p>
-                </div>
-                <div class="row">
-                    <form action="inventory-item-search-similar-items" method="post">
-                        {% csrf_token %}
-                            <div class="button">
-                                <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search" name="search-similar-item-name">
-                            </div>
-                            <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
-                            <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
-                        </form>
-                </div>
-            </div>
                 <!-- INSTAGRAM -->
                 <div class="standard-command-container">
                     <div class="row">
@@ -265,7 +246,7 @@
         <div class="form-group">
           <div id="keywords-insert-div">
             <label for="keywords-insert">Enter the keywords you want in the title</label>
-            <input id="keywords-insert" class="form-control" type="text">
+            <input id="keywords-insert" name="title-keywords" class="form-control" type="text">
             <small id="keywords-insertHelp" class="form-text text-muted">Write keywords separated by commas.</small>
             <button id="gpt-suggest-keywords-button" class="standard-button" onclick="gpt_suggest_keywords()">Suggest keywords</button>
           </div>
@@ -314,7 +295,7 @@
       <form action="inventory-item-save-gpt-description" method="POST">
         {% csrf_token %}
         <div>
-            <textarea id="generated-description" name="text-area-generated-description" class="textarea-gpt" rows="4" cols="50" hidden="hidden"></textarea>
+            <textarea id="generated-description" name="text-area-generated-description" class="textarea-gpt" rows="10" cols="50" hidden="hidden"></textarea>
          </div>
         <div name ="save-or-generate-description-div" id="save-or-generate-title-div-id">
             <button id="gpt-save-description-button" class="standard-button" onclick=""> Save</button>
@@ -350,6 +331,32 @@
         
     }
 
+    function reverse_image_search(button_id){
+
+      image_url = button_id.replace('reverse-image-search-button-', '')
+      console.log(image_url)
+      let csrftoken = "{{csrf_token}}"
+      var data_json = {'csrfmiddlewaretoken': csrftoken, 
+                        'itemName': document.getElementById("id_itemName").value,
+                        'service': 'gpt-title',
+                        'keywords': document.getElementById("keywords-insert").value, };
+
+      $.ajax({
+            method: 'POST',
+            url: "{% url 'inventory-item-search-similar-items' %}",
+            data: data_json,
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+
+
+    }
 
     async function cj_get_access_token() {
                 let url = 'https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken';
@@ -509,136 +516,104 @@
         }
     }
 
+    function check_user_words(){
+      const user_words = {{ user.words | safe }};
+      if (user_words <= 0){
+        return true
+      }else{
+        return false
+      }
+    }
     async function gpt_write_title(){
-        const apiKey = "";
-        const url = "https://api.openai.com/v1/chat/completions";
 
-        let spinner = document.getElementById("loader-title")
-        spinner.removeAttribute("hidden");
+        let csrftoken = "{{csrf_token}}"
+        var data_json = {'csrfmiddlewaretoken': csrftoken, 
+                        'itemName': document.getElementById("id_itemName").value,
+                        'service': 'gpt-title',
+                        'keywords': document.getElementById("keywords-insert").value, };
+        console.log(data_json)
 
-        let itemName = document.getElementById("id_itemName").value
 
-        let message_1 = "Write one professional and SEO optimized product title for a " + itemName + "."
-        let message_2 = document.getElementById("keywords-insert").value
-
-        const requestHeaders = {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        };
-
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a product title writer"},
-                      {"role": "user", "content": message_1},
-                      {"role": "assistant", "content": "Which keywords?"},
-                      {"role": "user", "content": message_2},
-                      {"role": "user", "content": "Avoid introduction or everything else. Return only the title."},
-                    ],
-          "temperature": 0.7
-        };
-
-        console.log('here2')
-        await fetch(url, {
-          method: "POST",
-          headers: requestHeaders,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)            
-            document.getElementById('generated-title').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
-            document.getElementById('generated-title').removeAttribute("hidden");
-            document.getElementById('gpt-write-button').setAttribute("hidden", "hidden");
-            document.getElementsByName('save-or-generate-title-div').forEach((el) => {
-            el.removeAttribute("hidden");
-            });
-            // UPDATE WORDS COUNTER
-            update_words(data)
-            /*
-            let csrftoken = "{{csrf_token}}"
-            var data_json = {'tokens_used': data['usage']['completion_tokens'], 'csrfmiddlewaretoken': csrftoken};
-            console.log(data_json)
-            $.ajax({
-                method: 'POST',
-                url: "{% url 'update-user-words' %}",
-                data: data_json,
-                success: function (data) {
-                    //this gets called when server returns an OK response
-                    console.log(data);
-                },
-                error: function (data) {
-                    console.log(data);
-                }
-            });*/
-        })
-        .catch(error => console.error(error));
-
-        spinner.setAttribute("hidden", "hidden")
+        if (check_user_words() == true){
+          alert('Words finished')
+          let spinner_close = document.getElementById("loader-title")
+          spinner_close.setAttribute("hidden", "hidden")
+        }else{
+          $.ajax({
+            method: 'POST',
+            url: "{% url 'gpt-write' %}",
+            data: data_json,
+            beforeSend: function() {
+              let spinner = document.getElementById("loader-title")
+              spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+                let spinner_close = document.getElementById("loader-title")
+                spinner_close.setAttribute("hidden", "hidden")
+                document.getElementById('generated-title').value = data.replace(/["]+/g, '') //['choices'][0]['message']['content'].replace(/["]+/g, '')
+                document.getElementById('generated-title').removeAttribute("hidden");
+                document.getElementById('gpt-write-button').setAttribute("hidden", "hidden");
+                document.getElementsByName('save-or-generate-title-div').forEach((el) => {
+                el.removeAttribute("hidden");
+                });
+                
+            },
+            error: function (data) {
+                console.log(data);
+                let spinner_close = document.getElementById("loader-title")
+                spinner_close.setAttribute("hidden", "hidden")
+            }
+        });
+        }
     }
 
     async function gpt_write_description(){
-        const apiKey = "";
-        const url = "https://api.openai.com/v1/chat/completions";
-        
-        let spinner = document.getElementById("loader-description")
-        spinner.removeAttribute("hidden");
+        let csrftoken = "{{csrf_token}}"
+        var data_json = {'csrfmiddlewaretoken': csrftoken,
+                          'service': 'gpt-description',
+                        'itemName': document.getElementById("id_itemName").value,
+                        'keywords': document.getElementById("keywords-insert").value,
+                       'description': description = document.getElementById("original-description").outerHTML,
+                      
+                      };
+        console.log(data_json)
 
-        let itemName = document.getElementById("id_itemName").value
-        let description = document.getElementById("original-description").outerHTML
-        console.log(description)
-        description = cleanHtml(description)
-        console.log(itemName)
-        console.log(description)
-
-        const requestHeaders = {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        };
-
-        console.log("here")
-
-        message_1 = "Write a professional product description for a " + itemName + " with these features: " //+ description
-        //message_2 = "A SEO optimized product description for keywords like: " + keywords
-        message_3 = "The description must not contain the title of the product"
-        message_4 = "Avoid introduction, just describe the product "
-
-        const requestData = {
-          "model": "gpt-3.5-turbo",
-          "messages": [
-                      {"role": "system", "content": "You are a product description writer"},
-                      {"role": "user", "content": message_1},
-                      //{"role": "user", "content": message_2},
-                      {"role": "user", "content": message_3},
-                      {"role": "user", "content":message_4},
-                    ],
-          "temperature": 0.7
-        };
-
-        await fetch(url, {
-          method: "POST",
-          headers: requestHeaders,
-          body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data)            
-            document.getElementById('generated-description').value = data['choices'][0]['message']['content'].replace(/["]+/g, '')
-            document.getElementById('generated-description').removeAttribute("hidden");
-            document.getElementById('gpt-write-description-button').setAttribute("hidden", "hidden");
-            document.getElementsByName('save-or-generate-description-div').forEach((el) => {
-            el.removeAttribute("hidden");
-            })
-
-            // UPDATE OWRDS
-            update_words(data)            
-        })
-        .catch(error => console.error(error));
-
-        
-
-        spinner.setAttribute("hidden", "hidden")
-    }
+        if (check_user_words() == true){
+          alert('Words finished')
+          let spinner_close = document.getElementById("loader-description")
+          spinner_close.setAttribute("hidden", "hidden")
+        }else{
+          $.ajax({
+            method: 'POST',
+            url: "{% url 'gpt-write' %}",
+            data: data_json,
+            beforeSend: function() {
+              let spinner = document.getElementById("loader-description")
+              spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+                let spinner_close = document.getElementById("loader-description")
+                spinner_close.setAttribute("hidden", "hidden")
+                document.getElementById('generated-description').value = data //['choices'][0]['message']['content'].replace(/["]+/g, '')
+                document.getElementById('generated-description').removeAttribute("hidden");
+                document.getElementById('gpt-write-description-button').setAttribute("hidden", "hidden");
+                document.getElementsByName('save-or-generate-description-div').forEach((el) => {
+                el.removeAttribute("hidden");
+                });
+                
+            },
+            error: function (data) {
+                console.log(data);
+                let spinner_close = document.getElementById("loader-title")
+                spinner_close.setAttribute("hidden", "hidden")
+            }
+        });
+        }
+    } 
 
 
     async function gpt_suggest_keywords(){

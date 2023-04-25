@@ -5,42 +5,158 @@
 {% load static %}
 
 {% block content %}
+
+
+{% if search_by == 'item-image' %}
+
 <div class="standard-command-container">
-        <h3>Ebay</h3> 
-        {% for item in items %}
-        <div class="row" style="border-bottom: solid 1px black; font-size:x-small;">
-            <div class="col-2">
-                <p><b>Title:</b> {{item.title}}</p>
-            </div>
-            <div class="col-1">
-                <p><b>Price:</b> {{item.price.value}}</p>$
-            </div>
-            <div class="col-3">
-                {% for category in item.categories %}
-                <p><b>Category:</b> {{category.categoryName}} <b>Category ID:</b> {{category.categoryId}} 
-                    <form action="inventory-item-set-ebay-category" method="post">
-                        {% csrf_token %}
-                        <div class="button" style="text-align: center; margin-top:4em;">
-                            <input class="standard-button" id='setebaycategory' type="submit" value="Set as Ebay category" name="set-ebay-category">
-                          </div>
-                          <input type="hidden" id="primarykey" name="primary-key" value="{{primary_key}}">
-                          <input type="hidden" id="categoryid" name="category-id" value="{{category.categoryId}}">
-                           
-                    </form>
-                </p>
-                {% endfor %}
-            </div>
-            <div class="col-4">
-                
-            </div>
-            <div class="col-1">
-                
-            </div>
-            <div class="col-1">
-                <img src={{item.image.imageUrl}} width="80" height="80" alt="">
-            </div>
-        </div>
-        {% endfor %}
+
+    <div class="table-responsive">
+        <table class="table">
+           <caption></caption>
+           <thead>
+             <tr>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              
+             </tr>
+           </thead>
+           <tbody>
+            {% for image in inline_images %}
+              <tr>
+                 <th scope="row"><img src={{image.thumbnail}}></td>
+                    <td>{{image.title}}</td>
+                 <td>{{image.source_name}} </td>
+                 <td><a href="{{image.source}}" target="_blank" rel="follow">View</a></td>
+                   </tr>
+               {% endfor %}
+           </tbody>
+        </table>
+      </div>
 </div>
+
+{% else %}
+<div class="standard-command-container">
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+  <li class="search-similar nav-item" role="presentation">
+    <button class="nav-link active" id="pills-blog-article-tab" data-bs-toggle="pill" data-bs-target="#pills-blog-article" type="button" role="tab" aria-controls="pills-blog-article" aria-selected="true"><img src="http://xzshop.eu/wp-content/uploads/2023/04/google-logo.png" height="25px" width="70px"></button>
+  </li>
+  <li class="search-similar nav-item" role="presentation">
+    <button class="search-similar nav-link" id="pills-facebook-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-facebook-ads" type="button" role="tab" aria-controls="pills-facebook-ads" aria-selected="false"><img src="http://xzshop.eu/wp-content/uploads/2023/04/2560px-EBay_logo.svg_.png" height="23px" width="60px"></button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="pills-walmart" data-bs-toggle="pill" data-bs-target="#pills-walmart" type="button" role="tab" aria-controls="pills-walmart" aria-selected="false"><img src="http://xzshop.eu/wp-content/uploads/2023/04/Walmart_logo.svg_.png" height="25px" width="90px"></button>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-blog-article" role="tabpanel" aria-labelledby="pills-blog-article-tab">
+    <div class="card-deck">
+      <div class="card" style="border: none; padding: 0.2px">
+        <div class="table-responsive">
+          <table class="table">
+             <caption></caption>
+             <thead>
+               <tr>
+                <th scope="col"></th>
+                <th scope="col">Title</th>
+              <th scope="col">Price</th>
+              <th scope="col">Rating</th>
+              <th scope="col">Reviews</th>
+                <th scope="col">Store</th>
+                
+               </tr>
+             </thead>
+             <tbody>
+              {% for result in shopping_results %}
+                <tr>
+                   <th scope="row"><img src={{result.thumbnail}} width="100px" height="100px"></td>
+                    <td>{{result.title}}</td>
+                    <td>{{result.price}} </td>
+                    <td>{{result.rating}}/5</td>
+                    <td>{{result.reviews}}</td>
+              
+                    <td><a href="{{result.link}}" target="_blank" rel="follow">{{result.source}} <i style="color: #2868fc;" class="fa-solid fa-eye"></i></td>
+                     </tr>
+                 {% endfor %}
+             </tbody>
+          </table>
+        </div>
+        </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="pills-facebook-ads" role="tabpanel" aria-labelledby="pills-facebook-ads-tab">
+    <div class="card-deck">
+      <div class="card" style="border: none; padding: 0.2px">
+        <div class="table-responsive">
+          <table class="table">
+             <caption></caption>
+             <thead>
+               <tr>
+                <th scope="col"></th>
+                <th scope="col">Title</th>
+              <th scope="col">Price</th>
+              <th scope="col">Rating</th>
+              <th scope="col">Reviews</th>
+                <th scope="col">Store</th>
+                
+               </tr>
+             </thead>
+             <tbody>
+              {% for result_e in ebay_results %}
+                <tr>
+                   <th scope="row"><img src={{result_e.thumbnail}} width="100px" height="100px"></td>
+                    <td>{{result_e.title}}</td>
+                    <td>{{result_e.price.raw}} </td>
+                    <td>{{result_e.rating}}/5</td>
+                    <td>{{result_e.reviews}}</td>
+                    <td><a href="{{result_e.link}}" target="_blank" rel="follow">{{result_e.seller.username}}</a></td>
+                     </tr>
+                 {% endfor %}
+             </tbody>
+          </table>
+        </div>
+        </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="pills-walmart" role="tabpanel" aria-labelledby="pills-walmart">
+    <div class="card-deck">
+      <div class="card" style="border: none; padding: 0.2px">
+        <div class="table-responsive">
+          <table class="table">
+             <caption></caption>
+             <thead>
+               <tr>
+                <th scope="col"></th>
+                <th scope="col">Title</th>
+              <th scope="col">Price</th>
+              <th scope="col">Rating</th>
+              <th scope="col">Reviews</th>
+                <th scope="col">Store</th>
+                
+               </tr>
+             </thead>
+             <tbody>
+              {% for result in shopping_results %}
+                <tr>
+                   <th scope="row"><img src={{result.thumbnail}} width="100px" height="100px"></td>
+                    <td>{{result.title}}</td>
+                    <td>{{result.price}} </td>
+                    <td>{{result.rating}}/5</td>
+                    <td>{{result.reviews}}</td>
+              
+                    <td><a href="{{result.link}}" target="_blank" rel="follow">{{result.source}}</a></td>
+                     </tr>
+                 {% endfor %}
+             </tbody>
+          </table>
+        </div>
+        </div>
+    </div>
+  </div>
+  </div>
+</div>
+{% endif %}
 
 {% endblock %}

@@ -10,7 +10,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 
 from users.tokens import account_activation_token
-from users.forms import UserRegistrationForm, ContactForm, WhitelistForm
+from users.forms import UserRegistrationForm, ContactForm, WhitelistForm, CustomAuthenticationForm
 # Create your views here.
 
 def index(request):
@@ -41,7 +41,7 @@ def activate(request, uidb64, token):
     return redirect(index)
 
 def activateEmail(request, user, to_email):
-    mail_subject = 'Activate your user account.'
+    mail_subject = 'SellFast - Activate your user account.'
     message = render_to_string('users/template_activate_account.html', {
         'user': user.username,
         'domain': get_current_site(request).domain,
@@ -51,8 +51,8 @@ def activateEmail(request, user, to_email):
     })
     email = EmailMessage(mail_subject, message, to=[to_email])
     if email.send():
-        messages.success(request, f'Dear <b>{user}</b>, please go to you email <b>{to_email}</b> inbox and click on \
-            received activation link to confirm and complete the registration. <b>Note:</b> Check your spam folder.')
+        messages.success(request, f'Please go to you email <b>{to_email}</b> inbox and click on \
+            received activation link to confirm and complete the registration.')
     else:
         messages.error(request, f'Problem sending confirmation email to {to_email}, check if you typed it correctly.')
 
@@ -65,8 +65,11 @@ def registration(request):
         if registration_form.is_valid():
             user = registration_form.save(commit=False)
             user.is_active = False
+            user.username = registration_form.cleaned_data.get('email')
             user.save()
             activateEmail(request, user, registration_form.cleaned_data.get('email'))
+            email = EmailMessage('User +1', 'daje', to=['francescozedde711@gmail.com'])
+            email.send()
             #login(request, user)
             #messages.success(request, f"Hello <b>{user.username}</b>, your account has been created.")
             return redirect(index)
@@ -102,6 +105,7 @@ def custom_login(request):
                 messages.error(request, error)
                 return redirect(custom_login)
 
+    login_form = CustomAuthenticationForm()
     context = {'login_form':login_form}
     return render(request, 'users/login.html', context)
 

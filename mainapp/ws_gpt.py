@@ -76,7 +76,7 @@ class ChatGPT:
                   ])
         print(response)
         time.sleep(5)
-        return response['choices'][0]['message']['content']
+        return response['choices'][0]['message']['content'], response['usage']['completion_tokens']
 
 
     def gpt35_write_product_title(self, product_title, category):
@@ -95,7 +95,7 @@ class ChatGPT:
                       {"role": "user", "content":message_3},
                   ])
         print(response)
-        return response['choices'][0]['message']['content']
+        return response['choices'][0]['message']['content'], response['usage']['completion_tokens']
 
 
     def answer_question(self, question, max_tokens):
@@ -111,19 +111,212 @@ class ChatGPT:
 
         answer = response['choices'][0]['text']
         return answer
-'''
+
     def generate_image_from_prompt(self, prompt):
         response = openai.Image.create(
                 prompt=prompt,
-                n=1,
+                n=2,
                 size="1024x1024"
         )
+        print(response)
         return response
     
     def generate_image_variation(self):
         response = openai.Image.create_variation(
-                image=open("mainapp/static/images/testimage2.b.png", "rb"),
+                #prompt="add a model"
+                image=open("mainapp/static/images/blackdress.png", "rb"),
                 n=2,
                 size="1024x1024"
         )
-        print(response)'''
+        print(response)
+
+    def smartcopy_write_blog_article(self, topic, target_audience, keywords, tone, word_count, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                {"role": "system", "content": "You are a blog article writer"},
+                {"role": "user", "content": f"Write a {tone} blog article"},
+                {"role": "user", "content": f"Topic: {topic}. Target Audience: {target_audience}. Keywords: {keywords}. Word Count: {str(word_count)}. Language: {language}"},
+            ],
+            temperature =0.7,
+            max_tokens = 2000,
+            top_p = 1,
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+    
+    def smartcopy_blog_ideas(self, topic, target_audience, keywords, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are a blog writer"},
+                      {"role": "user", "content": "Make a list of 15 blog article ideas" },
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords  + ". Language: " + language},
+                    ],
+            temperature =0.7,
+            max_tokens = 2000,
+            top_p = 1,
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+
+    def smartcopy_check_plagiarism(self, text):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are a plagiarism checker"},
+                      {"role": "user", "content": "check plagiarism in this text and highlight parts that are plagiarized:" },
+                      {"role": "user", "content": text },
+                    ],
+            temperature =0.7,
+            max_tokens = 2000,
+            top_p = 1,
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+
+    
+    def smartcopy_write_facebook_ads(self, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are a facebook ads writer"},
+                      {"role": "user", "content": "Write a " + tone + " facebook ads"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + str(word_count)  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
+                    ],
+            temperature =0.7,
+            max_tokens = 2000,
+            top_p = 1,
+            n = int(n_copies),
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+    
+    def smartcopy_facebook_post(self, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are a social media manager"},
+                      {"role": "user", "content": "Write a " + tone + " facebook post"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + str(word_count)  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
+                    ],
+            temperature =0.7,
+            max_tokens = 2000,
+            top_p = 1,
+            n = int(n_copies),
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+    
+    def smartcopy_facebook_post_ideas(self, topic, target_audience, keywords, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are a social media manager"},
+                      {"role": "user", "content": "Make a list of 10 topics for a facebook post ideas" },
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords  + ". Language: " + language},
+                    ],
+            temperature =0.7,
+            max_tokens = 500,
+            top_p = 1,
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+
+    
+    
+    def smartcopy_write_instagram_post(self, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are a instagram post writer"},
+                      {"role": "user", "content": "Write a " + tone + " instagram post"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + "Word Count: " + str(word_count)  + ". Language: " + language + ".  Style: " + emoji + bullet_list},
+                    ],
+            temperature =0.7,
+            max_tokens = 1000,
+            top_p = 1,
+            n = int(n_copies),
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")
+    
+
+    def smartcopy_write_instagram_tags(self,topic, target_audience, keywords, language):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                
+                messages = [
+                      {"role": "system", "content": "You are an expert social media manager"},
+                      {"role": "user", "content": "Write 20 instagram tags in a single line"},
+                      {"role": "user", "content": "Topic: " + topic + ". Target Audience: " + target_audience + ". Keywords: " + keywords + ". Language: " + language },
+                    ],
+            temperature =0.7,
+            max_tokens = 1000,
+            top_p = 1,
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            
+            )
+        print(response)
+
+        if len(response['choices']) >= 1:
+            return response
+        else:
+            print(f"Error")

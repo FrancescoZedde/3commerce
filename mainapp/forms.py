@@ -738,65 +738,65 @@ class InventoryItemForm(ModelForm):
         widgets = {
             'itemName': TextInput(attrs={
                 'class': "form-control",
-                'style': 'font-size: 11px;',
+                'style': 'font-size: 13px;',
                 }),
             'sku': TextInput(attrs={
                 'class': "form-control",
-                'style': 'font-size: 11px;',
+                'style': 'font-size: 13px;',
                 'readonly': True,
                 }),
             'supplier': TextInput(attrs={
                 'class': "form-control",
-                'style': 'font-size: 11px;',
+                'style': 'font-size: 13px;',
                 'readonly': True,
                 }),
             'materialNameEn': TextInput(attrs={
                 'class': "form-control",
-                'style': 'font-size: 11px;',
+                'style': 'font-size: 13px;',
                 'readonly': True,
                 }),
             'supplierSellPrice': TextInput(attrs={
                 'class': "form-control",
-                'style': 'font-size: 11px;',
+                'style': 'font-size: 13px;',
                 'readonly': True,
                 }),
             'categoryFirst' : TextInput(attrs={
                 'class': "form-control",
-                'style': ' font-size: 11px;',
+                'style': ' font-size: 13px;',
                 'readonly': True,
                 }),
             'brand' : TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 200px; font-size: 11px;',
+                'style': 'max-width: 200px; font-size: 13px;',
                 }),
             'description': Textarea(attrs={
                     'class': "form-control",
                     'rows': 7, 
-                    'style': 'max-width: 100%; font-size: 11px;',
+                    'style': 'max-width: 100%; font-size: 13px;',
                     }),
             'descriptionFeatures': Textarea(attrs={
                     'class': "form-control",
                     'rows': 7, 
-                    'style': 'max-width: 100%; font-size: 11px;',
+                    'style': 'max-width: 100%; font-size: 13px;',
                     'blank':True,
                     }),
             'descriptionChatGpt': Textarea(attrs={
                     'class': "form-control",
-                    'rows': 7, 
-                    'style': 'max-width: 100%; font-size: 11px;',
+                    'rows': 15, 
+                    'style': 'max-width: 100%; font-size: 13px;',
                     }),
             'sellPrice': TextInput(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 100%;font-size: 11px;',
+                'style': 'max-width: 100%;font-size: 13px;',
                 }),
             'attributes': TextInput(attrs={
                 'class': "form-control", 
-                'style': 'font-size: 11px;',
+                'style': 'font-size: 13px;',
                 'readonly': True,
                 }),
             'productImage':TextInput(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 100%; font-size: 11px;',
+                'style': 'max-width: 100%; font-size: 13px;',
                 'readonly': True,
                 }),
         }
@@ -892,29 +892,30 @@ class BlogPlagiarismForm(forms.Form):
                                                     }))
 
 class FacebookAdsForm(forms.Form):
-    form_id = forms.CharField(initial='facebook-ads',widget = forms.HiddenInput())
-    topic = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
-    keywords = forms.CharField(max_length=50)
-    target_audience = forms.CharField(max_length=50)
-    word_count = forms.IntegerField(initial=100)
-    n_copies = forms.IntegerField(initial=3)
-    emoji = forms.BooleanField(label='Check to use emoji',initial=False, required=False)
-    bullet_list = forms.BooleanField(label='Check to use bullet point list',initial=False, required=False)
-    language = forms.ChoiceField(choices=languages)
-    
+    form_id = forms.CharField(initial='facebook-ads',widget=forms.HiddenInput())
+    topic = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'style': 'font-size: 12px;'}))
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style': 'font-size: 12px;', 'size': '1'}))
+    keywords = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'style': 'font-size: 12px;'}))
+    target_audience = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'style': 'font-size: 12px;'}))
+    word_count = forms.IntegerField(initial=100, widget=forms.NumberInput(attrs={'style': 'font-size: 12px;'}))
+    n_copies = forms.IntegerField(initial=3, widget=forms.NumberInput(attrs={'style': 'font-size: 12px;'}))
+    emoji = forms.BooleanField(label='Check to use emoji',initial=False, required=False, widget=forms.CheckboxInput(attrs={'style': 'font-size: 12px;'}))
+    bullet_list = forms.BooleanField(label='Check to use bullet point list',initial=False, required=False, widget=forms.CheckboxInput(attrs={'style': 'font-size: 12px;'}))
+    language = forms.ChoiceField(choices=languages, widget=forms.Select(attrs={'style': 'font-size: 12px;', 'size': '1'}))
+
 
 class FacebookPostForm(forms.Form):
-    form_id = forms.CharField(initial='facebook-post',widget = forms.HiddenInput())
-    topic = forms.CharField(max_length=100)
-    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style':'', 'size':'1'}))
-    keywords = forms.CharField(max_length=50)
-    target_audience = forms.CharField(max_length=50)
-    word_count = forms.IntegerField(initial=100)
-    n_copies = forms.IntegerField(initial=3)
-    emoji = forms.BooleanField(label='Check to use emoji',initial=False, required=False)
-    bullet_list = forms.BooleanField(label='Check to use bullet point list',initial=False, required=False)
-    language = forms.ChoiceField(choices=languages)
+    form_id = forms.CharField(initial='facebook-post',widget=forms.HiddenInput())
+    topic = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'style': 'font-size: 12px;'}))
+    tone = forms.ChoiceField(choices=tone_of_voice, widget=forms.Select(attrs={'style': 'font-size: 12px;', 'size': '1'}))
+    keywords = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'style': 'font-size: 12px;'}))
+    target_audience = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'style': 'font-size: 12px;'}))
+    word_count = forms.IntegerField(initial=100, widget=forms.NumberInput(attrs={'style': 'font-size: 12px;'}))
+    n_copies = forms.IntegerField(initial=3, widget=forms.NumberInput(attrs={'style': 'font-size: 12px;'}))
+    emoji = forms.BooleanField(label='Check to use emoji',initial=False, required=False, widget=forms.CheckboxInput(attrs={'style': 'font-size: 12px;'}))
+    bullet_list = forms.BooleanField(label='Check to use bullet point list',initial=False, required=False, widget=forms.CheckboxInput(attrs={'style': 'font-size: 12px;'}))
+    language = forms.ChoiceField(choices=languages, widget=forms.Select(attrs={'style': 'font-size: 12px;', 'size': '1'}))
+        
 
 class FacebookPostIdeasForm(forms.Form):
     form_id = forms.CharField(initial='facebook-post-ideas',widget = forms.HiddenInput())

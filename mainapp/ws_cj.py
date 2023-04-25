@@ -35,9 +35,9 @@ class CJDropshipping:
     def cj_get_access_token(self):
         return self.access_token
 
-    def cj_products_by_category(self, category_id, results_limit):
+    def cj_products_by_category(self, category_id):
         url = 'https://developers.cjdropshipping.com/api2.0/v1/product/list'
-        n_page = math.ceil(int(results_limit)/200)
+        n_page = math.ceil(int(200)/200)
         response = []
         for i in range(int(n_page)+1):
             try:
@@ -49,11 +49,12 @@ class CJDropshipping:
                     headers = {"CJ-Access-Token": self.access_token}
 
                     get_products_resp = requests.get(url, params=data, headers=headers).json()
+                    print(get_products_resp)
                     lista_prodotti = get_products_resp['data']['list']
                     response = response + lista_prodotti
             except:
                 break
-        return response[0:int(results_limit)]
+        return response
     
     def cj_get_product_details(self, sku):        
         url = 'https://developers.cjdropshipping.com/api2.0/v1/product/query?productSku=' + str(sku)

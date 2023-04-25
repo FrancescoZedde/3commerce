@@ -83,8 +83,8 @@
                                   <p class="card-title" style="font-size:12px !important; min-height:28%">{{ product.productNameEn }}</p>
                                 
                                       <p class="card-text"><small class="text-muted"><!--Sku: {{ product.productSku}}<br> --> 
-                                             Listings: {{ product.listedNum}} <br> 
-                                             <form action="search-product-details" method="post">
+                                            Listed in <b>{{ product.listedNum}}</b> stores <br> 
+                                             <form action="search-product-details" method="post" target="_blank">
                                                 {% csrf_token %}
                                                 <input style="margin-left:-5px;border:none;color:rgb(73, 167, 255); background-color: transparent;" id='see-details' type="submit" value="See details" name="see-details">
                                                 <input type="hidden" id="selected-item-{{ product.productSku}}" name="selected-item" value="{{ product.productSku}}">

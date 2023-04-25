@@ -10,9 +10,11 @@ from django.contrib import messages
 from django.conf import settings
 from urllib.parse import urlencode
 from django.urls import reverse
+from django.http import JsonResponse
 
 
-from mainapp.views_utils import map_json_shopify_to_woocommerce, new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
+
+from mainapp.views_utils import check_order, map_json_shopify_to_woocommerce, new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
 
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
@@ -29,10 +31,11 @@ from mainapp.ws_woocommerce import WooCommerce, WooCommerceConnect
 from mainapp.ws_shopify import Shopify, ShopifyConnect, shopify_exchange_code
 from mainapp.ws_gpt import ChatGPT
 from mainapp.ws_printful import Printful
+from mainapp.ws_serpapi import SerpApi
 
 from mainapp.ws_facebook import instagram_check_container_validity, instagram_create_container_media, instagram_create_container_carousel, instagram_publish_carousel
 
-from mainapp.db_functions import retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
+from mainapp.db_functions import reset_cjdropshipping, updateUserWords, retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
 
 
 
@@ -131,7 +134,7 @@ def profile(request):
         shopify_store_url = "https://sellfast-development-store.myshopify.com/admin/oauth/authorize"
         shopify_params = {
             "client_id": "700418a025a1df4a02784f0ed03362da",
-            "scope": "write_products, read_orders",
+            "scope": "write_products, read_orders, orders, marketplace_orders",
             "redirect_uri" : "https://sellfast.app/callback-endpoint"
         }
 
@@ -241,6 +244,8 @@ def reset_store(request):
         elif reset == 'shopify':
             reset_shopify_store(request.user)
             reset_woocommerce_store(request.user)
+        elif reset == 'cjdropshipping':
+            reset_cjdropshipping(request.user)
         return redirect(profile)
 
 
@@ -254,13 +259,18 @@ def orders(request):
 
         print(user_instance.store_type)
         if user_instance.store_type == 'shopify':
-            class_instance = Shopify(user_instance)
-            response = Shopify.shopify_retrieve_orders(class_instance)
-            context = {'response': response}
+            orders_pending = Order.objects.filter(user=user_instance, status='Pending', store_name=request.user.store_name)
+            orders_submited = Order.objects.filter(user=user_instance, status='submited', store_name=request.user.store_name)
+            print(orders_submited)
+            context = {'orders_pending': orders_pending, 
+                        'orders_submited': orders_submited, 
+                        'cj_access_token':cj_access_token}
             return render(request, 'mainapp/orders.html', context)
+
         elif user_instance.store_type == 'woocommerce':
-            orders_pending = Order.objects.filter(user=user_instance, status='pending')
-            orders_submited = Order.objects.filter(user=user_instance, status='submited')
+            orders_pending = Order.objects.filter(user=user_instance, status='Sending', store_name=request.user.store_name)
+            orders_submited = Order.objects.filter(user=user_instance, status='Submited', store_name=request.user.store_name)
+            
             context = {'orders_pending': orders_pending, 
                         'orders_submited': orders_submited, 
                         'cj_access_token':cj_access_token}
@@ -281,14 +291,50 @@ def orders_retrieve(request):
         order_ids = []
         for order in user_orders:
             order_ids.append(order.external_order_id)
-        print(order_ids)
         if user_instance.store_type == 'shopify':
             print('shopifuu')
+            class_instance = Shopify(user_instance)
+            response = Shopify.shopify_retrieve_orders(class_instance)
+            for order in response['orders']:
+                print(order['id'])
+                if str(order['id']) in order_ids:
+                    print('order already present')
+                else:
+                    vids = []
+                    for product in order['line_items']:
+                        print(product['sku'])
+                        variant = Variant.objects.filter(variantSku=product['sku'])
+                        try:
+                            vids.append(variant[0].vid)
+                        except:
+                            messages.error(request, f'Product not found in your Inventory. Sync Inventory and retry')
+                            return redirect(orders)
+                    print(vids)
+                    new_order = Order.objects.create(user=request.user,
+                                    external_order_id=order['id'],
+                                    store_name=request.user.store_name,
+                                    order_info=order,
+                                    shipping_zip='',
+                                    shipping_country_code=order['shipping_address']['country_code'],
+                                    shipping_country=order['shipping_address']['country'],
+                                    shipping_province=order['shipping_address']['province'],
+                                    shipping_city='',
+                                    shipping_address='',
+                                    shipping_customer_name='',
+                                    shipping_phone='',
+                                    remark='',
+                                    from_country_code='CN',
+                                    logistic_name='Default(cheapest option)',
+                                    products=order['line_items'],
+                                    vids = ','.join(vids),
+                                )
+                    new_order.save()
             return redirect(orders)
         elif user_instance.store_type == 'woocommerce':
             print('wooooo')
             class_instance = WooCommerce(user_instance)
             response = WooCommerce.woocommerce_retrieve_all_orders(class_instance)
+
             for order in response:
                 print(order['id'])
                 if str(order['id']) in order_ids:
@@ -300,6 +346,7 @@ def orders_retrieve(request):
                         vids.append(variant[0].vid)
                     new_order = Order(user=request.user,
                                         external_order_id = order['id'],
+                                        store_name = request.user.store_name,
                                         order_info=order,
                                         shipping_zip=order['shipping']['postcode'],
                                         shipping_country_code=order['shipping']['country'],
@@ -372,6 +419,10 @@ def orders_submit(request):
         for order in orders_to_fulfill:
             try:
                 order_object = Order.objects.get(id=int(order))
+
+                if check_order(order_object):
+                    messages.error(request, f"Error")
+                    return redirect(orders)
                 products = literal_eval(order_object.products)
                 response = CJDropshipping.cj_create_order(class_instance, order_object, products)
                 message += 'Order <b>' + str(order) + '</b> succesfully send <br>'
@@ -505,11 +556,11 @@ def search_results(request):
         if search_mode == 'cj-by-category':
             category_id = request.POST.get('category', None)
             keywords = request.POST.get('keywords', None)
-            results_limit = request.POST.get('results_limit', None)
+            #results_limit = request.POST.get('results_limit', None)
             if category_id != None:
                 #esegui ricerca
                 class_instance = CJDropshipping(request.user)
-                products = CJDropshipping.cj_products_by_category(class_instance, category_id, results_limit)
+                products = CJDropshipping.cj_products_by_category(class_instance, category_id)
                 if keywords != '':
                     products = filter_by_keywords(products, keywords)
                 #make a list of lists products grouped by 5
@@ -525,25 +576,29 @@ def search_results(request):
                 return render(request, 'mainapp/search_results.html')
         
         elif search_mode == 'cj-by-sku':
-            sku = request.POST.get('search_by_sku', None)
-            class_instance = CJDropshipping(request.user)
-            product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
-            print(literal_eval(product_details['productImage'])[0])
+            try:
+                sku = request.POST.get('search_by_sku', None)
+                class_instance = CJDropshipping(request.user)
+                product_details = CJDropshipping.cj_get_product_details(class_instance, sku)
+                print(literal_eval(product_details['productImage'])[0])
 
-            description = remove_img_tags(product_details['description'])
-            img_main = literal_eval(product_details['productImage'])[0]
-            img_set = product_details['productImageSet']
+                description = remove_img_tags(product_details['description'])
+                img_main = literal_eval(product_details['productImage'])[0]
+                img_set = product_details['productImageSet']
 
-            class_instance = CJDropshipping(request.user)
-            access_token = CJDropshipping.cj_get_access_token(class_instance)
-            context = {
-                'product_details': product_details,
-                'img_main': img_main,
-                'img_set': img_set,
-                'description': description,
-                'access_token':access_token,
-            }
-            return render(request, "mainapp/search_product_details.html", context)
+                class_instance = CJDropshipping(request.user)
+                access_token = CJDropshipping.cj_get_access_token(class_instance)
+                context = {
+                    'product_details': product_details,
+                    'img_main': img_main,
+                    'img_set': img_set,
+                    'description': description,
+                    'access_token':access_token,
+                }
+                return render(request, "mainapp/search_product_details.html", context)
+            except:
+                messages.error(request, f'SKU Not Found')
+                return redirect(search)
 
 
 @login_required(login_url='/login')
@@ -782,6 +837,12 @@ def inventory_list_view_sync_commands(request):
     return redirect(inventory_list_view)
 
 @login_required(login_url='/login')
+def inventory_list_view_delete(request, pk):
+    item = retrieveInventoryItemById(pk)
+    item.delete()
+    return redirect(inventory_list_view)
+
+@login_required(login_url='/login')
 def inventory_item_detail_view(request, pk):
     #inventory-item-detail-view
     print(pk)
@@ -793,7 +854,6 @@ def inventory_item_detail_view(request, pk):
     print(cj_access_token)
     item_original_description = remove_img_tags(item.description)
     img_set = literal_eval(item.productImageSet)
-
     item_form = InventoryItemForm(instance=item)
 
     variant_forms = []
@@ -808,7 +868,7 @@ def inventory_item_detail_view(request, pk):
                 'item_original_description':item_original_description,
                 'img_set':img_set,
                 'gpt_write_dscription_form': gpt_write_dscription_form,
-                'cj_access_token':cj_access_token
+                'cj_access_token':cj_access_token,
                 }
     return render(request, 'mainapp/inventory_item_detail_view.html', context)
 
@@ -873,9 +933,45 @@ def inventory_item_set_main_image(request):
 @login_required(login_url='/login')
 def inventory_item_search_similar_items(request):
     if request.method == 'POST':
+        
         primary_key = request.POST.get("primary-key", None)
         keywords = request.POST.get("item-name", None)
-        user_instance = CustomUser.objects.get(email=request.user.email)
+        search_by = request.POST.get("search-by", None)
+        item = InventoryItem.objects.get(user=request.user, id=primary_key)
+        class_instance = SerpApi()
+        if search_by == 'item-name':
+            shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, 'us', 'en')
+            ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
+            
+            context = {
+                    'primary_key' : primary_key,
+                    'shopping_results': shopping_results,
+                    'ebay_results': ebay_results,
+                    'search_by':search_by,
+                    }
+            return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
+        elif search_by == 'item-image':
+            inline_images = SerpApi.serp_reverse_image(class_instance, item.productImage)
+            context = {
+                    'primary_key' : primary_key,
+                    'inline_images': inline_images,
+                    'search_by':search_by,
+                    }
+            return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
+        
+        print(item.productImage)
+    
+        #inline_images = SerpApi.serp_reverse_image(class_instance, item.productImage)
+        shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, 'us', 'en')
+        #sellers = SerpApi.serp_search_sellers_by_product_id(class_instance, shopping_results[0]['product_id'], 'us', 'en')
+        context = {
+                    #'inline_images': inline_images,
+                    'primary_key' : primary_key,
+                    'shopping_results': shopping_results,
+                   # 'sellers': sellers,
+                    }
+        return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
+        '''
         if keywords != None:
             response = ebay_search_items_by_keywords(user_instance.ebay_access_token, keywords)
             if type(response) == list:
@@ -890,7 +986,7 @@ def inventory_item_search_similar_items(request):
                 return redirect(inventory_item_detail_view, pk=primary_key)
         else:
             messages.error(request, f"Somethin goes wrong")
-            return redirect(inventory_item_detail_view, pk=primary_key)
+            return redirect(inventory_item_detail_view, pk=primary_key)'''
 
 
 
@@ -901,17 +997,28 @@ def inventory_sync(request):
         return redirect(inventory_list_view)
     if request.method == 'POST':
         #retireve app inventory items
-        all_inventory_items = retrieveAllInventoryItems()
+        #all_inventory_items = retrieveAllInventoryItems()
+        all_inventory_items = InventoryItem.objects.filter(user=request.user)
         #make list
         inventory_sku_list = make_sku_list(all_inventory_items, 'app-inventory')
+        full_sync = request.POST.get('full-sync', None)
+        print(full_sync)
+        if request.user.store_type == 'woocommerce':
 
-        if 'sync-with-woocommerce' in request.POST:
             print('START sync-with-woocommerce')
-            class_instance = WooCommerce()
+            class_instance = WooCommerce(request.user)
             woocommerce_items = WooCommerce.woocommerce_retrieve_all_products(class_instance)
             woocommerce_sku_list = make_sku_list(woocommerce_items, 'sync-woocommerce')
-            results = compare_lists_and_import_missing_products(inventory_sku_list, woocommerce_sku_list)
-
+            results = compare_lists_and_import_missing_products(request.user, inventory_sku_list, woocommerce_sku_list, full_sync)
+            context = {'results': results}
+            return redirect(inventory_list_view)
+        elif request.user.store_type == 'shopify':
+            class_instance = Shopify(request.user)
+            shopify_items = Shopify.shopify_retrieve_all_products(class_instance)
+            shopify_sku_list = make_sku_list(shopify_items, 'sync-shopify')
+            results = compare_lists_and_import_missing_products(request.user, inventory_sku_list, shopify_sku_list, full_sync)
+            context = {'results': results}
+            return redirect(inventory_list_view)
         elif 'sync-with-ebay' in request.POST:
             print('START sync-with-ebay')
             '''
@@ -922,11 +1029,9 @@ def inventory_sync(request):
             #compare con inventory_sku_list
             results = compare_lists(inventory_sku_list, ebay_sku_list)'''
 
-        context = {
-            'all_inventory_items' : all_inventory_items,
-        }
-
-        return redirect(inventory_list_view)
+            return redirect(inventory_list_view)
+        else:
+            return redirect(inventory_list_view)
 
 @login_required(login_url='/login')
 def inventory_edit_items(request):
@@ -1246,11 +1351,11 @@ def update_user_words(request):
             words = user_instance.words
             user_instance.words = words - words_used
             user_instance.save()
-            return HttpResponse('Success!')
-        except: 
-            return HttpResponse('Error :(')
+            return HttpResponse('success')
+        except:
+            return HttpResponse('error')
 
-
+@login_required(login_url='/login')
 def inventory_item_save_gpt_title(request):
     print(request.POST)
     primary_key = request.POST.get("primary-key", None)
@@ -1262,6 +1367,43 @@ def inventory_item_save_gpt_title(request):
 
     return redirect(inventory_item_detail_view, pk=primary_key)
 
+@login_required(login_url='/login')
+def gpt_write(request):
+    if request.method == 'GET':
+        return HttpResponse('error')
+    elif request.method == 'POST':
+        
+        '''
+        tokens_used = request.POST.get('tokens_used', None)
+        words_used = int(round((int(tokens_used)/0.80), 0))
+        user_instance = CustomUser.objects.get(email=request.user.email)
+        words = user_instance.words
+        user_instance.words = words - words_used
+        user_instance.save()'''
+        service = request.POST.get('service', 'none')
+        if service == 'gpt-title':
+            itemName = request.POST.get('itemName', '')
+            keywords = request.POST.get('keywords', '')
+            print(itemName)
+            class_instance = ChatGPT()
+            chatgpt_description, tokens_used = ChatGPT.gpt35_write_product_title(class_instance, itemName, 'electronic')
+            updateUserWords(request.user, tokens_used)
+            print(chatgpt_description)
+            return HttpResponse(chatgpt_description)
+        elif service == 'gpt-description':
+            itemName = request.POST.get('itemName', '')
+            keywords = request.POST.get('keywords', '')
+            print(itemName)
+            class_instance = ChatGPT()
+            chatgpt_description, tokens_used = ChatGPT.gpt35_write_product_description(class_instance, itemName, 'muy bueno', keywords, '150', '100')
+            updateUserWords(request.user, tokens_used)
+            print(chatgpt_description)
+            return HttpResponse(chatgpt_description)
+        else:
+            return redirect(inventory_list_view)
+        
+
+@login_required(login_url='/login')
 def inventory_item_save_gpt_description(request):
     print(request.POST)
     primary_key = request.POST.get("primary-key", None)
@@ -1274,11 +1416,12 @@ def inventory_item_save_gpt_description(request):
 
     return redirect(inventory_item_detail_view, pk=primary_key)
 
-
+@login_required(login_url='/login')
 def smartcopy_start(request):
     if request.method == 'GET':
         return render(request, 'mainapp/smartcopy_start.html')
 
+@login_required(login_url='/login')
 def smartcopy_play(request):
     if request.method == 'GET':
         return redirect(smartcopy_start)
@@ -1315,6 +1458,120 @@ def smartcopy_play(request):
                     'form':form, 
                     'GPT_KEY' : settings.CHAT_GPT_KEY}
         return render(request, 'mainapp/smartcopy_play.html', context)
+
+@login_required(login_url='/login')
+def smartcopy_write(request):
+    if request.method == 'GET':
+        return redirect(smartcopy_start)
+    elif request.method == 'POST':
+        print(request.POST)
+        class_instance = ChatGPT()
+
+        service = request.POST.get('service')
+        if service == 'blog-article':
+            '''
+            if int(request.user.words) <= 0:
+                return JsonResponse('no tokens')
+            else:'''
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            tone = request.POST.get('tone')
+            word_count = request.POST.get('word_count')
+            language = request.POST.get('language')
+
+
+            results = ChatGPT.smartcopy_write_blog_article(class_instance,topic, target_audience, keywords, tone, word_count, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])    
+            return JsonResponse(results)
+
+        elif service == 'blog-ideas':
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            language = request.POST.get('language')
+
+            results = ChatGPT.smartcopy_blog_ideas(class_instance, topic, target_audience, keywords, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])   
+            return JsonResponse(results)
+
+        elif service == 'blog-plagiarism':
+            text = request.POST.get('text')
+
+            results = ChatGPT.smartcopy_check_plagiarism(class_instance,text)
+            updateUserWords(request.user, results['usage']['completion_tokens'])   
+            return JsonResponse(results)
+
+        elif service == 'facebook-ads':
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            tone = request.POST.get('tone')
+            word_count = request.POST.get('word_count')
+            language = request.POST.get('language')
+            emoji = request.POST.get('emoji')
+            bullet_list = request.POST.get('bullet_list')
+            n_copies = request.POST.get('n_copies')
+
+
+            results = ChatGPT.smartcopy_write_facebook_ads(class_instance, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])
+            return JsonResponse(results)
+
+        elif service == 'facebook-post':
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            tone = request.POST.get('tone')
+            word_count = request.POST.get('word_count')
+            language = request.POST.get('language')
+            emoji = request.POST.get('emoji')
+            bullet_list = request.POST.get('bullet_list')
+            n_copies = request.POST.get('n_copies')
+
+            results = ChatGPT.smartcopy_write_facebook_ads(class_instance, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])   
+            return JsonResponse(results)
+        elif service == 'facebook-post-ideas':
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            language = request.POST.get('language')
+
+            results = ChatGPT.smartcopy_facebook_post_ideas(class_instance, topic, target_audience, keywords, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])   
+            return JsonResponse(results)
+        elif service == 'instagram-post':
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            tone = request.POST.get('tone')
+            word_count = request.POST.get('word_count')
+            language = request.POST.get('language')
+            emoji = request.POST.get('emoji')
+            bullet_list = request.POST.get('bullet_list')
+            n_copies = request.POST.get('n_copies')
+
+            results = ChatGPT.smartcopy_write_instagram_post(class_instance, topic, target_audience, keywords, tone, word_count, n_copies, emoji, bullet_list, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])   
+            return JsonResponse(results)
+        elif service == 'instagram-tags':
+            topic = request.POST.get('topic')
+            target_audience = request.POST.get('target_audience')
+            keywords = request.POST.get('keywords')
+            language = request.POST.get('language')
+
+            results = ChatGPT.smartcopy_write_instagram_tags(class_instance,topic, target_audience, keywords, language)
+            updateUserWords(request.user, results['usage']['completion_tokens'])   
+            return JsonResponse(results)
+        elif service == 'google-ads-title':
+            form = GoogleAdsTitleForm()
+        elif service == 'google-ads-description':
+            form = GoogleAdsDescriptionForm()
+        elif service == 'email-marketing':
+            form = EmailMarketingForm()
+        elif service == 'amazon-description':
+            form = AmazonProductDescription()
 '''
 def woocommerce_update_descriptions_bulk(request):
     if request.method == 'POST':
@@ -1354,6 +1611,7 @@ def woocommerce_update_descriptions_bulk(request):
         return redirect(inventory_list_view)
 
 '''
+@login_required(login_url='/login')
 def generate_img(request):
     question = request.POST.get('question')
     class_instance = ChatGPT()

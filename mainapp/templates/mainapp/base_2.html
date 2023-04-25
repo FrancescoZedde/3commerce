@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 
-  <meta name="description" content="SellFast is an ecommerce process management software. We offer solutions for sales channel management, order automation, trending product search, marketing content creation and more. An all-in-one solution for eCommerces and dropshippers">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-93KNH2JYSD"></script>
 <script>
@@ -674,9 +673,34 @@
   .product-img img {max-width: 100%; height:auto;}
 
 
-  .nav-pills .search-similar .nav-link.active, .nav-pills .show>.nav-link{
-    background-color: rgb(232, 237, 239);
+  .container-smartcopy {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.part1 {
+  flex-basis: 25%;
+  order: 1;
+}
+
+.part2 {
+  flex-basis: 75%;
+  order: 2;
+}
+
+@media screen and (max-width: 1407px) {
+  .part1 {
+    flex-basis: 100%;
+    order: 1;
   }
+  
+  .part2 {
+    flex-basis: 100%;
+    order: 2;
+  }
+}
+  
   </style>
 </head>
 
@@ -688,9 +712,8 @@
   <div class="wrapper">
 
       
-    {% include 'mainapp/includes/sidebar.html' %}
       <div id="content" class="main-panel">
-                {% include 'mainapp/includes/navbar.html' %}
+                {% include 'mainapp/includes/navbar_2.html' %}
                 {% include 'mainapp/includes/messaging.html' %}
                 {% block content %}
                 {% endblock content %}
