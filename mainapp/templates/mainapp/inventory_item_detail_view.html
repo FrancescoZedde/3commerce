@@ -517,7 +517,7 @@
     }
 
     function check_user_words(){
-      const user_words = {{ user.words | safe }};
+      const user_words = "{{ user.words }}";
       if (user_words <= 0){
         return true
       }else{
