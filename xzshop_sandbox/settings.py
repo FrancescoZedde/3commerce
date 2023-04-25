@@ -34,7 +34,7 @@ SECRET_KEY = str(os.getenv('DJANGO_SECRET_KEY'))
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    
+    '127.0.0.1',
     'sellfast.app',
     'www.sellfast.app',
     '139.144.179.11',
@@ -58,6 +58,9 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+AUTHENTICATION_BACKENDS = ['mainapp.backends.EmailBackend']
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
