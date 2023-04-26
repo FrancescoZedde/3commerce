@@ -1,0 +1,12 @@
+requests==2.26.0
+ShopifyAPI==12.2.0
+Django==3.2.3
+google_search_results==2.4.2
+openai==0.27.4
+stripe==5.4.0
+WooCommerce==3.0.0
+pandas==0.24.2
+six==1.16.0
+django_crispy_forms==2.0
+python-dotenv==1.0.0
+shopify==0.3.0

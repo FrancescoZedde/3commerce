@@ -39,7 +39,7 @@ class CJDropshipping:
         url = 'https://developers.cjdropshipping.com/api2.0/v1/product/list'
         n_page = math.ceil(int(200)/200)
         response = []
-        for i in range(int(n_page)+1):
+        for i in range(int(10)+1):
             try:
                 if i != 0:
                     print(i)

@@ -111,7 +111,7 @@
                     <td>{{result_e.price.raw}} </td>
                     <td>{{result_e.rating}}/5</td>
                     <td>{{result_e.reviews}}</td>
-                    <td><a href="{{result_e.link}}" target="_blank" rel="follow">{{result_e.seller.username}}</a></td>
+                    <td><a href="{{result_e.link}}" target="_blank" rel="follow">{% if result_e.seller.username %} {{result_e.seller.username}} {% else %} Store {% endif %}</a></td>
                      </tr>
                  {% endfor %}
              </tbody>
@@ -146,7 +146,7 @@
                     <td>{{result.rating}}/5</td>
                     <td>{{result.reviews}}</td>
               
-                    <td><a href="{{result.link}}" target="_blank" rel="follow">{{result.source}}</a></td>
+                    <td><a href="{{result.link}}" target="_blank" rel="follow">{% if result.source %} {{result.source}} {% else %} Store {% endif %}</a></td>
                      </tr>
                  {% endfor %}
              </tbody>

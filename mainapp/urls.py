@@ -10,6 +10,11 @@ urlpatterns = [
     path('orders-update-shipping-method', views.orders_update_shipping_method, name='orders-update-shipping-method'),
     path('orders-submit', views.orders_submit, name='orders-submit'),
 
+    path('pricing', views.pricing, name='pricing'),
+    path('create-checkout-session', views.create_checkout_session, name='create-checkout-session'),
+    path('payment-success', views.payment_success, name='payment-success'),
+    
+
 
     path('zohoverify/verifyforzoho.html', views.verify_for_zoho, name='verifyforzoho'),
 

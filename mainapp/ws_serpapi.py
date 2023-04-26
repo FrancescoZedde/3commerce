@@ -33,6 +33,7 @@ class SerpApi:
 
         search = GoogleSearch(params)
         results = search.get_dict()
+    
         shopping_results = results["shopping_results"]
         print(shopping_results)
         return shopping_results
@@ -65,6 +66,8 @@ class SerpApi:
 
         search = GoogleSearch(params)
         results = search.get_dict()
+        print('FULL JSON')
+        print(results)
         organic_results = results["organic_results"]
 
         return organic_results

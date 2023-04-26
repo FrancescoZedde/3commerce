@@ -241,7 +241,12 @@
         {{service_title}}
     </h3>
     <div class="row">
-        <p>Words: {{user.words}}</p>
+        <form action="/create-checkout-session" method="POST" style="text-align: right;">
+          <!-- Add a hidden field with the lookup_key of your Price -->
+          {% csrf_token %}
+          <input type="hidden" name="lookup_key" value="business" />
+          <button class="words-button" id="checkout-and-portal-button" type="submit">Words: {{user.words}}</button>
+        </form>
     </div>
     
 

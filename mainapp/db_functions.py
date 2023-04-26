@@ -6,8 +6,6 @@ from users.models import CustomUser
 from ast import literal_eval
 import html
 import math
-from bs4 import BeautifulSoup
-
 
 
 

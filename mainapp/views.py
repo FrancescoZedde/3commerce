@@ -11,6 +11,7 @@ from django.conf import settings
 from urllib.parse import urlencode
 from django.urls import reverse
 from django.http import JsonResponse
+import stripe
 
 
 
@@ -48,6 +49,51 @@ from users.forms import WooCommerceConnectForm, ShopifyConnectForm, CJDropshippi
 
 
 from django.http import JsonResponse
+
+
+
+def pricing(request):
+    if request.method == 'GET':
+
+        return render(request, 'mainapp/pricing.html')
+    if request.method == 'POST':
+
+        return render(request, 'mainapp/pricing.html')
+
+def create_checkout_session(request):
+    try:
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        prices = stripe.Price.list(
+            lookup_keys=[request.POST['lookup_key']],
+            expand=['data.product']
+        )
+
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    'price': prices.data[0].id,
+                    'quantity': 1,
+                },
+            ],
+            mode='subscription',
+            success_url='http://127.0.0.1:8000' +
+            '/payment-success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='http://127.0.0.1:8000' + '/pricing',
+        )
+        return redirect(checkout_session.url, code=303)
+    except Exception as e:
+        print(e)
+        return redirect(pricing)
+
+def payment_success(request):
+    if request.method == 'GET':
+        print(request.GET)
+
+        session_id = request.GET.get('session_id')
+        print(session_id)
+        messages.success(request, f'Paymente completed!')
+        return redirect(pricing) 
+
 
 def callback_endpoint_wc(request):
     if request.method == 'GET':
@@ -942,7 +988,8 @@ def inventory_item_search_similar_items(request):
         if search_by == 'item-name':
             shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, 'us', 'en')
             ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
-            
+            print('EBAY RESULTS')
+            print(ebay_results)
             context = {
                     'primary_key' : primary_key,
                     'shopping_results': shopping_results,

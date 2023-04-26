@@ -30,6 +30,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.getenv('DJANGO_SECRET_KEY'))
 
+SERPAPI_KEY = '2dedf5aef1596faf5b1d9b5c061c33931af89193601a5d61060546e00fe66361'
+
+STRIPE_PUBLIC_KEY = 'pk_test_51N15WlIlDnlgZk4mfn1GoXDstXgPXmJ3bbFR34svyXPgsNv4EHjNobPqN0FbS5Pfq6nlBvhmpSKO5A1eRsBlSr8U00eWtwVBSb'
+STRIPE_SECRET_KEY = 'sk_test_51N15WlIlDnlgZk4mtUAW3G07sqKE32umduuNzuxye1AHplSxiCYc02IDIOeSSInrZ8Rp9VpOldEiVWFvIFK4eHFZ00yxrhRH0C'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

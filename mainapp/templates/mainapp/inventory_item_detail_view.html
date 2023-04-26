@@ -187,8 +187,12 @@
                 <div class="standard-command-container">
                     <!-- MAIN DESCRIPTION-->
                     <h5><b>Title and Description Writer</b></h5> <small><i>Powered by GPT-4</i></small>
-
-                    <p style="margin-top: 1em;"><b>Words:</b> {{request.user.words}}</p>
+                    <form action="/create-checkout-session" method="POST">
+                      <!-- Add a hidden field with the lookup_key of your Price -->
+                      {% csrf_token %}
+                      <input type="hidden" name="lookup_key" value="business" />
+                      <button class="words-button" id="checkout-and-portal-button" type="submit"><b>Words:</b> {{request.user.words}}</button>
+                    </form>
                     <p>Write optimized titles for search engine results in seconds.</p>
                     <div style="margin-top:0.5em; margin-bottom:1em;">
                         <button class="standard-button" id="OpenModalTitleGPT" onclick="open_modal(this.id)">Generate Title</button>
