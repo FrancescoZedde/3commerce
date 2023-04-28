@@ -1203,7 +1203,7 @@ def ebay_success(request):
     if request.method == 'POST':
         messages.success(request, f'{request.POST}')
         return redirect(inventory_list_view)
-    elif request,method == 'GET':
+    elif request.method == 'GET':
         messages.success(request, f'{request.GET}')
         return redirect(inventory_list_view)
 
@@ -1212,7 +1212,7 @@ def ebay_declined(request):
     if request.method == 'POST':
         messages.success(request, f'{request.POST}')
         return redirect(inventory_list_view)
-    elif request,method == 'GET':
+    elif request.method == 'GET':
         messages.success(request, f'{request.GET}')
         return redirect(inventory_list_view)
 
