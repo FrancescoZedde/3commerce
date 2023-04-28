@@ -14,16 +14,15 @@
         <li>
             <a href="{% url 'inventory-list-view' %}">Inventory</a>
         </li>
-        <li>
-            <a href="{% url 'orders' %}">Orders</a>
-        </li>
         <!--
         <li>
             <a href="{% url 'inventory-list-view' %}">Printful</a>
         </li>-->
 
         {% if user.store_name != '' %}
-        <!-- SHOPIFY -->
+        <li>
+            <a href="{% url 'orders' %}">Orders</a>
+        </li>
         <li>
             <a href="{% url 'store-onsale' %}">{{user.store_name}}</a>
         </li>
