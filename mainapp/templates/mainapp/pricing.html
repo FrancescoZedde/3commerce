@@ -6,52 +6,78 @@
 
         
 <div class="standard-command-container">
+    <!-- Upgrade Plan-->
+  <h4 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;">Upgrade your plan</h4>
+  <div style="text-align: center;">
+    <img src="http://xzshop.eu/wp-content/uploads/2023/04/secure-stripe-payment-logo.png" width="20%" height="20%">
+  </div>
+  <div style="text-align: center;">
+    <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px; margin-top: 2em;;">
+      <input class="form-check-input" name="billed_annually" default="False" type="checkbox" id="billed-annually" onchange="change_price(this.checked)">
+      <label class="form-check-label" for="flexSwitchCheckDefault">Billed Annually</label>
+    </div>
+  </div>
     <div class="card-deck" style="margin-top:2em;">
         <div class="index-card shadow card">
           <div class="card-body" style="text-align: center; ">
-            <h1 class="pricing-index-card-title">$9.99<small class="text-muted fw-light">/mo</small></h1>
+            <h3>Basic</h3>
+            <p>Choose our Basic plan for only 9,99€ per month and get access to all basic features</p>
+            <h1 class="month-plan pricing-index-card-title">$9.99<small class="text-muted fw-light">/mo</small></h1>
+            <h1 class="year-plan pricing-index-card-title" hidden >$79.99<small class="text-muted fw-light">/yr</small></h1>
             <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
               <li><i class="fa-solid fa-check"></i></i> 10+ millions products</li>
               <li><i class="fa-solid fa-check"></i></i> Auto-fulfillment orders</li>
-              <li><i class="fa-solid fa-check"></i></i> WooCommerce</li>
-              <li><i class="fa-solid fa-check"></i></i> Shopify</li>
+              <li><i class="fa-solid fa-check"></i></i> WooCommerce store</li>
+              <li><i class="fa-solid fa-check"></i></i> Shopify store</li>
+              <li><i class="fa-solid fa-check"></i></i> One-click publish products</li>
               <li><i class="fa-solid fa-check"></i></i> CJDropshipping</li>
               <li><i class="fa-solid fa-check"></i></i> Aliexpress</li>
-              <li><i class="fa-solid fa-check"></i></i> Ebay</li>
-              <li><i class="fa-solid fa-check"></i></i> Facebook</li>
-              <li><i class="fa-solid fa-check"></i></i> Instagram</li>
-              <li><i class="fa-solid fa-check"></i></i> GPT-4</li>
-              <li><i class="fa-solid fa-check"></i></i> Email Support</li>
+              <li><i class="fa-solid fa-check"></i></i> GPT-4 Smart Copy - 100000 words/month </li>
+              <li><i class="fa-solid fa-check"></i></i> Trends Explorer + Spy Competitors - 1000 searches/month </li>
+              <li><i class="fa-solid fa-check"></i></i> Early access to all new features </li>
+              <li><i class="fa-solid fa-check"></i></i> Priority Support</li>
+              <li><img src="http://xzshop.eu/wp-content/uploads/2023/04/coming-soon.png" width="25px" height="25px"></i> Ebay</li>
+              <li><img src="http://xzshop.eu/wp-content/uploads/2023/04/coming-soon.png" width="25px" height="25px"></i> Instagram schedule post</li>
+              <li><img src="http://xzshop.eu/wp-content/uploads/2023/04/coming-soon.png" width="25px" height="25px"></i> Facebook schedule post</li>
             </ul>
             <form action="/create-checkout-session" method="POST">
                 <!-- Add a hidden field with the lookup_key of your Price -->
                 {% csrf_token %}
-                <input type="hidden" name="lookup_key" value="starter" />
+                <input type="hidden" name="lookup_key" id="starter-lookup-key"  value="starter-month" />
                 <button class="standard-button" id="checkout-and-portal-button" type="submit">Checkout</button>
+                
+                
               </form>
           </div>
         </div>
         <div class="index-card shadow card">
             <div class="card-body" style="text-align: center; ">
-              <h1 class="pricing-index-card-title">$999.99<small class="text-muted fw-light">/mo</small></h1>
-              <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+              <h3>Premium</h3>
+              <p>Upgrade to our Premium plan for only 29,99€ per month and unlock all the advanced features</p>
+              <h1 class="month-plan pricing-index-card-title">$29.99<small class="text-muted fw-light">/mo</small></h1>
+              <h1 class="year-plan pricing-index-card-title" hidden>$239.99<small class="text-muted fw-light">/yr</small><span style="font-size: 20px; color: red;"></span></h1>
+              <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;"> 
                 <li><i class="fa-solid fa-check"></i></i> 10+ millions products</li>
                 <li><i class="fa-solid fa-check"></i></i> Auto-fulfillment orders</li>
-                <li><i class="fa-solid fa-check"></i></i> WooCommerce</li>
-                <li><i class="fa-solid fa-check"></i></i> Shopify</li>
+                <li><i class="fa-solid fa-check"></i></i> WooCommerce store</li>
+                <li><i class="fa-solid fa-check"></i></i> Shopify store</li>
+                <li><i class="fa-solid fa-check"></i></i> One-click publish products</li>
                 <li><i class="fa-solid fa-check"></i></i> CJDropshipping</li>
                 <li><i class="fa-solid fa-check"></i></i> Aliexpress</li>
-                <li><i class="fa-solid fa-check"></i></i> Ebay</li>
-                <li><i class="fa-solid fa-check"></i></i> Facebook</li>
-                <li><i class="fa-solid fa-check"></i></i> Instagram</li>
-                <li><i class="fa-solid fa-check"></i></i> GPT-4</li>
-                <li><i class="fa-solid fa-check"></i></i> Email Support</li>
+                <li><i class="fa-solid fa-check"></i></i> GPT-4 Smart Copy - 400000 words/month </li>
+                <li><i class="fa-solid fa-check"></i></i> Trends Explorer + Spy Competitors - 4000 searches/month </li>
+                <li><i class="fa-solid fa-check"></i></i> Early access to all new features </li>
+                <li><i class="fa-solid fa-check"></i></i> Priority Support</li>
+                <li><img src="http://xzshop.eu/wp-content/uploads/2023/04/coming-soon.png" width="25px" height="25px"></i> Ebay</li>
+              <li><img src="http://xzshop.eu/wp-content/uploads/2023/04/coming-soon.png" width="25px" height="25px"></i> Instagram schedule post</li>
+              <li><img src="http://xzshop.eu/wp-content/uploads/2023/04/coming-soon.png" width="25px" height="25px"></i> Facebook schedule post</li>
               </ul>
               <form action="/create-checkout-session" method="POST">
                   <!-- Add a hidden field with the lookup_key of your Price -->
                   {% csrf_token %}
-                  <input type="hidden" name="lookup_key" value="business" />
+                  <input type="hidden" name="lookup_key" id="business-lookup-key" value="business-month" />
                   <button class="standard-button" id="checkout-and-portal-button" type="submit">Checkout</button>
+                 
                 </form>
             </div>
           </div>
@@ -60,6 +86,104 @@
       <button id="checkout-and-portal-button" type="submit">Manage your billing information</button>
     </form>-->
       </div>
+      <!-- BUY WORDS -->
+  <h4 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; margin-top:2em">Buy Words</h4>
+  <div class="card-deck" style="margin-top:2em;">
+      <div class="index-card shadow card">
+        <div class="card-body" style="text-align: center; ">
+          <h3>Words 10k</h3>
+          <h1 class="pricing-index-card-title">$4.99<small class="text-muted fw-light"></small></h1>
+          <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+            <li><i class="fa-solid fa-check"></i></i> 10.000 Words</li>
+          </ul>
+          <form action="/create-checkout-session" method="POST">
+              <!-- Add a hidden field with the lookup_key of your Price -->
+              {% csrf_token %}
+              <input type="hidden" name="lookup_key" value="words-10k" />
+              <button class="standard-button" id="checkout-and-portal-button" type="submit">Checkout</button>
+              
+            </form>
+        </div>
+      </div>
+      <div class="index-card shadow card">
+          <div class="card-body" style="text-align: center; ">
+            <h3>Words 25k</h3>
+            <h1 class="pricing-index-card-title">$9.99<small class="text-muted fw-light">/mo</small></h1>
+            <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+              <li><i class="fa-solid fa-check"></i></i> 25.000 Words</li>
+            </ul>
+            <form action="/create-checkout-session" method="POST">
+                <!-- Add a hidden field with the lookup_key of your Price -->
+                {% csrf_token %}
+                <input type="hidden" name="lookup_key" value="words-25k" />
+                <button class="standard-button" id="checkout-and-portal-button" type="submit">Checkout</button>
+              </form>
+          </div>
+        </div>
+        <div class="index-card shadow card">
+          <div class="card-body" style="text-align: center; ">
+            <h3>Words 100k</h3>
+            <h1 class="pricing-index-card-title">$29.99<small class="text-muted fw-light"></small></h1>
+            <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+              <li><i class="fa-solid fa-check"></i></i> 100.000 Words</li>
+            </ul>
+            <form action="/create-checkout-session" method="POST">
+                <!-- Add a hidden field with the lookup_key of your Price -->
+                {% csrf_token %}
+                <input type="hidden" name="lookup_key" value="words-100k" />
+                <button class="standard-button" id="checkout-and-portal-button" type="submit">Checkout</button>
+              </form>
+          </div>
+        </div>
+    </div>
+
 </div>
 
+
+
+
+<script>
+
+
+  function change_price(billed_annually){
+    console.log(billed_annually)
+      if (billed_annually == true){
+          month_plans = document.getElementsByClassName('month-plan pricing-index-card-title')
+          for (let plan of month_plans) {
+            plan.setAttribute('hidden', 'hidden')
+          }
+          year_plas = document.getElementsByClassName('year-plan pricing-index-card-title')
+          console.log(year_plas)
+          for (let plan of year_plas) {
+            plan.removeAttribute('hidden')
+          }
+          change_lookup_key(billed_annually)
+      }else{
+        month_plans = document.getElementsByClassName('month-plan pricing-index-card-title')
+          for (let plan of month_plans) {
+            plan.removeAttribute('hidden')
+          }
+          year_plas = document.getElementsByClassName('year-plan pricing-index-card-title')
+          console.log(year_plas)
+          for (let plan of year_plas) {
+            plan.setAttribute('hidden', 'hidden')
+          }
+          change_lookup_key(billed_annually)
+      }
+  }
+
+  function change_lookup_key(billed_annually){
+    if (billed_annually == true){
+          document.getElementById('starter-lookup-key').value = 'starter-year'
+          document.getElementById('business-lookup-key').value = 'business-year'
+          console.log(document.getElementById('business-lookup-key').value )
+
+      }else{
+        document.getElementById('starter-lookup-key').value = 'starter-month'
+          document.getElementById('business-lookup-key').value = 'business-month'
+          console.log(document.getElementById('business-lookup-key').value )
+        
+      }
+  }
+</script>
 {% endblock %}

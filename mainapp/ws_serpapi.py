@@ -25,7 +25,7 @@ class SerpApi:
         params = {
                     "engine": "google_shopping",
                     "q": query,
-                    "location": "Austin, Texas, United States",
+                    #"location": "Austin, Texas, United States",
                     "hl": language,
                     "gl": location,
                     "api_key": self.api_key,
@@ -33,7 +33,7 @@ class SerpApi:
 
         search = GoogleSearch(params)
         results = search.get_dict()
-    
+        print(results)
         shopping_results = results["shopping_results"]
         print(shopping_results)
         return shopping_results

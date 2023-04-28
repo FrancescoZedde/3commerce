@@ -15,6 +15,16 @@ def remove_img_tags(description_string):
 #def build_body_default_template(item):
 
 
+def set_null_if_missing(shipping_address, field):
+    if shipping_address != None and field == 'country_code':
+        return order['shipping_address']['country_code']
+    elif shipping_address != None and field == 'country':
+        return order['shipping_address']['country']
+    elif shipping_address != None and field == 'province':
+        return order['shipping_address']['province']
+    else:
+        return 'NULL'
+
 def create_default_template_description_string(item):
     #item = retrieveItemBySku(item_sku)
     header_1 = '<table style="width: 100%; border: none;" cellspacing="0" cellpadding="0"><tbody><tr><th style="width: 100%; text-align: center;"></th></tr><tr><td style="text-align: center;"><h2>'

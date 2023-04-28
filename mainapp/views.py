@@ -11,11 +11,17 @@ from django.conf import settings
 from urllib.parse import urlencode
 from django.urls import reverse
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
+
+
+
 import stripe
 
 
 
-from mainapp.views_utils import check_order, map_json_shopify_to_woocommerce, new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
+from mainapp.views_utils import set_null_if_missing,check_order, map_json_shopify_to_woocommerce, new_default_template, format_results, woocommerce_extract_text_description, woocommerce_get_first_10_images, make_woocommerce_on_sale_products_list, remove_img_tags, clean_html,create_template_description_string, make_sku_list, compare_lists_and_import_missing_products, create_default_template_description_string, filter_by_keywords, create_item_and_variants_forms
 
 
 from mainapp.forms import CJSearchProducts, exportSetup, InventoryItemForm, VariantForm, newStoreWoocommerce, woocommerceImportSetup, InstagramPostSetup
@@ -36,7 +42,7 @@ from mainapp.ws_serpapi import SerpApi
 
 from mainapp.ws_facebook import instagram_check_container_validity, instagram_create_container_media, instagram_create_container_carousel, instagram_publish_carousel
 
-from mainapp.db_functions import reset_cjdropshipping, updateUserWords, retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
+from mainapp.db_functions import retrieve_last_user_order, create_contract_order, save_checkout_session, reset_cjdropshipping, updateUserWords, retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
 
 
 
@@ -60,38 +66,98 @@ def pricing(request):
 
         return render(request, 'mainapp/pricing.html')
 
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class StripeWebhookView(View):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    def post(self, request, format=None):
+        payload = request.body
+        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+        event = None
+
+        try:
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+        except ValueError as e:
+            # Invalid payload
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            return HttpResponse(status=400)
+
+        if event["type"] == "checkout.session.completed":
+            print("Payment successful")
+            print(event)
+            print(type(event))
+            save_checkout_session(event)
+            print('ijnxj')
+
+        # Can handle other events here.
+
+        return HttpResponse(status=200)
+
+
 def create_checkout_session(request):
     try:
         stripe.api_key = settings.STRIPE_SECRET_KEY
+        print(request.POST['lookup_key'])
         prices = stripe.Price.list(
             lookup_keys=[request.POST['lookup_key']],
             expand=['data.product']
         )
-
+        #prices = stripe.Price.list(limit=3)
+        print(prices)
+        if request.POST['lookup_key'] in ['words-10k','words-25k','words-100k']:
+            mode = 'payment'
+        else:
+            mode = 'subscription'
         checkout_session = stripe.checkout.Session.create(
             line_items=[
                 {
-                    'price': prices.data[0].id,
+                    'price': prices['data'][0]['id'],
                     'quantity': 1,
                 },
             ],
-            mode='subscription',
+            mode=mode,
             success_url='http://127.0.0.1:8000' +
             '/payment-success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='http://127.0.0.1:8000' + '/pricing',
+            cancel_url='http://127.0.0.1:8000' + '/payment-cancel',
         )
+
+        create_contract_order(request.user, request.POST['lookup_key'])
+
         return redirect(checkout_session.url, code=303)
     except Exception as e:
         print(e)
         return redirect(pricing)
 
+
+@login_required(login_url='/login')
 def payment_success(request):
     if request.method == 'GET':
-        print(request.GET)
-
-        session_id = request.GET.get('session_id')
+        user_instance = request.user
+        last_order = retrieve_last_user_order(user_instance)
+        print(last_order.lookup_key)
+        if last_order.lookup_key == 'starter-month' or last_order.lookup_key == 'starter-year':
+            user_instance.status = 'basic'
+            user_instance.save()
+        elif last_order.lookup_key == 'business-month' or last_order.lookup_key == 'business-year':
+            user_instance.status = 'premium'
+            user_instance.save()
+        else:
+            user_instance.status = 'free'
+            user_instance.save()
+            
+        session_id = request.GET.get('session_id')    
         print(session_id)
         messages.success(request, f'Paymente completed!')
+        return redirect(pricing)
+
+@login_required(login_url='/login')
+def payment_cancel(request):
+    if request.method == 'GET':
+        messages.error(request, f'Payment failed! Try again or contact Support')
         return redirect(pricing) 
 
 
@@ -353,17 +419,17 @@ def orders_retrieve(request):
                         try:
                             vids.append(variant[0].vid)
                         except:
-                            messages.error(request, f'Product not found in your Inventory. Sync Inventory and retry')
                             return redirect(orders)
                     print(vids)
+                    print(order)
                     new_order = Order.objects.create(user=request.user,
                                     external_order_id=order['id'],
                                     store_name=request.user.store_name,
                                     order_info=order,
                                     shipping_zip='',
-                                    shipping_country_code=order['shipping_address']['country_code'],
-                                    shipping_country=order['shipping_address']['country'],
-                                    shipping_province=order['shipping_address']['province'],
+                                    shipping_country_code= set_null_if_missing(order['shipping_address'], 'country_code'),
+                                    shipping_country= set_null_if_missing(order['shipping_address'], 'country'),
+                                    shipping_province=  set_null_if_missing(order['shipping_address'], 'province'),
                                     shipping_city='',
                                     shipping_address='',
                                     shipping_customer_name='',
@@ -979,14 +1045,16 @@ def inventory_item_set_main_image(request):
 @login_required(login_url='/login')
 def inventory_item_search_similar_items(request):
     if request.method == 'POST':
-        
+        print(request.POST)
         primary_key = request.POST.get("primary-key", None)
         keywords = request.POST.get("item-name", None)
         search_by = request.POST.get("search-by", None)
+        location = request.POST.get('similar-item-location', None)
+        print(location)
         item = InventoryItem.objects.get(user=request.user, id=primary_key)
         class_instance = SerpApi()
         if search_by == 'item-name':
-            shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, 'us', 'en')
+            shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, location, 'en')
             ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
             print('EBAY RESULTS')
             print(ebay_results)
@@ -1128,6 +1196,27 @@ def ebay_connect_store(request):
             'ebay_access_token' : ebay_access_token,
         }
         return render(request, 'mainapp/ebay_connect_store.html', context)
+
+
+@login_required(login_url='/login')
+def ebay_success(request):
+    if request.method == 'POST':
+        messages.success(request, f'{request.POST}')
+        return redirect(inventory_list_view)
+    elif request,method == 'GET':
+        messages.success(request, f'{request.GET}')
+        return redirect(inventory_list_view)
+
+@login_required(login_url='/login')
+def ebay_declined(request):
+    if request.method == 'POST':
+        messages.success(request, f'{request.POST}')
+        return redirect(inventory_list_view)
+    elif request,method == 'GET':
+        messages.success(request, f'{request.GET}')
+        return redirect(inventory_list_view)
+
+
 
 @login_required(login_url='/login')
 def ebay_update_access_token(request):

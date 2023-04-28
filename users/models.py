@@ -6,8 +6,9 @@ from django.db import models
 class CustomUser(AbstractUser):
 
     status = (
-        ('regular', 'regular'),
-        ('subscriber', 'subscriber'),
+        ('free', 'free'),
+        ('basic', 'basic'),
+        ('premium', 'premium'),
         ('moderator', 'moderator')
     )
 
@@ -19,10 +20,13 @@ class CustomUser(AbstractUser):
 
    
     email = models.EmailField(unique=True)
-    status = models.CharField(max_length=100, choices=status, default='regular')
+    status = models.CharField(max_length=100, choices=status, default='free')
 
     # WORD CREDITS
-    words = models.IntegerField( default=2000)
+    words = models.IntegerField(default=2000)
+
+    # SEARCHES
+    searches = models.IntegerField(default=0)
 
     # EBAY
     ebay_access_token = models.TextField('Ebay Access Token', default='', blank=True)
@@ -67,7 +71,7 @@ class Order(models.Model):
         ('fulfilled', 'FulFilled')
     )
 
-    user = models.ForeignKey(CustomUser, related_name='user',on_delete=models.CASCADE,)
+    user = models.ForeignKey(CustomUser, related_name='user_order',on_delete=models.CASCADE,)
     external_order_id = models.TextField('External order id:', max_length=10000, default='', blank=True)
     store_name = models.CharField('Store Name', max_length=255, default='', blank=True)
     status = models.CharField(max_length=20, choices=order_status_choices, default="Pending")
@@ -85,3 +89,48 @@ class Order(models.Model):
     logistic_name = models.CharField('Logistic Name', max_length=100, default='', blank=True)
     products = models.TextField('Products', max_length=1000, default='', blank=True)
     vids = models.TextField('Products', max_length=1000, default='', blank=True)
+
+
+class ContractOrder(models.Model):
+
+    status_options = (
+        ('pending', 'pending'),
+        ('failed', 'failed'),
+        ('succed', 'succed')
+    )
+
+    user = models.ForeignKey(CustomUser, related_name='user_contract_order', on_delete=models.PROTECT)
+    timestamp = models.TextField('timestamp', default='', blank=True)
+    status = models.TextField(max_length=20, choices=status_options, default="pending")
+    lookup_key = models.TextField('lookup key', default='')
+    session_id = models.TextField('session if', default='', blank=True)
+
+
+
+class CheckoutSession(models.Model):
+    api_version = models.TextField(default='', blank=True)
+    created = models.TextField(default='', blank=True)
+    amount_subtotal = models.TextField(default='', blank=True)
+    amount_total = models.TextField(default='', blank=True)
+    billing_address_collection = models.TextField(default='', blank=True)
+    cancel_url = models.TextField(default='', blank=True)
+    created = models.TextField(default='', blank=True)
+    currency = models.TextField(default='', blank=True)
+    customer = models.TextField(default='', blank=True)
+    customer_creation = models.TextField(default='', blank=True)
+    customer_email = models.TextField(default='', blank=True)
+    expires_at = models.TextField(default='', blank=True)
+    session_id = models.TextField(primary_key=True, default='', blank=True)
+    invoice = models.TextField(default='', blank=True)
+    livemode = models.TextField(default='', blank=True)
+    mode = models.TextField(default='', blank=True)
+    object_type = models.TextField(default='', blank=True)
+    payment_method_collection = models.TextField(default='', blank=True)
+    payment_method_types = models.TextField(default='', blank=True)
+    payment_status = models.TextField(default='', blank=True)
+    phone_number_collection = models.TextField(default='', blank=True)
+    status = models.TextField(default='', blank=True)
+    subscription = models.TextField(default='', blank=True)
+    success_url = models.TextField(default='', blank=True)
+    total_details = models.TextField(default='', blank=True)
+    session_type = models.TextField(default='', blank=True)

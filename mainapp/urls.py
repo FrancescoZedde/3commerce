@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from .views import StripeWebhookView
+
 
 urlpatterns = [
     path('profile', views.profile, name='profile'),
@@ -13,7 +15,8 @@ urlpatterns = [
     path('pricing', views.pricing, name='pricing'),
     path('create-checkout-session', views.create_checkout_session, name='create-checkout-session'),
     path('payment-success', views.payment_success, name='payment-success'),
-    
+    path('payment-cancel', views.payment_cancel, name='payment-cancel'),
+    path("webhooks/stripe/", StripeWebhookView.as_view(), name="stripe-webhook"),    
 
 
     path('zohoverify/verifyforzoho.html', views.verify_for_zoho, name='verifyforzoho'),
@@ -64,6 +67,8 @@ urlpatterns = [
 
     # EBAY
     path('ebay-connect-store', views.ebay_connect_store, name='ebay-connect-store'),
+    path('ebay-success', views.ebay_success, name='ebay-success'),
+    path('ebay-declined', views.ebay_declined, name='ebay-declined'),
     path('ebay-update-access-token', views.ebay_update_access_token, name='ebay-update-access-token'),
     path('ebay-start-export-batch', views.ebay_start_export_batch, name='ebay-start-export-batch'),
     path('ebay-inventory', views.ebay_inventory, name='ebay-inventory'),

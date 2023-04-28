@@ -2,13 +2,14 @@ import pandas as pd
 import re
 import json
 from mainapp.models import InventoryItem, Variant, WoocommerceStore
-from users.models import CustomUser
+from users.models import CustomUser, CheckoutSession, ContractOrder
 from ast import literal_eval
 import html
 import math
 
 
 
+ 
 def connect_woocommerce_store(user, store_name, host, ck, cs):
     user.store_type = 'woocommerce'
     user.store_name = store_name
@@ -337,3 +338,58 @@ def updateUserWords(user, tokens_used):
     words = user.words
     user.words = words - words_used
     user.save()
+
+
+def create_contract_order(user, lookup_key):
+    new_contract_order = ContractOrder(user=user, status='pending', lookup_key=lookup_key )
+    new_contract_order.save()
+
+def retrieve_last_user_order(user):
+    try:
+        last_order = ContractOrder.objects.filter(user=user).order_by('-id')[:1]
+        
+        return last_order[0]
+    except:
+        return None
+
+def save_checkout_session(data):
+    checkout_session = data['data']['object']
+    new_checkout = CheckoutSession(
+        api_version= str(data['api_version']),
+        created= str(checkout_session['created']),
+        amount_subtotal= str(checkout_session['amount_subtotal']),
+        amount_total= str(checkout_session['amount_total']),
+        billing_address_collection= str(checkout_session['billing_address_collection']),
+        cancel_url= str(checkout_session['cancel_url']),
+        currency= str(checkout_session['currency']),
+        customer= str(checkout_session['customer']),
+        customer_creation= str(checkout_session['customer_creation']),
+        customer_email= str(checkout_session['customer_email']),
+        expires_at= str(checkout_session['expires_at']),
+        session_id= str(checkout_session['id']),
+        invoice= str(checkout_session['invoice']),
+        livemode= str(checkout_session['livemode']),
+        mode= str(checkout_session['mode']),
+        object_type= str(checkout_session['object']),
+        payment_method_collection= str(checkout_session['payment_method_collection']),
+        payment_method_types= str(checkout_session['payment_method_types']),
+        payment_status= str(checkout_session['payment_status']),
+        phone_number_collection= str(checkout_session['phone_number_collection']),
+        status= str(checkout_session['status']),
+        subscription= str(checkout_session['subscription']),
+        success_url= str(checkout_session['success_url']),
+        total_details= str(checkout_session['total_details']),
+        session_type= str(data['type'])
+    )
+    new_checkout.save()
+
+def update_user_status(user, plan):
+    user = CustomUser.objects.get(email=user.email)
+    if plan == '':
+        user.status = 'basic'
+        user.save()
+    elif plan == '':
+        user.status = 'premium'
+        user.save()
+    else:
+        print('do nothing')
