@@ -127,21 +127,22 @@ def contact(request):
     if request.method == 'POST':
         contact_form = ContactForm(request.POST)
         if contact_form.is_valid():
-            subject = "Website Inquiry" 
+            subject = contact_form.cleaned_data['problem'] 
             body = {
-            'first_name': contact_form.cleaned_data['first_name'], 
-            'last_name': contact_form.cleaned_data['last_name'], 
+            'message': contact_form.cleaned_data['message'], 
             'email': contact_form.cleaned_data['email_address'], 
-            'message':contact_form.cleaned_data['message'], 
             }
             message = "\n".join(body.values())
             email = EmailMessage(subject, message, to=['sellfast.app@gmail.com'])
             if email.send():
-                messages.success(request, f'We have received your message! We will contact you by email, check your inbox.')
+                messages.success(request, f'Message received, talk to you soon!')
                 return redirect(contact)
             else:
                 messages.error(request, f'ERROR: contact us by email at sellfast.app@gmail.com')
                 return redirect(contact)
+        else:
+            messages.error(request, f'Please insert a valid email value')
+            return redirect(contact)
 
 def whitelist(request):
     if request.method == 'GET':
