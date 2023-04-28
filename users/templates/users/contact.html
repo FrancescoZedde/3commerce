@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="standard-command-container">
-    <p>Describe your problem as accurately as possible. We will reply as soon as possible.</p>
+    <p>Describe your inquiry as accurately as possible.</p>
     <form action="contact" method="post">
         {% csrf_token %}
         {{ contact_form | crispy}}

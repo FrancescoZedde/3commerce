@@ -318,8 +318,7 @@
 
         if (parseInt("{{user.words}}") <= 0){
             alert('Words finished')
-        }else{
-            document.getElementById('multiple-copies').innerHTML = ''
+        }
 /*
         const url = "https://api.openai.com/v1/chat/completions";
         const gpt = "{{GPT_KEY}}"
@@ -495,9 +494,9 @@
         }else if(service_id == 'amazon-description'){
 
         }
-        }
+    
+      }
 
-    }
 
     function call_backend(data_json){
         $.ajax({
@@ -518,7 +517,8 @@
 
                 data['choices'].forEach((option) => {
                 console.log(option)
-                multiple_copies_div.innerHTML += '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'        
+                multiple_copies_div.innerHTML = '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'  + multiple_copies_div.innerHTML;
+                   
             })
                 
             },
