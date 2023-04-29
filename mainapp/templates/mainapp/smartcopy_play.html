@@ -13,26 +13,26 @@
     
 <div class="standard-command-container" style="padding: 0.05em !important;">
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-blog-article-tab" data-bs-toggle="pill" data-bs-target="#pills-blog-article" type="button" role="tab" aria-controls="pills-blog-article" aria-selected="true">Blog</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link active" id="pills-blog-article-tab" data-bs-toggle="pill" data-bs-target="#pills-blog-article" type="button" role="tab" aria-controls="pills-blog-article" aria-selected="true"><i class="fa-solid fa-blog"></i> Blog</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-facebook-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-facebook-ads" type="button" role="tab" aria-controls="pills-facebook-ads" aria-selected="false">Facebook</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link" id="pills-facebook-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-facebook-ads" type="button" role="tab" aria-controls="pills-facebook-ads" aria-selected="false"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-instagram-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-instagram-ads" type="button" role="tab" aria-controls="pills-instagram-ads" aria-selected="false">Instagram</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link" id="pills-instagram-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-instagram-ads" type="button" role="tab" aria-controls="pills-instagram-ads" aria-selected="false"><i class="fa-brands fa-instagram"></i> Instagram</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-google-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-google-ads" type="button" role="tab" aria-controls="pills-google-ads" aria-selected="false">Google</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link" id="pills-google-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-google-ads" type="button" role="tab" aria-controls="pills-google-ads" aria-selected="false"><i class="fa-brands fa-google"></i> Google</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-amazon-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-amazon-ads" type="button" role="tab" aria-controls="pills-amazon-ads" aria-selected="false">Amazon</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link" id="pills-amazon-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-amazon-ads" type="button" role="tab" aria-controls="pills-amazon-ads" aria-selected="false"><i class="fa-brands fa-amazon"></i> Amazon</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-ebay-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-ebay-ads" type="button" role="tab" aria-controls="pills-ebay-ads" aria-selected="false">Ebay</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link" id="pills-ebay-ads-tab" data-bs-toggle="pill" data-bs-target="#pills-ebay-ads" type="button" role="tab" aria-controls="pills-ebay-ads" aria-selected="false"> <i class="fa-brands fa-ebay"></i> Ebay</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-landing-page-tab" data-bs-toggle="pill" data-bs-target="#pills-landing-page" type="button" role="tab" aria-controls="pills-landing-page" aria-selected="false">Landing Page</button>
+      <li class="smartcopy-menu nav-item" role="presentation">
+        <button class="nav-link" id="pills-landing-page-tab" data-bs-toggle="pill" data-bs-target="#pills-landing-page" type="button" role="tab" aria-controls="pills-landing-page" aria-selected="false"><i class="fa-regular fa-file-lines"></i> Landing Page</button>
       </li>
     </ul>
     <div class="tab-content" id="pills-tabContent">
@@ -241,12 +241,7 @@
         {{service_title}}
     </h3>
     <div class="row">
-        <form action="/create-checkout-session" method="POST" style="text-align: right;">
-          <!-- Add a hidden field with the lookup_key of your Price -->
-          {% csrf_token %}
-          <input type="hidden" name="lookup_key" value="business" />
-          <button class="words-button" id="checkout-and-portal-button" type="submit">Words: {{user.words}}</button>
-        </form>
+        <button class="words-button" style="margin-left: 1em;" id="open-words-modal" onclick="open_modal(this.id)" ><b>Words:</b> {{request.user.words}}</button>
     </div>
     
 
@@ -309,6 +304,17 @@
 
 <!-- SPINNER -->
 <div id="loader-smartcopy" hidden class="loader"></div>
+
+
+<!-- MODAL WORDS -->
+<div id="modal-words" class="modal-container">
+  <div class="'modal-content">
+    <div class="standard-command-container">
+    <span id="close-modal-words" class="close">&times;</span>
+    {% include 'mainapp/includes/pricing_words.html' %}
+  </div>
+  </div>
+</div>
 
 <script src="{% static 'smartcopy.js' %}"></script>
 
@@ -557,6 +563,21 @@
             }
         }
     }
+
+    function open_modal(button_id){
+
+          if (button_id == "open-words-modal"){
+                let modal = document.getElementById("modal-words");
+                let close = document.getElementById("close-modal-words");
+                close.onclick = function() {
+                  modal.style.display = "none";
+                }
+                modal.style.display = "block";
+                }
+        
+        
+        
+        }
 
 </script>
     

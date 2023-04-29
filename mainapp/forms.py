@@ -734,7 +734,7 @@ class InventoryItemForm(ModelForm):
     class Meta:
         model = InventoryItem
         fields = ['itemName', 'description', 'descriptionFeatures', 'supplier', 'sellPrice', 'brand','attributes','productImage','sku','supplierSellPrice','categoryFirst',
-                    'materialNameEn','descriptionChatGpt']
+                    'materialNameEn','descriptionCustom']
         widgets = {
             'itemName': TextInput(attrs={
                 'class': "form-control",
@@ -780,7 +780,7 @@ class InventoryItemForm(ModelForm):
                     'style': 'max-width: 100%; font-size: 13px;',
                     'blank':True,
                     }),
-            'descriptionChatGpt': Textarea(attrs={
+            'descriptionCustom': Textarea(attrs={
                     'class': "form-control",
                     'rows': 15, 
                     'style': 'max-width: 100%; font-size: 13px;',

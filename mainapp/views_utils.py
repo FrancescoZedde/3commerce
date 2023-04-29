@@ -34,7 +34,7 @@ def create_default_template_description_string(item):
 
     img_set = literal_eval(item.productImageSet)
 
-    if item.descriptionChatGpt == '':
+    if item.descriptionCustom == '':
         body_1 = '<table style="width: 100%; border: none;" cellspacing="0" cellpadding="0"><tbody><tr><th style="width: 50%;"></th><th style="width: 50%;"></th></tr><tr><td>'
         body_2 = '</td></tr></tbody></table>'
         footer_img_set_1 = '<table style="width: 100%; border: none;" cellspacing="0" cellpadding="0"><tbody><tr><th></th><th></th><th></th></tr><tr>'
@@ -93,10 +93,10 @@ def create_default_template_description_string(item):
         #print('IMG TABLE FULL')
         #print(img_table_full)
         if item.descriptionFeatures == '':
-            stringTemplateDescription = header_1 + str(item.itemName) + header_2 + '<div id="text-description">' + item.descriptionChatGpt + '</div>' + img_table_full + footer
+            stringTemplateDescription = header_1 + str(item.itemName) + header_2 + '<div id="text-description">' + item.descriptionCustom + '</div>' + img_table_full + footer
         else:
             features = set_format_features_description(item.descriptionFeatures)
-            stringTemplateDescription = header_1 + str(item.itemName) + header_2 + '<div id="text-description">' + item.descriptionChatGpt + '</div>' + '<div style="max-width:80%; margin-top:1em;">' + features + '</div>' + img_table_full + footer
+            stringTemplateDescription = header_1 + str(item.itemName) + header_2 + '<div id="text-description">' + item.descriptionCustom + '</div>' + '<div style="max-width:80%; margin-top:1em;">' + features + '</div>' + img_table_full + footer
         print('FULL DESC')
         print(stringTemplateDescription)
 
@@ -110,10 +110,10 @@ def create_default_template_description_string(item):
 def new_default_template(item):
     footer = '<div> <p>Feel free to write us at for any information: <b>hello@xzshop.eu</b></p> </div> <div> <p>You will receive a tracking code to keep track of your shipment</p> </div>'
     if item.descriptionFeatures == '':
-        stringTemplateDescription = '<div id="text-description">' + item.descriptionChatGpt + '</div>'  + footer
+        stringTemplateDescription = '<div id="text-description">' + item.descriptionCustom + '</div>'  + footer
     else:
         features = set_format_features_description(item.descriptionFeatures)
-        stringTemplateDescription = '<div id="text-description">' + item.descriptionChatGpt + '</div>' + '<div style="max-width:80%; margin-top:1em;">' + features + '</div>' + footer
+        stringTemplateDescription = '<div id="text-description">' + item.descriptionCustom + '</div>' + '<div style="max-width:80%; margin-top:1em;">' + features + '</div>' + footer
     print('FULL DESC')
     print(stringTemplateDescription)
     item.descriptionTemplate = stringTemplateDescription

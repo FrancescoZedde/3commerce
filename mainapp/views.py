@@ -42,7 +42,7 @@ from mainapp.ws_serpapi import SerpApi
 
 from mainapp.ws_facebook import instagram_check_container_validity, instagram_create_container_media, instagram_create_container_carousel, instagram_publish_carousel
 
-from mainapp.db_functions import retrieve_last_user_order, create_contract_order, save_checkout_session, reset_cjdropshipping, updateUserWords, retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
+from mainapp.db_functions import update_user_searches, retrieve_last_user_order, create_contract_order, save_checkout_session, reset_cjdropshipping, updateUserWords, retrieveVariantsByItem, connect_cj_account, retrieveItemBySku, connect_shopify_store, reset_shopify_store, reset_woocommerce_store, connect_woocommerce_store, deleteItemBySku, retrieveAllInventoryItems,update_variant, retrieveInventoryItemById, create_item_and_variants,update_items_offer,update_item
 
 
 
@@ -852,7 +852,7 @@ def inventory_list_view_manipulation_commands(request):
                         print('GPT Completition Title:')
                         print(chatgpt_title)
                     chatgpt_description = ChatGPT.gpt35_write_product_description(class_instance, item.itemName, clean_html(item.description), keywords, max_words, min_words)
-                    item.descriptionChatGpt = chatgpt_description
+                    item.descriptionCustom = chatgpt_description
                     print('GPT 3.5 Description:')
                     print(chatgpt_description)
                 else:
@@ -862,7 +862,7 @@ def inventory_list_view_manipulation_commands(request):
                         print('GPT Completition Title:')
                         print(chatgpt_title)
                     chatgpt_description = ChatGPT.write_product_description(class_instance, model, item.itemName, item.description, keywords)
-                    item.descriptionChatGpt = chatgpt_description
+                    item.descriptionCustom = chatgpt_description
                     print('GPT Completition Description:')
                     print(chatgpt_description)
                 item.save()
@@ -963,7 +963,7 @@ def inventory_item_detail_view(request, pk):
     variants = retrieveVariantsByItem(item)
     class_instance = CJDropshipping(request.user)
     cj_access_token = CJDropshipping.cj_get_access_token(class_instance)
-    print(cj_access_token)
+    #print(cj_access_token)
     item_original_description = remove_img_tags(item.description)
     img_set = literal_eval(item.productImageSet)
     item_form = InventoryItemForm(instance=item)
@@ -986,27 +986,44 @@ def inventory_item_detail_view(request, pk):
 
 @login_required(login_url='/login')
 def inventory_item_detail_view_save_changes(request):
-    primary_key = request.POST.get("primary-key", None)
-    new_name = request.POST.get("itemName", None)
-    new_sellprice= request.POST.get("sellPrice", None)
-    #new_description = request.POST.get("description", None)
-    #new_brand = request.POST.get("brand", None)
-    #new_descriptionFeatures = request.POST.get("descriptionFeatures", '')
-
-    item = retrieveInventoryItemById(primary_key)
-    item.itemName = new_name
-    item.sellPrice = new_sellprice
-    item.save()
-
-    return redirect(inventory_item_detail_view, pk=primary_key)
+    if request.method == 'GET':
+        return redirect(inventory_item_detail_view, pk=primary_key)
+    elif request.method == 'POST':
+        mode = request.POST.get("save-mode", None)
+        primary_key = request.POST.get("primary-key", None)
+        if mode == 'save-item':
+            new_name = request.POST.get("itemName", None)
+            new_sellprice= request.POST.get("sellPrice", None)
+            new_custom_description = request.POST.get("descriptionCustom", None)
+            item = retrieveInventoryItemById(primary_key)
+            item.itemName = new_name
+            item.sellPrice = new_sellprice
+            item.descriptionCustom = new_custom_description
+            item.save()
+            messages.success(request, f'Item updated')
+            return redirect(inventory_item_detail_view, pk=primary_key)
+        elif mode == 'save-variant':
+            print(request.POST)
+            variant_id = request.POST.get("variant-id-update", None)
+            new_name = request.POST.get("variantNameEn", None)
+            new_sellprice = request.POST.get("sellPrice", None)
+            variant = Variant.objects.get(id=variant_id)
+            variant.variantNameEn = new_name
+            variant.sellPrice = new_sellprice
+            variant.save()
+            messages.success(request, f'Variant updated')
+            return redirect(inventory_item_detail_view, pk=primary_key)
+        else:
+            messages.error(request, f'Generic Error')
+            return redirect(inventory_item_detail_view, pk=primary_key)
 
 @login_required(login_url='/login')
 def inventory_item_detail_view_save_main_AI_manual_changes(request):
     primary_key = request.POST.get("primary-key", None)
-    new_descriptionChatGpt = request.POST.get("descriptionChatGpt", None)
+    new_descriptionCustom = request.POST.get("descriptionCustom", None)
 
     item = retrieveInventoryItemById(primary_key)
-    item.descriptionChatGpt = new_descriptionChatGpt
+    item.descriptionCustom = new_descriptionCustom
     
     item.save()
 
@@ -1053,20 +1070,25 @@ def inventory_item_search_similar_items(request):
         print(location)
         item = InventoryItem.objects.get(user=request.user, id=primary_key)
         class_instance = SerpApi()
+        if request.user.searches <= 0:
+            messages.error(request, f"You've finished your words!")
+            return redirect(inventory_item_detail_view, pk=primary_key)
         if search_by == 'item-name':
-            shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, location, 'en')
-            ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
+            #shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, location, 'en')
+            #ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
             print('EBAY RESULTS')
-            print(ebay_results)
+            #print(ebay_results)
+            update_user_searches(request.user)
             context = {
                     'primary_key' : primary_key,
-                    'shopping_results': shopping_results,
-                    'ebay_results': ebay_results,
+                    #'shopping_results': shopping_results,
+                    #'ebay_results': ebay_results,
                     'search_by':search_by,
                     }
             return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
         elif search_by == 'item-image':
             inline_images = SerpApi.serp_reverse_image(class_instance, item.productImage)
+            update_user_searches(request.user)
             context = {
                     'primary_key' : primary_key,
                     'inline_images': inline_images,
@@ -1320,7 +1342,7 @@ def gpt_generate_description(request):
                     print('GPT Completition Title:')
                     print(chatgpt_title)
                 chatgpt_description = ChatGPT.gpt35_write_product_description(class_instance, item.itemName, clean_html(item.description), keywords, max_words, min_words)
-                item.descriptionChatGpt = chatgpt_description
+                item.descriptionCustom = chatgpt_description
                 print('GPT 3.5 Description:')
                 print(chatgpt_description)
             else:
@@ -1330,7 +1352,7 @@ def gpt_generate_description(request):
                     print('GPT Completition Title:')
                     print(chatgpt_title)
                 chatgpt_description = ChatGPT.write_product_description(class_instance, model, item.itemName, item.description, keywords)
-                item.descriptionChatGpt = chatgpt_description
+                item.descriptionCustom = chatgpt_description
                 print('GPT Completition Description:')
                 print(chatgpt_description)
             item.save()
@@ -1452,8 +1474,8 @@ def instagram_create_post(request):
             if use_woocommerce_description != None:
                 item = retrieveItemBySku(woocommerce_product['sku'])
                 print('NEW CAPTION')
-                print(item.descriptionChatGpt)
-                caption = item.descriptionChatGpt
+                print(item.descriptionCustom)
+                caption = item.descriptionCustom
             carousel_id = instagram_create_container_carousel(user_instance, ids_array, caption)
             # pubblica container carosello
             instagram_publish_carousel(user_instance, carousel_id)
@@ -1547,7 +1569,7 @@ def inventory_item_save_gpt_description(request):
     print(primary_key)
     print(description)
     item = retrieveInventoryItemById(primary_key)
-    item.descriptionChatGpt = description
+    item.descriptionCustom = description
     item.save()
 
     return redirect(inventory_item_detail_view, pk=primary_key)

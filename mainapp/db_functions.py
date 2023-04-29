@@ -393,3 +393,7 @@ def update_user_status(user, plan):
         user.save()
     else:
         print('do nothing')
+
+def update_user_searches(user):
+    user.searches = user.searches - 1
+    user.save()

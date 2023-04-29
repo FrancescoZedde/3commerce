@@ -27,7 +27,7 @@ class InventoryItem(models.Model):
     description = models.TextField()
     descriptionTemplate = models.TextField()
     descriptionFeatures = models.TextField()
-    descriptionChatGpt = models.TextField()
+    descriptionCustom = models.TextField()
     supplierSellPrice = models.TextField()
     sellPrice = models.TextField()
     supplier = models.TextField()

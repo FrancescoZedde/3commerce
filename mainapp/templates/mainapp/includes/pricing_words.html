@@ -1,0 +1,48 @@
+<div class="card-deck" style="margin-top:1em;">
+    <div class="index-card shadow card">
+      <div class="card-body" style="text-align: center; ">
+        <h3>Words 10k</h3>
+        <h1 class="pricing-index-card-title">$4.99<small class="text-muted fw-light"></small></h1>
+        <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+          <li><i class="fa-solid fa-check"></i></i> 10.000 Words</li>
+        </ul>
+        <form action="/create-checkout-session" method="POST">
+            <!-- Add a hidden field with the lookup_key of your Price -->
+            {% csrf_token %}
+            <input type="hidden" name="lookup_key" value="words-10k" />
+            <button class="words-button" id="checkout-and-portal-button" type="submit">Continue</button>
+            
+          </form>
+      </div>
+    </div>
+    <div class="index-card shadow card">
+        <div class="card-body" style="text-align: center; ">
+          <h3>Words 25k</h3>
+          <h1 class="pricing-index-card-title">$9.99<small class="text-muted fw-light"></small></h1>
+          <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+            <li><i class="fa-solid fa-check"></i></i> 25.000 Words</li>
+          </ul>
+          <form action="/create-checkout-session" method="POST">
+              <!-- Add a hidden field with the lookup_key of your Price -->
+              {% csrf_token %}
+              <input type="hidden" name="lookup_key" value="words-25k" />
+              <button class="words-button" id="checkout-and-portal-button" type="submit">Continue</button>
+            </form>
+        </div>
+      </div>
+      <div class="index-card shadow card">
+        <div class="card-body" style="text-align: center; ">
+          <h3>Words 100k</h3>
+          <h1 class="pricing-index-card-title">$29.99<small class="text-muted fw-light"></small></h1>
+          <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+            <li><i class="fa-solid fa-check"></i></i> 100.000 Words</li>
+          </ul>
+          <form action="/create-checkout-session" method="POST">
+              <!-- Add a hidden field with the lookup_key of your Price -->
+              {% csrf_token %}
+              <input type="hidden" name="lookup_key" value="words-100k" />
+              <button class="words-button" id="checkout-and-portal-button" type="submit">Continue</button>
+            </form>
+        </div>
+      </div>
+  </div>
