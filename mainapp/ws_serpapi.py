@@ -28,6 +28,7 @@ class SerpApi:
                     #"location": "Austin, Texas, United States",
                     "hl": language,
                     "gl": location,
+                    'num': 100,
                     "api_key": self.api_key,
                     }
 
@@ -37,6 +38,23 @@ class SerpApi:
         shopping_results = results["shopping_results"]
         print(shopping_results)
         return shopping_results
+
+    def serp_search_related_results_query(self, query, location, language):
+        params = {
+          "engine": "google_shopping",
+          "q": query,
+          "hl": language,
+          "gl": location,
+          "api_key": self.api_key,
+        }
+
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        print('related shopping results')
+        print(results)
+        related_shopping_results = results["related_shopping_results"]
+        
+        return related_shopping_results
 
     def serp_search_sellers_by_product_id(self, product_id,location, language):
 

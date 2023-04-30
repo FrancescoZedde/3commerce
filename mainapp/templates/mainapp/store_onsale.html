@@ -5,7 +5,11 @@
 {% block content %}
 
 <div class="standard-command-container">
-    <table style="font-size: 7px" class="inventory-table" id="inventory-table">
+    <div class="row">
+      <h3>Store: {{ user.store_name }}</h3>
+      <small>{{ user.shopify_host }}</small>
+    </div> 
+    <table style="font-size: 7px; margin-top: 3em;" class="inventory-table" id="inventory-table">
         <div style="text-align:right; margin-right:1em;">
         </div>
           <tr class="tr-header">

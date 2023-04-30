@@ -1061,6 +1061,8 @@ def inventory_item_set_main_image(request):
 
 @login_required(login_url='/login')
 def inventory_item_search_similar_items(request):
+    if request.method == 'GET':
+        return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
     if request.method == 'POST':
         print(request.POST)
         primary_key = request.POST.get("primary-key", None)
@@ -1074,15 +1076,18 @@ def inventory_item_search_similar_items(request):
             messages.error(request, f"You've finished your words!")
             return redirect(inventory_item_detail_view, pk=primary_key)
         if search_by == 'item-name':
-            #shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, location, 'en')
-            #ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
+            shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, location, 'en')
+            ebay_results = SerpApi.serp_ebay_search_by_query(class_instance, item.itemName)
+            #related_results = SerpApi.serp_search_related_results_query(class_instance, item.itemName, location, 'en')
             print('EBAY RESULTS')
-            #print(ebay_results)
+            #shopping_results = related_results + shopping_results
+            print(ebay_results)
             update_user_searches(request.user)
             context = {
+                    'item': item,
                     'primary_key' : primary_key,
-                    #'shopping_results': shopping_results,
-                    #'ebay_results': ebay_results,
+                    'shopping_results': shopping_results,
+                    'ebay_results': ebay_results,
                     'search_by':search_by,
                     }
             return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
@@ -1090,40 +1095,12 @@ def inventory_item_search_similar_items(request):
             inline_images = SerpApi.serp_reverse_image(class_instance, item.productImage)
             update_user_searches(request.user)
             context = {
+                'item': item,
                     'primary_key' : primary_key,
                     'inline_images': inline_images,
                     'search_by':search_by,
                     }
             return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
-        
-        print(item.productImage)
-    
-        #inline_images = SerpApi.serp_reverse_image(class_instance, item.productImage)
-        shopping_results = SerpApi.serp_search_by_query(class_instance, item.itemName, 'us', 'en')
-        #sellers = SerpApi.serp_search_sellers_by_product_id(class_instance, shopping_results[0]['product_id'], 'us', 'en')
-        context = {
-                    #'inline_images': inline_images,
-                    'primary_key' : primary_key,
-                    'shopping_results': shopping_results,
-                   # 'sellers': sellers,
-                    }
-        return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
-        '''
-        if keywords != None:
-            response = ebay_search_items_by_keywords(user_instance.ebay_access_token, keywords)
-            if type(response) == list:
-                #visualizza gli items
-                context = {
-                    'items': response,
-                    'primary_key' : primary_key,
-                    }
-                return render(request, 'mainapp/inventory_item_search_similar_items.html', context)
-            else:
-                messages.error(request, f"Somethin goes wrong, Ebay returns {response}")
-                return redirect(inventory_item_detail_view, pk=primary_key)
-        else:
-            messages.error(request, f"Somethin goes wrong")
-            return redirect(inventory_item_detail_view, pk=primary_key)'''
 
 
 
