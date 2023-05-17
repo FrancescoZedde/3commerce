@@ -1,0 +1,111 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+
+
+<!--    
+{% if request.user_agent.is_mobile %}
+<p>mobile</p>
+{% else %}
+<p>non mobile</p>-->
+
+{% endif %}
+	  <div class="card-deck">
+		<div class="shadow card">
+			<div class="card-body" style="">
+				<canvas id="pie-chart"></canvas>
+			</div>
+		  </div>
+		  <div class="shadow card">
+			<div class="card-body" style="">
+				<canvas id="sales-chart"></canvas>
+		  </div>
+		  </div>
+        </div>
+
+		<div class="card-deck">
+			<div class="shadow card">
+				<div class="card-body" style="">
+					<canvas id="orders-chart"></canvas>
+				</div>
+			  </div>
+			  <div class="shadow card">
+				<div class="card-body" style="">
+					
+				</div>
+			  </div>
+		</div>
+        
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+    
+    new Chart(document.getElementById("orders-chart"), {
+		type : 'bar',
+		data : {
+			labels : [ '1/04', '2/04', '3/04','4/04', '5/04', '6/04', '7/04', '8/04', '9/04', '10/04', '11/04', '12/04', '13/04', '14/04', '15/04', '16/04', '17/04', '18/04', '19/04', '20/04', '21/04', '22/04', '23/04', '24/04', '25/04', '26/04', '27/04', '28/04', '29/04', '30/04'],
+			datasets : [
+					{
+						data : [53, 16, 97, 52, 42, 54, 40, 76, 60, 28, 76, 50, 34, 29, 44, 50, 15, 59, 61, 22, 76, 99, 70, 86, 69, 67, 55, 53, 80, 73],
+						label : "Sales in $",
+						borderColor : "#3cba9f",
+						fill : false
+					}]
+		},
+		options : {
+			title : {
+				display : true,
+				text : '---'
+			}
+		}
+	});
+
+    new Chart(document.getElementById("sales-chart"), {
+		type : 'line',
+		data : {
+			labels : [ 'January', 'February', 'March', 'April', 'June' ],
+			datasets : [
+					{
+						data : [ 186, 205, 1321, 1516, 2107, ],
+						label : "Sales in $",
+						borderColor : "#3cba9f",
+						fill : false
+					}]
+		},
+		options : {
+			title : {
+				display : true,
+				text : '---'
+			}
+		}
+	});
+
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: ['10', '40', '30',],
+          backgroundColor: [
+            '#5AF728', '#28A9F7', '#FCFF33',
+          ],
+          label: 'Population'
+        }],
+        labels: ['x', 'y', 'z']
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+</script>
+
+{% endblock %}

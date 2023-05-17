@@ -1,0 +1,360 @@
+
+
+{% extends 'main_app/base_2.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+
+<div class="container-smartcopy">
+  <div class="part1">
+    <div class="standard-command-container">
+    
+    <h3 style="font-family:monaco,Consolas,Lucida Console,monospace; color: #8D021F;">
+        {{service_title}}
+    </h3>
+    <div class="row">
+        <button class="standard-button" style="margin-left: 1em;" id="open-words-modal" onclick="open_modal(this.id)" ><b>Words:</b> {{request.user.words}}</button>
+    </div>
+    
+
+    {% if service in 'blog-plagiarism' %}
+
+    <div class="row">
+        {{form.text|as_crispy_field}}
+        <div style="text-align: center;">
+            <button style="margin-top: 25px;" class="standard-button" id="{{form.form_id.value}}" onclick="smartcopy_write(this.id)">
+                Check <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    {% elif service in 'blog-ideas' %}
+    <div class="row">
+        {{form|crispy}}
+        <div style="text-align: center;">
+            <button style="margin-top: 25px;" class="standard-button" id="{{form.form_id.value}}" onclick="smartcopy_write(this.id)">
+                Write <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    {% else %}
+    {{form|crispy}}
+    <div class="row">
+        <input type="hidden" value="{{form.form_id.value}}" id="service-id">
+            <div style="text-align: left;">
+                <button class="standard-button" id="suggest-keywords">
+                    Suggest keywords
+                </button>
+            </div>      
+        <div style="text-align: center;">
+            <button style="margin-top: 25px;" class="standard-button" id="{{form.form_id.value}}" onclick="smartcopy_write(this.id)">
+                Write <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+        </div>
+        
+    </div>
+
+    {% endif %}
+
+</div>
+</div>
+
+  <div class="part2">
+    <div class="standard-command-container">
+        <div>
+            <textarea id="generated-text" name="generated-text-area" class="textarea-gpt" rows="30" cols="50" hidden="hidden"></textarea>
+        </div>
+
+        <div id="multiple-copies">
+            
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- SPINNER -->
+<div id="loader-smartcopy" hidden class="loader"></div>
+
+
+<!-- MODAL WORDS -->
+<div id="modal-words" class="modal-container">
+  <div class="'modal-content">
+    <div class="standard-command-container">
+    <span id="close-modal-words" class="close">&times;</span>
+    {% include 'main_app/includes/pricing_words.html' %}
+  </div>
+  </div>
+</div>
+
+<script src="{% static 'smartcopy.js' %}"></script>
+
+<script>
+    function smartcopy_write(service_id){
+        console.log(service_id)
+
+        if (parseInt("{{user.words}}") <= 0){
+            alert('Words finished')
+        }
+/*
+        const url = "https://api.openai.com/v1/chat/completions";
+        const gpt = "{{GPT_KEY}}"
+        const headers = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${gpt}`
+        };*/
+        let spinner = document.getElementById("loader-smartcopy")
+        spinner.removeAttribute("hidden");
+        let csrftoken = "{{csrf_token}}"
+        // BLOG WRITING
+        if (service_id == 'blog-article'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let tone = document.getElementById('id_tone').value
+            let word_count = document.getElementById('id_word_count').value
+            let language = document.getElementById('id_language').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "blog-article",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language
+                        }
+            call_backend(data_json)
+            //smartcopy_write_blog_article(service_id, gpt, url, headers, topic, target_audience, keywords, tone, word_count, language)
+        }
+        // BLOG IDEAS
+        else if(service_id == 'blog-ideas'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let language = document.getElementById('id_language').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "blog-ideas",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "language": language
+                        }
+            call_backend(data_json)
+        }
+        // BLOG PLAGIARISM
+        else if(service_id == 'blog-plagiarism'){
+            let text = document.getElementById('id_text').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "blog-plagiarism",
+                            "text": text,
+                        }
+            call_backend(data_json)
+        }
+        // FACEBOOK ADS
+        else if(service_id == 'facebook-ads'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let tone = document.getElementById('id_tone').value
+            let word_count = document.getElementById('id_word_count').value
+            let emoji = set_copy_style('emoji', document.getElementById('id_emoji').checked)
+            let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
+            let n_copies = document.getElementById('id_n_copies').value
+            let language = document.getElementById('id_language').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "facebook-ads",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language,
+                            "emoji": emoji,
+                            "bullet_list": bullet_list,
+                            "n_copies": n_copies,
+                        }
+            call_backend(data_json)
+        }
+        // FACEBOOK POST
+        else if(service_id == 'facebook-post'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let tone = document.getElementById('id_tone').value
+            let word_count = document.getElementById('id_word_count').value
+            let emoji = set_copy_style('emoji', document.getElementById('id_emoji').checked)
+            let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
+            let n_copies = document.getElementById('id_n_copies').value
+            let language = document.getElementById('id_language').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "facebook-post",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language,
+                            "emoji": emoji,
+                            "bullet_list": bullet_list,
+                            "n_copies": n_copies,
+                        }
+            call_backend(data_json)
+        }
+        // FACEBOOK POST IDEAS
+        else if(service_id == 'facebook-post-ideas'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let language = document.getElementById('id_language').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "facebook-post-ideas",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "language": language,
+                        }
+            call_backend(data_json)
+        }
+        else if(service_id == 'instagram-post'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let tone = document.getElementById('id_tone').value
+            let word_count = document.getElementById('id_word_count').value
+            let emoji = set_copy_style('emoji', document.getElementById('id_emoji').checked)
+            let bullet_list = set_copy_style('bullet_list',document.getElementById('id_bullet_list').checked)
+            let n_copies = document.getElementById('id_n_copies').value
+            let language = document.getElementById('id_language').value
+
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "instagram-post",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "tone": tone,
+                            "word_count": word_count,
+                            "language": language,
+                            "emoji": emoji,
+                            "bullet_list": bullet_list,
+                            "n_copies": n_copies,
+                        }
+            call_backend(data_json)
+        }
+        else if(service_id == 'instagram-tags'){
+            let topic = document.getElementById('id_topic').value
+            let target_audience = document.getElementById('id_target_audience').value
+            let keywords = document.getElementById('id_keywords').value
+            let language = document.getElementById('id_language').value
+            let data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                            "service": "instagram-tags",
+                            "topic": topic,
+                            "target_audience": target_audience,
+                            "keywords": keywords,
+                            "language": language,
+                        }
+            call_backend(data_json)
+        }
+        else if(service_id == 'google-ads-title'){
+        }
+        else if(service_id == 'google-ads-description'){
+        }
+        else if(service_id == 'email-marketing'){
+
+        }else if(service_id == 'amazon-description'){
+
+        }
+    
+      }
+
+
+    function call_backend(data_json){
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'smartcopy-write' %}",
+            data: data_json,
+            beforeSend: function() {
+              let spinner = document.getElementById("loader-smartcopy")
+              spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+                let spinner_close = document.getElementById("loader-smartcopy")
+                spinner_close.setAttribute("hidden", "hidden")
+                console.log(data)
+                multiple_copies_div = document.getElementById('multiple-copies')
+
+                data['choices'].forEach((option) => {
+                console.log(option)
+                multiple_copies_div.innerHTML = '<textarea name="generated-text-area" class="textarea-gpt" rows="10" cols="50">' + option['message']['content'].replace(/["]+/g, '') + '</textarea>'  + multiple_copies_div.innerHTML;
+                   
+            })
+                
+            },
+            error: function (data) {
+                console.log(data);
+                let spinner_close = document.getElementById("loader-smartcopy")
+                spinner_close.setAttribute("hidden", "hidden")
+            }
+        });
+    }
+
+
+
+
+    function show_hide_loader(){
+        let spinner = document.getElementById("loader-smartcopy")
+        if (spinner.hidden == true){
+            spinner.removeAttribute('hidden')
+        }else{
+            spinner.setAttribute('hidden', 'hidden')
+        }
+    }
+
+    function set_copy_style(feature, boolean_val){
+        if (feature == "emoji"){
+            if (boolean_val == true){
+                return "Use emoji"
+            }else{
+                return " Do not use emoji "
+            }
+        }else if (feature == "bullet_list"){
+            if (boolean_val == true){
+                return "Use bullet list"
+            }else{
+                return " Do not use bullet list "
+            }
+        }
+    }
+
+    function open_modal(button_id){
+
+          if (button_id == "open-words-modal"){
+                let modal = document.getElementById("modal-words");
+                let close = document.getElementById("close-modal-words");
+                close.onclick = function() {
+                  modal.style.display = "none";
+                }
+                modal.style.display = "block";
+                }
+        
+        
+        
+        }
+
+</script>
+    
+{% endblock %}

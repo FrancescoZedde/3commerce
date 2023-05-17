@@ -1,0 +1,151 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+<!--
+<style>
+  body {
+    background-image: url("{% static 'futuristic-artifical-intelligence-background.png' %}");
+    background-repeat: no-repeat;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+  }
+  </style>
+-->
+<div class="standard-command-container">
+<div style="text-align:center;">
+
+   
+
+
+  
+    <!-- PRICING -->
+      <div style="text-align: center;">
+        <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px; margin-top: 2em;;">
+          <input class="form-check-input" name="billed_annually" default="False" type="checkbox" id="billed-annually" onchange="change_price(this.checked)">
+          <label class="form-check-label" for="flexSwitchCheckDefault">Billed Annually</label>
+        </div>
+      </div>
+      <div class="card-deck" style="margin-top:2em;">
+        <div class="index-card shadow card">
+          <div class="card-body" style="text-align: center; ">
+            <h3>Free</h3>
+            <h1 class="pricing-index-card-title">$0.00<small class="text-muted fw-light">/mo</small></h1>
+            <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+              <li><i class="fa-solid fa-check"></i></i> </li>
+              
+            </ul>
+            <div style="text-align: center;">
+              <button type="button" class="standard-button"><a href="{% url 'registration' %}" style="color:white; font-size: 18px;padding: 2px;">Continue</a></button>
+
+            </div>
+          </div>
+        </div>
+        <div class="index-card shadow card">
+          <div class="card-body" style="text-align: center; ">
+            <h3>Basic</h3>
+            <h1 class="month-plan pricing-index-card-title">$0.00<small class="text-muted fw-light">/mo</small></h1>
+            <h1 class="year-plan pricing-index-card-title" hidden >$0.00<small class="text-muted fw-light">/yr</small></h1>
+            <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;">
+              <li><i class="fa-solid fa-check"></i></i> </li>
+       
+            </ul>
+            <div style="text-align: center;">
+              <button type="button" class="standard-button"><a href="{% url 'registration' %}" style="color:white; font-size: 18px;padding: 2px;">Continue</a></button>
+
+            </div>
+          </div>
+        </div>
+        <div class="index-card shadow card">
+            <div class="card-body" style="text-align: center; ">
+              <h3>Premium</h3>
+              <h1 class="month-plan pricing-index-card-title">$0.00<small class="text-muted fw-light">/mo</small></h1>
+              <h1 class="year-plan pricing-index-card-title" hidden>$0.00<small class="text-muted fw-light">/yr</small><span style="font-size: 20px; color: red;"></span></h1>
+              <ul class="list-unstyled mt-3 mb-4" style=" text-align: left; display: inline-block;"> 
+                <li><i class="fa-solid fa-check"></i></i> </li>
+              
+              </ul>
+              <div style="text-align: center;">
+                <button type="button" class="standard-button"><a href="{% url 'registration' %}" style="color:white; font-size: 18px;padding: 2px;">Continue</a></button>
+  
+              </div>
+            </div>
+          </div>
+        </div>
+       
+
+
+<script>
+
+
+var text = 'Automate boring stuff,  focus on growing your business';
+var item = document.getElementById("text-headline-1");
+
+function typeText(item, text, delay, i) {
+    $(item).append(text.charAt(i))
+        .delay(delay)
+        .promise()
+        .done(function() {
+          if(i<text.length) {
+            i++;
+            typeText(item, text, delay, i);  
+          }
+    });
+}
+
+function change_price(billed_annually){
+    console.log(billed_annually)
+      if (billed_annually == true){
+          month_plans = document.getElementsByClassName('month-plan pricing-index-card-title')
+          for (let plan of month_plans) {
+            plan.setAttribute('hidden', 'hidden')
+          }
+          year_plas = document.getElementsByClassName('year-plan pricing-index-card-title')
+          console.log(year_plas)
+          for (let plan of year_plas) {
+            plan.removeAttribute('hidden')
+          }
+          change_lookup_key(billed_annually)
+      }else{
+        month_plans = document.getElementsByClassName('month-plan pricing-index-card-title')
+          for (let plan of month_plans) {
+            plan.removeAttribute('hidden')
+          }
+          year_plas = document.getElementsByClassName('year-plan pricing-index-card-title')
+          console.log(year_plas)
+          for (let plan of year_plas) {
+            plan.setAttribute('hidden', 'hidden')
+          }
+          change_lookup_key(billed_annually)
+      }
+  }
+
+  function change_lookup_key(billed_annually){
+    if (billed_annually == true){
+          document.getElementById('starter-lookup-key').value = 'starter-year'
+          document.getElementById('business-lookup-key').value = 'business-year'
+          console.log(document.getElementById('business-lookup-key').value )
+
+      }else{
+        document.getElementById('starter-lookup-key').value = 'starter-month'
+          document.getElementById('business-lookup-key').value = 'business-month'
+          console.log(document.getElementById('business-lookup-key').value )
+        
+      }
+  }
+
+
+(function loop() {
+  typeText(item, text, 100, 0)
+})();
+
+
+
+</script>
+{% endblock %}

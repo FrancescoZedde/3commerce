@@ -1,0 +1,89 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+
+
+<div class="standard-command-container">
+    <form action="generate-img" method="POST">
+        {% csrf_token %}
+        {{assistant_chat_form | crispy }}
+    
+    </form>
+
+    <button class="standard-button" onclick="generate_image()">Generate</button>
+
+    <div id="multiple-copies">
+
+    </div>
+</div>
+<script>
+
+    function generate_image(){
+        let prompt = document.getElementById('id_question').value
+        let n_copies = document.getElementById('id_n_copies').value
+
+        if (n_copies > 4){
+            alert('max n images: 4')
+        }else {
+            console.log(n_copies)
+        let csrftoken = "{{csrf_token}}"
+        data_json = {
+                'csrfmiddlewaretoken': csrftoken,
+                "question": prompt, 
+                "n_copies": n_copies,}
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'generate-img' %}",
+            data: data_json,
+            beforeSend: function() {
+              //let spinner = document.getElementById("loader-smartcopy")
+              //spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+
+                data = transformToObjectArray(data)
+                //let spinner_close = document.getElementById("loader-smartcopy")
+                //spinner_close.setAttribute("hidden", "hidden")
+                //console.log(data)
+                multiple_copies_div = document.getElementById('multiple-copies')
+                start_card_deck = '<div class="card-deck" style="padding-bottom: 4em;">'
+                end_card_deck = '</div>'
+                cards = ''
+                Array.from(data).forEach((option) => {
+                console.log(option)
+                cards += '<div class="card" style="border:none; text-align:center; max-width: 320px; max-height:320px;"><img class="card-img" src="' + option['url'] + '" width="320px" height="320px"><div class="card-img-overlay"></div><div class="card-footer"><button class="generated-image-button"><i class="fa-solid fa-floppy-disk" style="color:green"></i></button>   <button class="generated-image-button"><i class="fa-solid fa-hat-wizard" style="color:yellow"></i></button>    <button class="generated-image-button"><i class="fa-solid fa-download" style="color:blue;"></i></button>   </div></div>';
+                   
+            })
+                card_deck_set = start_card_deck + cards + end_card_deck
+                multiple_copies_div.innerHTML = card_deck_set + multiple_copies_div.innerHTML
+            },
+            error: function (data) {
+                console.log(data);
+                
+            }
+        });
+        }
+    }
+
+
+    function transformToObjectArray(inputString) {
+          const regex = /{[^{}]+}/g; // regular expression to match each object
+          const matches = inputString.match(regex); // find all matches
+          const result = [];
+
+          // iterate through matches and parse each object
+          for (const match of matches) {
+            const obj = JSON.parse(match);
+            result.push(obj);
+          }
+      
+          return result;
+        }
+</script>
+{% endblock %}

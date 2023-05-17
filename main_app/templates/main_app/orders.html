@@ -1,0 +1,483 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<div class="standard-command-container">
+<ul class="nav nav-pills mb-3" id="myTab" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active" id="pending-fulfillment-tab" data-toggle="tab" href="#pending-fulfillment" role="tab" aria-controls="pending-fulfillment" aria-selected="true">Pending</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="fulfilled-tab" data-toggle="tab" href="#fulfilled" role="tab" aria-controls="fulfilled" aria-selected="false">Fulfilled</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="fulfilled-tab" data-toggle="tab" href="#tracker" role="tab" aria-controls="tracker" aria-selected="false">Tracker</button>
+    </li>
+  </ul>
+  
+  <!-- Tab content section -->
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="pending-fulfillment" role="tabpanel" aria-labelledby="pending-fulfillment-tab">
+      <div class="standard-command-container">
+        <p><b>Autopilot</b></p>
+
+        
+        <div style="margin-left: 1em;" class="form-check form-switch">
+          <input class="form-check-input" default="False" type="checkbox" id="flex-switch">
+          <label class="form-check-label" for="flexSwitchCheckDefault"><small>Automates order placement</small></label>
+        </div>
+      </div>
+      <div class="row" style="text-align: center; margin-top: 5%;">
+        <div class="col">
+          <button id="" class="standard-button" onclick="open_modal_fulfill()">FulFill</button>
+          <p><small>Place orders </small></p>
+        </div>
+        <div class="col">
+          <form action="orders-retrieve" method="GET">
+            {% csrf_token %}
+          <button type="submit" class="standard-button">Sync orders</button>
+          <p><small>Synchronize new orders</small></p>
+          </form>
+        </div>
+        </div>
+
+        <!-- ORDERS PENDING  TABLE-->
+        <div style="overflow-x:auto;">
+          <div class="table-responsive">
+            <table class="table">
+               <thead>
+                 <tr>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  
+                 </tr>
+               </thead>
+               <tbody>
+                 {% for order in orders_pending %}
+                  <tr>
+                    <td class="td-standard" style="color:rgb(222, 213, 41)">{{order.status}}</td>
+                    <td>{{order.shipping_customer_name}}</td>
+
+                    <td>{{order.shipping_country}}</td>
+                    <!--<td>{{order.logistic_name}}</td>-->
+                    <td><input type="checkbox" id="checkbox-{{order.id}}" name="order-checkbox" onchange="select_orders()"/></td>
+                    <td><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_order_setup(this.id, false)">Setup</a></td>
+
+                    <input type="hidden" id="id-{{order.id}}" value="{{order.id}}">
+                    <input type="hidden" id="shipping_customer_name-{{order.id}}" value="{{order.shipping_customer_name}}">
+                    <input type="hidden" id="shipping_country-{{order.id}}" value="{{order.shipping_country}}">
+                    <input type="hidden" id="logistic_name-{{order.id}}" value="{{order.logistic_name}}">
+                    <input type="hidden" id="shipping_zip-{{order.id}}" value="{{order.shipping_zip}}">
+                    <input type="hidden" id="shipping_address-{{order.id}}" value="{{order.shipping_address}}">
+                    <input type="hidden" id="shipping_country_code-{{order.id}}" value="{{order.shipping_country_code}}">
+                    <input type="hidden" id="shipping_city-{{order.id}}" value="{{order.shipping_city}}">
+                    <input type="hidden" id="shipping_province-{{order.id}}" value="{{order.shipping_province}}">
+                    <input type="hidden" id="products-{{order.id}}" value="{{order.products}}">
+                    <input type="hidden" id="shipping_phone-{{order.id}}" value="{{order.shipping_phone}}">
+                    <input type="hidden" id="vids-{{order.id}}" value="{{order.vids}}">
+                    <!--
+                    <input type="hidden" id="remark-{{order.id}}" value="{{order.remark}}">
+                    <input type="hidden" id="fromCountryCode-{{order.id}}" value="{{order.fromCountryCode}}">
+                    <input type="hidden" id="logisticName-{{order.id}}" value="{{order.logisticName}}">-->
+        
+                   </tr>
+                   {% endfor %}
+               </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="fulfilled" role="tabpanel" aria-labelledby="fulfilled-tab">
+      <div style="overflow-x:auto;">
+        <div class="table-responsive">
+          <table class="table">
+             <thead>
+               <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                
+               </tr>
+             </thead>
+             <tbody>
+               {% for order in orders_submited %}
+                <tr>
+                  <td style="color:greenyellow">{{order.status}}</td>
+                  <td>{{order.shipping_customer_name}}</td>
+                  <td>{{order.logistic_name}}</td>
+                  <td>{{order.from_country_code}}</td>
+                  <td>{{order.shipping_country}}</td>
+                  <td><a id="{{order.id}}" style='color:rgb(65, 134, 255)' href="##" onclick="return open_modal_order_setup(this.id, true)">Details</a></td>
+                  
+                  <input type="hidden" id="id-{{order.id}}" value="{{order.id}}">
+                  <input type="hidden" id="shipping_customer_name-{{order.id}}" value="{{order.shipping_customer_name}}">
+                    <input type="hidden" id="shipping_country-{{order.id}}" value="{{order.shipping_country}}">
+                    <input type="hidden" id="logistic_name-{{order.id}}" value="{{order.logistic_name}}">
+                    <input type="hidden" id="shipping_zip-{{order.id}}" value="{{order.shipping_zip}}">
+                    <input type="hidden" id="shipping_address-{{order.id}}" value="{{order.shipping_address}}">
+                    <input type="hidden" id="shipping_country_code-{{order.id}}" value="{{order.shipping_country_code}}">
+                    <input type="hidden" id="shipping_city-{{order.id}}" value="{{order.shipping_city}}">
+                    <input type="hidden" id="shipping_province-{{order.id}}" value="{{order.shipping_province}}">
+                    <input type="hidden" id="products-{{order.id}}" value="{{order.products}}">
+                    <input type="hidden" id="shipping_phone-{{order.id}}" value="{{order.shipping_phone}}">
+                    <input type="hidden" id="vids-{{order.id}}" value="{{order.vids}}">
+                 </tr>
+                 {% endfor %}
+             </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+    <div class="tab-pane fade" id="tracker" role="tabpanel" aria-labelledby="tracker-tab">
+
+      <small>Track your ship</small>
+        <div class="form-group">
+          <input class="form-control" id="track-code" type="text" value="">
+        </div>
+          
+        <span id="tracker-response"></span>
+
+        <div>  
+          <button class="standard-button" onclick="get_track_info()">Check</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- SUBMIT ORDERS -->
+<div id="modal-fulfill" class="modal-container">
+  <div class="modal-content">
+    
+    <p id="close-modal-fulfill" class="close">&times;</p>
+      <form action="orders-submit" method="POST">
+        {% csrf_token %}
+        <small>Press <b>Continue</b> to send selected orders to the supplier</small>
+        <div class="button" style="text-align: center; margin-top: 20px;">
+          <input class="standard-button" type="submit" value="Send">
+        </div>
+        <input id="orders-to-fulfill" name="orders-to-fulfill-name" type="hidden" value="">
+      </form>
+          
+  </div>
+</div>
+
+
+<!--SETUP ORDER-->
+<div id="modal-setup-order" class="modal-container">
+    <div class="modal-content">
+        <div hidden="hidden" id="loader-product" class="loader"></div>
+        <p id="close-modal-setup-order" class="close">&times;</p>
+
+        
+        <form action="orders-update-shipping-method" method="POST">
+                {% csrf_token %}
+                <div id="order-details-form" class="form-group">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="id-modal" style="text-align:left;font-size:12px">ID</label>
+                        <input type="text" id="id-modal" name="id-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="" readonly="true">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Customer Name</label>
+                        <input type="text" id="shipping_customer_name-modal" name="shipping_customer_name-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_phone-modal" style="text-align:left;font-size:12px">Phone</label>
+                        <input type="text" id="shipping_phone-modal" name="shipping_phone-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_address-modal" style="text-align:left;font-size:12px">Address</label>
+                        <input type="text" id="shipping_address-modal" name="shipping_address-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_zip-modal" style="text-align:left;font-size:12px">Zip/Postal Code</label>
+                        <input type="text" id="shipping_zip-modal" name="shipping_zip-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_city-modal" style="text-align:left;font-size:12px">City</label>
+                        <input type="text" id="shipping_city-modal" name="shipping_city-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_province-modal" style="text-align:left;font-size:12px">Province/State</label>
+                        <input type="text" id="shipping_province-modal" name="shipping_province-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_country-modal" style="text-align:left;font-size:12px">Country</label>
+                        <input type="text" id="shipping_country-modal" name="shipping_country-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="shipping_country_code-modal" style="text-align:left;font-size:12px">Country Code</label>
+                        <input type="text" id="shipping_country_code-modal" name="shipping_country_code-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="logistic_name-modal" style="text-align:left;font-size:12px">Logistic Name</label>
+                        <input type="text" id="logistic_name-modal" name="logistic_name-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="" readonly="true">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="products-modal" style="text-align:left;font-size:12px">Products</label>
+                        <input type="text" id="products-modal" name="products-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="vids-modal" style="text-align:left;font-size:12px">Video IDs</label>
+                        <input type="text" id="vids-modal" name="vids-modal" class="form-control" style="margin-bottom:4px;font-size:12px" value="">
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+            
+
+                  {% csrf_token %}
+
+            
+            <div id="update-order-div">
+
+              <label for="sync-dropdown">Shipping method:</label>
+            
+                <select class="form-select" name="shipping-options-dropdown" id="shipping-options-dropdown" >
+                  <option id="shipping-method-in-use" value="" selected="selected"></option>
+      
+                </select>
+                  <div class="button" style="text-align: center; margin-top: 20px;">
+                    <input class="standard-button" type="submit" value="Update">
+                  </div>
+               </div>
+                  
+            </form>
+            
+    </div>
+</div>
+
+<script>
+
+  function select_orders(){
+    
+    var check_boxes = document.querySelectorAll("[name^=order-checkbox]")
+    //var check_boxes = document.getElementsByClassName('order-checkbox')
+    var orders_to_fulfill = []
+    console.log(check_boxes)
+    check_boxes.forEach((box) => {
+      if (box.checked == true){
+        var order_id = box.id
+        order_id = order_id.replace('checkbox-', '')
+        orders_to_fulfill.push(order_id)
+      }
+    })
+    console.log(orders_to_fulfill)
+    document.getElementById('orders-to-fulfill').value = orders_to_fulfill
+  }
+
+    function open_modal_order_setup(order_id, read_only_order){
+        console.log(order_id)
+
+        id = document.getElementById('id-'+ order_id).value
+        shipping_customer_name = document.getElementById('shipping_customer_name-'+ order_id).value
+        shipping_country = document.getElementById('shipping_country-'+ order_id).value
+        shipping_phone = document.getElementById('shipping_phone-'+ order_id).value
+        shipping_zip = document.getElementById('shipping_zip-'+ order_id).value
+        logistic_name = document.getElementById('logistic_name-'+ order_id).value
+        shipping_address = document.getElementById('shipping_address-'+ order_id).value
+        shipping_country_code = document.getElementById('shipping_country_code-'+ order_id).value
+        shipping_city = document.getElementById('shipping_city-'+ order_id).value
+        shipping_province = document.getElementById('shipping_province-'+ order_id).value
+        products = document.getElementById('products-'+ order_id).value
+        vids = document.getElementById('vids-'+ order_id).value.split(',')
+        console.log(vids)
+        console.log(shipping_address)
+
+        document.getElementById("id-modal").value = id;
+        document.getElementById("shipping_customer_name-modal").value = shipping_customer_name;
+        document.getElementById("shipping_country-modal").value = shipping_country;
+        document.getElementById("shipping_phone-modal").value = shipping_phone;
+        document.getElementById("shipping_zip-modal").value = shipping_zip;
+        document.getElementById("logistic_name-modal").value = logistic_name;
+        document.getElementById("shipping_address-modal").value = shipping_address;
+        document.getElementById("shipping_country_code-modal").value = shipping_country_code;
+        document.getElementById("shipping_city-modal").value = shipping_city;
+        document.getElementById("shipping_province-modal").value = shipping_province;
+        document.getElementById("products-modal").value = products;
+        document.getElementById("vids-modal").value = vids.join();
+
+        if (read_only_order == true){
+          document.getElementById("id-modal").readOnly = true;
+          document.getElementById("shipping_customer_name-modal").readOnly = true;
+          document.getElementById("shipping_country-modal").readOnly = true;
+          document.getElementById("shipping_phone-modal").readOnly = true;
+          document.getElementById("shipping_zip-modal").readOnly = true;
+          document.getElementById("logistic_name-modal").readOnly = true;
+          document.getElementById("shipping_address-modal").readOnly = true;
+          document.getElementById("shipping_country_code-modal").readOnly = true;
+          document.getElementById("shipping_city-modal").readOnly = true;
+          document.getElementById("shipping_province-modal").readOnly = true;
+          document.getElementById("products-modal").readOnly = true;
+          document.getElementById("vids-modal").readOnly = true;
+
+          document.getElementById('update-order-div').setAttribute('hidden', 'hidden')
+        }
+        
+
+        get_shipping_options(shipping_country_code, vids, logistic_name)
+
+        let modal = document.getElementById("modal-setup-order");
+        let close = document.getElementById("close-modal-setup-order");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
+        
+        //populate modal
+
+    }
+
+    function open_modal_fulfill(){
+        let modal = document.getElementById("modal-fulfill");
+        let close = document.getElementById("close-modal-fulfill");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
+    }
+
+
+    function open_modal_order_fulfilled(){
+      document.getElementById("id-modal").value = id;
+        document.getElementById("shipping_customer_name-modal").value = shipping_customer_name;
+        document.getElementById("shipping_country-modal").value = shipping_country;
+        document.getElementById("shipping_phone-modal").value = shipping_phone;
+        document.getElementById("shipping_zip-modal").value = shipping_zip;
+        document.getElementById("logistic_name-modal").value = logistic_name;
+        document.getElementById("shipping_address-modal").value = shipping_address;
+        document.getElementById("shipping_country_code-modal").value = shipping_country_code;
+        document.getElementById("shipping_city-modal").value = shipping_city;
+        document.getElementById("shipping_province-modal").value = shipping_province;
+        document.getElementById("products-modal").value = products;
+        document.getElementById("vids-modal").value = vids.join();
+    }
+
+
+
+    async function get_shipping_options(ship_to, vids, logistic_name){
+        //document.getElementById('shipping-options').innerHTML = ''
+        document.getElementById('shipping-options-dropdown').innerHTML = ''
+        const access_token = "{{cj_access_token}}"
+        const url = 'https://developers.cjdropshipping.com/api2.0/v1/logistic/freightCalculate';
+        var products = []
+        for (let i = 0; i < vids.length; i++){
+          console.log(vids[i])
+          products.push({"quantity":1, "vid":vids[i]})
+        }
+
+        const data = { 
+                        "startCountryCode": "CN",
+                        "endCountryCode": ship_to,
+                        "products": products
+                            };
+        
+        console.log(data)
+        await fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers:{
+            'Content-Type': 'application/json',
+            "CJ-Access-Token": access_token,
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          var shipping_options = data['data']
+          //var options_list = document.getElementById('shipping-options')
+          var shipping_options_list = document.getElementById('shipping-options-dropdown')
+          shipping_options.forEach((option) => {
+            //options_list.innerHTML += '<div class="card">' + option['logisticName'] + '</div>'
+            //options_list.innerHTML += '<li style="font-size: 10px;" class="list-group-item"><p><b><a href="">'+ option['logisticName'] + '</a></b>:  ' + option['logisticAging'] + ' days / ' + option['logisticPrice'] +' $</p></li>'        
+          
+              if (logistic_name == option['logisticName']){
+                shipping_options_list.innerHTML += '<option value="' + option['logisticName'] + '" selected="selected"><b>' + option['logisticName']+ '</b> ' + option['logisticAging'] + ' days / ' + option['logisticPrice'] +' $ '
+            
+              }else{
+                shipping_options_list.innerHTML += '<option value="' + option['logisticName'] + '"><b>' + option['logisticName']+ '</b> ' + option['logisticAging'] + ' days / ' + option['logisticPrice'] +' $ '
+              }
+          })
+          /*
+          console.log(shipping_options)
+          for (option in shipping_options){
+            console.log(option["logisticAging"])
+          }*/
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    function get_track_info(trackNumber) {
+              document.getElementById('tracker-response').innerHTML = ''
+              const track_number = document.getElementById('track-code').value
+              const url = `https://developers.cjdropshipping.com/api2.0/v1/logistic/getTrackInfo?trackNumber=${track_number}`;
+              return fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data)
+                  if (data['data'].length == 0){
+                    document.getElementById('tracker-response').innerHTML += '<p>Looks like there is not shipping linked to this track code.</p><p>Please check if your code is correct.</p>'
+                  }else{
+                    data['data'].forEach((tracker)=>{
+                      console.log(tracker)
+                      document.getElementById('tracker-response').innerHTML += '<b>Logistic name:</b> ' + tracker['logisticName'] + '<br>' + '<b>Status: </b>'+ tracker['routes'][0]['remark']
+                    })
+                  }
+                })
+                .catch(error => console.error(error));
+            }
+
+    
+</script>
+{% endblock %}

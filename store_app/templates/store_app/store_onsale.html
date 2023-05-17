@@ -1,0 +1,245 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="standard-command-container">
+    <div class="row">
+      <h3>Store: {{ user.store_name }}</h3>
+      
+    </div> 
+    <table style="font-size: 7px; margin-top: 3em;" class="inventory-table" id="inventory-table">
+        <div style="text-align:right; margin-right:1em;">
+        </div>
+          <tr class="tr-header">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        
+          {% for product in products %}
+          <tr class="tr-standard">
+            <td class="td-standard"><img src={{product.mainImage}} alt="" width="75" height="75"></td>
+            <td class="td-name">{{product.name}}</td>
+            <td class="td-standard"><input type="checkbox" name="checkbox-item" onchange="select_rows()"/>&nbsp;</td>
+            <td class="td-standard"><a style='color:rgb(65, 134, 255)' href={{product.url}} target="_blank" rel="follow">URL</a></td>
+            <td class="td-standard"><a id="search-:-{{product.name}}-:-{{product.mainImage}}" style='color:rgb(227, 65, 255)' href="#" onclick="return open_modal_search(this.id)">Search</a></td>
+            <td class="td-standard"><a id="{{product.id}}" style='color:rgb(65, 134, 255)' href="#" onclick="return open_modal_product(this.id)">Edit</a></td>
+            <td class="td-standard"><a id="delete-{{product.id}}" style='color:rgb(239, 57, 57)' href="#" onclick="return open_modal_delete(this.id)">Delete from store</a></td>
+        
+          </tr>
+          {% endfor %}
+        
+        </table>
+
+        <div style="text-align: center;">
+            <button style="margin-top: 25px;" class="standard-button" id="" onclick="">
+                Load more
+            </button>
+            <button style="margin-top: 25px;" class="standard-button" id="" onclick="">
+                Load all
+            </button>
+        </div>
+        
+</div>
+
+<!-- SEARCH MODAL -->
+<div id="modal-search" class="modal-container">
+  <div class="modal-content">
+    <p id="close-modal-search" class="close">&times;</p>
+    <div class="row" style="text-align: center; margin-bottom: 3em;">
+      <h5><b>Search Similar Items And Spy Your Competitors</b><img src="http://xzshop.eu/wp-content/uploads/2023/04/743607.png" height="40px" width="40px"></a></h5>
+  </div>
+  <div class="row">
+    <button class="standard-button" style="margin-left: 2em; margin-bottom: 2em;" id="open-searches-modal" type="submit" onclick="open_modal(this.id)"><b>Searches:</b> {{request.user.searches}}</button>
+  </div>
+  <div class="card-deck" style="text-align: center;">
+    <div class="card" style="border: none;">
+      <div class="card-body" >
+      <p >Search specifically for products similar to yours among thousands of products and different sources. Find out what your comepetitors are doing and analyze their strategies.</p>
+      <form action="inventory-item-search-similar-items" method="post">
+        {% csrf_token %}
+        <div style="text-align: left;">
+          <label class="form-check-label" style="text-align: left;"><b>Your market:</b></label>
+        </div>
+        
+        <input type="hidden" name="location selected-option" id="">
+        <select class="form-control" name="similar-item-location" style="margin-bottom: 2em;" onchange="set_location_selected_option()">
+          {% include 'main_app/includes/serpapi_locations.html' %}                        
+        </select>
+            <div class="button">
+                <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search by Name" name="search-similar-item-name">
+            </div>
+            <input type="hidden" id="item-name" name="item-name" value="">
+            <input type="hidden" id="item-image" name="item-image" value="">
+            <input type="hidden" id="searchbyname" name="search-by" value="item-name">
+        </form>
+      </div>
+    </div>
+    <div class="card" style="border: none;">
+      <div class="card-body">
+        <p>Reverse image search is useful when you need more information about your product, it's easy to find model, brand or marketing material through reverse image.</p>
+        <form action="inventory-item-search-similar-items" method="post">
+          {% csrf_token %}
+          <div style="text-align: left;">
+            <label class="form-check-label" style="text-align: left;"><b>Your market:</b></label>
+          </div>
+          
+          <input type="hidden" name="location selected-option" id="">
+          <select class="form-control" name="similar-item-location" style="margin-bottom: 2em;" onchange="set_location_selected_option()">
+            {% include 'main_app/includes/serpapi_locations.html' %}                        
+          </select>
+              <div class="button" style="margin-bottom: 0px !important;">
+                  <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search by Image" name="search-similar-item-name">
+              </div>
+              <input type="hidden" id="item-image" name="item-image" value="">
+              <input type="hidden" id="item-name" name="item-name" value="">
+              <input type="hidden" id="searchbyimage" name="search-by" value="item-image">
+          </form>
+      </div>                    
+    </div>
+      
+  </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+    <div id="modal-product" class="modal-container">
+        <div class="modal-content">
+            <div hidden="hidden" id="loader-product" class="loader"></div>
+            <p id="close-modal-product" class="close">&times;</p>
+            <p id="product-name"></p>
+            <p id="product-sku"></p>
+            <p id="product-average-rating"></p>
+            <p id="product-status"></p>
+            <p id="product-price"></p>
+            <div style="text-align: center;">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                        <input class="standard-button" type="submit" value="Save">
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE MODAL -->
+    <div id="modal-delete" class="modal-container">
+      <div class="modal-content">
+          <div hidden="hidden" id="loader-product" class="loader"></div>
+          <form action="store-delete" method="POST">
+            {% csrf_token %}
+          <p id="close-modal-delete" class="close">&times;</p>
+          <div style="text-align: center;">
+          <input type="hidden" name="store-product-id" id="delete-product-id">
+ 
+          <div class="row">
+            <div class="col-3">
+
+            </div>
+            <div class="col-6">
+              <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px;">
+                <input class="form-check-input" name="force" default="False" type="checkbox" id="flex-switch">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Delete permanently? </label>
+              </div>
+    
+              <div class="form-check form-switch" style="margin-left: 35px; margin-bottom: 20px;">
+                <input class="form-check-input" name="sync-inventory" default="False" type="checkbox" id="flex-switch">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Sync Inventory? This will delete the product if present in the Inventory app </label>
+                
+                
+              </div>
+            </div>
+            <div class="col-3">
+              
+            </div>
+          </div>
+          
+              
+                      <input class="standard-button" type="submit" value="Delete">
+                    </div>
+                  
+              </form>
+          </div>
+      </div>
+  </div>
+
+
+<script>
+
+    async function open_modal_product(product_id){
+        await wocommerceGetProduct(product_id)
+        //show modal
+        let modal = document.getElementById("modal-product");
+        let close = document.getElementById("close-modal-product");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
+        
+        //populate modal
+
+    }
+
+    function open_modal_search(name_and_img_url){
+      const inputs = name_and_img_url.split('-:-');
+      console.log(inputs)
+      document.getElementById('item-name').value = inputs[1]
+      document.getElementById('item-image').value = inputs[2]
+
+      let modal = document.getElementById("modal-search");
+        let close = document.getElementById("close-modal-search");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
+    }
+
+    function open_modal_delete(product_id){
+
+        var store_id = product_id.replace("delete-", '')
+        console.log(store_id)
+        document.getElementById("delete-product-id").value = store_id
+        
+        let modal = document.getElementById("modal-delete");
+        let close = document.getElementById("close-modal-delete");
+        close.onclick = function() {
+        modal.style.display = "none";
+        }
+        modal.style.display = "block";
+    }
+
+
+    async function wocommerceGetProduct(product_id) {   
+
+            const k = "{{user.woocommerce_consumer_key}}"+":"+"{{user.woocommerce_secret_key}}"
+            const url = "https://xzshop.eu/wp-json/wc/v3/products/" + product_id.toString();
+            const auth = btoa(k);
+
+            await fetch(url, {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + auth
+              }
+            })
+              .then(response => response.json())
+              .then((data) => {
+                    console.log(data)
+
+                    document.getElementById('product-name').innerText = data['name']
+                    document.getElementById('product-sku').innerText = data['sku']
+                    document.getElementById('product-average-rating').innerText = data['average_rating']
+                    document.getElementById('product-status').innerText = data['status']
+                    document.getElementById('product-price').innerText = data['price']
+
+                    })
+              .catch(error => console.error(error));
+            }
+</script>
+{% endblock %}

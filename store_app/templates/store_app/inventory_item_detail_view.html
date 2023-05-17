@@ -1,0 +1,753 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+<main>
+    <input type="hidden" id="item" name="item" value="{{item}}">
+                <!-- PRODUCT INFORMATION -->
+                <div class="standard-command-container">
+                    <div class="card-deck">
+                      <div class="card" style="border: None !important;">
+                        <div class="product-img">
+                          <img class="card-img-top" src={{item.productImage}}>
+                      </div>
+                      </div>
+                    <div class="card"  style="border: None !important;">
+                        <div class="card-body">
+                            <form action="inventory-item-detail-view-save-changes" method="post">
+                                <p class="card-text">
+                                  <b>Item Name</b>
+                                  {{item_form.itemName}}
+                                  <b>Sell Price</b>
+                                  {{item_form.sellPrice}}
+                                  <b>SKU</b>
+                                  {{item_form.sku}}
+                                  <b>Supplier</b>
+                                  {{item_form.supplier}}
+                                  <b>Supplier price </b>
+                                  {{item_form.supplierSellPrice}} 
+                                  <b>Category</b>
+                                  {{item_form.categoryFirst}}
+                                  <b>Attributes</b>
+                                  {{item_form.attributes}}
+                                  <b>Material</b>
+                                  {{item_form.materialNameEn}}
+                                  <b>Custom description</b>
+                                  {{item_form.descriptionCustom }}
+                                   
+                                </p>
+                                {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='save-changes' type="submit" value="Save changes" name="save-changes">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                                <input type="hidden" name="save-mode" value="save-item">
+                            </form>
+                        </div>
+                      </div>
+                      </div>
+                      <div class="row">
+                        <div style="text-align:left">
+                          <p><b>Original description</b></p>
+                          <button class="standard-button" id="show-original-description" onclick="show_hide(this.id)">Show</button>
+                        </div>
+                        <div id="div-show-original-description" hidden>
+                          {% autoescape off %}
+                          {{item_original_description}}
+                          {% endautoescape %}
+                        </div>
+                         
+                      </div>
+                </div>
+                <!-- VARIANTS -->
+                <div class="standard-command-container">
+                  <div style="text-align:center">
+                    <button class="standard-button" id="show-variants" onclick="show_hide_variants()">Variants</button>
+                  </div>
+                  <div id="variants-div" hidden="hidden">
+                    {% for variant in variants %}
+                    <div class="card bg-light mb-3" style="max-width:100%; max-height: 20em;">
+                      <form action="inventory-item-detail-view-save-changes" method="POST">
+                      <div class="form-group">
+                        <div class="row">
+                          
+                            {% csrf_token %}
+                          <div class="col-sm-6">
+                            <div class="form-group" style="text-align: center;">
+                              <img src="{{variant.variantImage}}" width="200px" height="200px" style="padding: 2px;">
+                            </div>
+                            <div class="button" style="text-align: center;">
+                              <input class="standard-button" style="margin-bottom: 0px !important;" id='save-variant-changes' type="submit" value="Save changes" name="save-changes">
+                          </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant Name</label>
+                              <input type="text" id="" name="variantNameEn" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantNameEn}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Sell price</label>
+                              <input type="text" id="" name="sellPrice" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.sellPrice}}">
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Supplier sell price</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.supplierSellPrice}}" readonly>
+                              <label for="shipping_customer_name-modal" style="text-align:left;font-size:12px">Variant key</label>
+                              <input type="text" id="" name="" class="form-control" style="margin-bottom:4px;font-size:12px" value="{{variant.variantKey}}" readonly>
+                              <input type="hidden" id='variant-id' name="variant-id" value="{{variant.vid}}">
+                              
+                            </div>
+                          </div>
+                          
+                        </div>
+                  
+                      </div>
+                      <input type="hidden" name="save-mode" value="save-variant">
+                      <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                      <input type="hidden" id="variantid" name="variant-id-update" value="{{variant.id}}">
+                    </form>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <!-- SEARCH SIMILAR ITEMS -->
+              <div class="standard-command-container">
+                <div class="row" style="text-align: center; margin-bottom: 3em;">
+                    <h5><b>Search Similar Items And Spy Your Competitors</b><img src="http://xzshop.eu/wp-content/uploads/2023/04/743607.png" height="40px" width="40px"></a></h5>
+                </div>
+                <div class="row">
+                  <button class="standard-button" style="margin-left: 2em; margin-bottom: 2em;" id="open-searches-modal" type="submit" onclick="open_modal(this.id)"><b>Searches:</b> {{request.user.searches}}</button>
+                </div>
+                <div class="card-deck" style="text-align: center;">
+                  <div class="card" style="border: none;">
+                    <div class="card-body" >
+                    <p >Search specifically for products similar to yours among thousands of products and different sources. Find out what your comepetitors are doing and analyze their strategies.</p>
+                    <form action="inventory-item-search-similar-items" method="post">
+                      {% csrf_token %}
+                      <div style="text-align: left;">
+                        <label class="form-check-label" style="text-align: left;"><b>Your market:</b></label>
+                      </div>
+                      
+                      <input type="hidden" name="location selected-option" id="">
+                      <select class="form-control" name="similar-item-location" style="margin-bottom: 2em;" onchange="set_location_selected_option()">
+                        {% include 'main_app/includes/serpapi_locations.html' %}                        
+                      </select>
+                          <div class="button">
+                              <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search by Name" name="search-similar-item-name">
+                          </div>
+                          <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                          <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
+                          <input type="hidden" id="searchbyname" name="search-by" value="item-name">
+                      </form>
+                    </div>
+                  </div>
+                  <div class="card" style="border: none;">
+                    <div class="card-body">
+                      <p>Reverse image search is useful when you need more information about your product, it's easy to find model, brand or marketing material through reverse image.</p>
+                      <form action="inventory-item-search-similar-items" method="post">
+                        {% csrf_token %}
+                        <div style="text-align: left;">
+                          <label class="form-check-label" style="text-align: left;"><b>Your market:</b></label>
+                        </div>
+                        
+                        <input type="hidden" name="location selected-option" id="">
+                        <select class="form-control" name="similar-item-location" style="margin-bottom: 2em;" onchange="set_location_selected_option()">
+                          {% include 'main_app/includes/serpapi_locations.html' %}                        
+                        </select>
+                            <div class="button" style="margin-bottom: 0px !important;">
+                                <input class="standard-button" style="margin-bottom: 0px !important;" id='search-similar-item-name' type="submit" value="Search by Image" name="search-similar-item-name">
+                            </div>
+                            <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            <input type="hidden" id="itemname" name="item-name" value="{{item.itemName}}">
+                            <input type="hidden" id="searchbyimage" name="search-by" value="item-image">
+                        </form>
+                    </div>                    
+                  </div>
+                    
+                </div>
+
+            </div>
+                <!-- IMAGES CONTROL PANEL -->
+                <div class="standard-command-container">
+                    <div class="row">
+                        <h5><b>Images</b></h5>
+                        <p>Remove images you don't need, set the main image and add new ones</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            <!-- ADD NEW IMAGE BUTTON-->
+                            <form action="" method="post">
+                            {% csrf_token %}
+                                <div class="button" style="text-align: center;">
+                                    <input class="standard-button" id='addnewimage' disabled="disabled" type="submit" value="Add image" name="add-new-image">
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            </form>
+                        </div>
+                        <div class="col-10">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table style="margin-top:2em;display: block;overflow-x: auto; white-space: nowrap;">
+                            <tr>
+                                {% for img in img_set %}
+                                <td>
+                                    <div style="text-align:center">
+                                        <img src={{img}} alt="" width="125" height="125">
+                                    </div>
+                                    <!-- REMOVE IMAGE BUTTON -->
+                                    <br>
+                                    <form action="inventory-item-remove-image" method="post">
+                                        {% csrf_token %}
+                                        <div class="button" style="text-align: center;">
+                                            <input class="standard-button" id='removeimg' type="submit" value="Delete" name="remove-img">
+                                        </div>
+                                        <input type="hidden" id="imgurl" name="img-url" value="{{img}}">
+                                        <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                                    </form>
+                                    <!-- SET NEW IMAGE BUTTON -->
+                                    <form action="inventory-item-set-main-image" method="post">
+                                        {% csrf_token %}
+                                        <div class="button" style="text-align: center;">
+                                            <input class="standard-button" id='newmainimg' type="submit" value="Set as main" name="new-main-img">
+                                        </div>
+                                        <input type="hidden" id="imgurl" name="img-url" value="{{img}}">
+                                        <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">        
+                                    </form>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- AI DESCRIPTIONS -->
+                <div class="standard-command-container">
+                    <!-- MAIN DESCRIPTION-->
+                    <h5><b>Title and Description Writer</b></h5> <small><i>Powered by GPT-4</i></small>
+ 
+                      <!--<input type="hidden" name="lookup_key" value="business" />-->
+                      <br><button class="standard-button" id="open-words-modal" onclick="open_modal(this.id)" ><b>Words:</b> {{request.user.words}}</button>
+                    <p>Write optimized titles for search engine results in seconds.</p>
+                    <div style="margin-top:0.5em; margin-bottom:1em;">
+                        <button class="standard-button" id="OpenModalTitleGPT" onclick="open_modal(this.id)">Generate Title</button>
+                      </div>
+                    <p>Write product descriptions with optional features such as bullet points lists, emojies and SEO optimized content. Improve SEO rankings and increase sales.</p>
+                    <div style="margin-top:0.5em; margin-bottom:1em;">
+                      <button class="standard-button" id="OpenModalDescriptionGPT" onclick="open_modal(this.id)">Generate Description</button>
+                    </div>
+                </div>
+                
+                <!-- SHIPPING -->
+                <div class="standard-command-container" id="calc-shipping" style="font-family: Poppins">
+                  <label for="calc-shipping-options">Ship to:</label>
+                        <select class="country-select form-control" name="calc-shipping" id="calc-shipping-options">
+                                {% include 'main_app/includes/languages.html' %}
+                        </select>
+                        <div style="text-align: center;margin-top:1em;">
+                          <button id="calc-shipping-button" class="standard-button" onclick="calc_shipping()">Estimate shipping</button>
+                        </div>
+              
+                        <ul id="shipping-options" class="list-group">
+                              <!-- SHIPPING OPTIONS -->
+                        </ul>
+              </div>
+                <!-- INSTAGRAM -->
+                <div class="standard-command-container">
+                    <div class="row">
+                        <h5><b>Share</b></h5>
+                        <p>Share your product on social media</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <form action="" method="post">
+                            {% csrf_token %}
+                                <div class="button">
+                                    <input class="standard-button" style="margin-bottom: 0px !important;" id='create-ig-post' type="submit" value="Share on Social Media" name="create-ig-post">                                   
+                                </div>
+                                <input type="hidden" id="primarykey" name="primary-key" value="{{item.id}}">
+                            </form>
+                        </div>
+                        <div class="col-6">
+                            
+                        </div>
+                    </div>
+                </div>
+                
+<!-- WRITE TITLE MODAL -->
+<div id="modal-write-title-gpt" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-write-title-gpt" class="close">&times;</span>
+      <div id="loader-title" hidden class="loader"></div>
+      <div>
+        <p>Actual title for this product: </p>
+        <p>{{item_form.itemName}}</p>
+        <div class="form-group">
+          <div id="keywords-insert-div">
+            <label for="keywords-insert">Enter the keywords you want in the title</label>
+            <input id="keywords-insert" name="title-keywords" class="form-control" type="text">
+            <small id="keywords-insertHelp" class="form-text text-muted">Write keywords separated by commas.</small>
+            <button id="gpt-suggest-keystandard-button" class="standard-button" onclick="gpt_suggest_keywords()">Suggest keywords</button>
+          </div>
+          <div id="max-characters-div">
+            <label for="max-characters">Max characters</label>
+            <input id="max-characters" class="form-control" type="number" value="80" required>
+            <small id="max-charactersHelp" class="form-text text-muted">80 characters correspond to approximately 10 words.</small>
+          </div>
+        </div>
+      </div>
+      <div id="" style="margin-top: 1em; text-align:center;">
+        <!-- Write button --> 
+        <button id="gpt-write-button" class="standard-button" onclick="gpt_write_title()">Write title</button>
+        <!-- Save button -->
+        <form action="inventory-item-save-gpt-title" method="POST">
+          {% csrf_token %}
+          <div>
+            <textarea id="generated-title" name="text-area-generated-title" class="textarea-gpt" rows="4" cols="50" hidden></textarea>
+          </div>
+          <div name ="save-or-generate-title-div" id="save-or-generate-title-div-id">
+            <button id="gpt-save-button" class="standard-button">Save</button>
+            <input type="hidden" id="primarykey-savetitle" name="primary-key" value="{{item.id}}">
+          </div>
+        </form>
+        <!-- Try again button -->
+        <div name="save-or-generate-title-div">
+            <button id="gpt-re-write-button" class="standard-button" onclick="gpt_write_title()">Try again</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <!-- WRITE DESCRIPTION MODAL -->
+  <div id="modal-write-description-gpt" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-write-description-gpt" class="close">&times;</span>
+      <div hidden="hidden" id="loader-description" class="loader"></div>
+      <div id="" style="margin-top: 1em;">
+        {{gpt_write_dscription_form|crispy}}
+      </div>
+      
+      <div style="text-align: center;">
+        <button id="gpt-write-description-button" class="standard-button" onclick="gpt_write_description()"> Write Description</button>
+      
+      <!-- Save button -->
+      <form action="inventory-item-save-gpt-description" method="POST">
+        {% csrf_token %}
+        <div>
+            <textarea id="generated-description" name="text-area-generated-description" class="textarea-gpt" rows="10" cols="50" hidden="hidden"></textarea>
+         </div>
+        <div name ="save-or-generate-description-div" id="save-or-generate-title-div-id">
+            <button id="gpt-save-description-button" class="standard-button" onclick=""> Save</button>
+          <input type="hidden" id="primarykey-savetitle" name="primary-key" value="{{item.id}}">
+        </div>
+      </form>
+      <!-- Try again button -->
+      <div name="save-or-generate-description-div">
+        <button id="gpt-re-write-description-button" class="standard-button" onclick="gpt_write_description()"> Try again</button>
+    </div>
+</div>
+
+
+    </div>
+  </div>
+
+  <!-- SEARCHES MODAL -->
+  <div id="modal-searches" class="modal-container">
+    <div class="modal-content">
+      <span id="close-modal-searches" class="close">&times;</span>
+ 
+  </div>
+  </div>
+
+  <!-- MODAL WORDS -->
+  <div id="modal-words" class="modal-container">
+    <div class="'modal-content">
+      <div class="standard-command-container">
+      <span id="close-modal-words" class="close">&times;</span>
+      {% include 'main_app/includes/pricing_words.html' %}
+    </div>
+    </div>
+  </div>
+  
+</main>
+<script>
+
+
+    window.onload = function() {
+          
+      
+      let at_from_js = cj_get_access_token()
+      
+      var img_urls = document.querySelectorAll("[name^=variant-img-url-]")
+      var img_tags = document.querySelectorAll("[name^=variant-img-url-]")
+
+      console.log(img_urls)
+      img_urls.forEach((url)=>{
+        console.log(url.value)
+      })
+
+        
+    }
+
+
+    function show_hide(button_id){
+        div_id = 'div-' + button_id
+        div_section = document.getElementById(div_id)
+        
+        if (div_section.hidden == true){
+          div_section.removeAttribute('hidden')
+          document.querySelector('#show-original-description').innerText = 'Hide';
+        }else{
+          div_section.setAttribute('hidden', 'hidden')
+          document.querySelector('#show-original-description').innerText = 'Show';
+        }
+
+    }
+
+
+    function reverse_image_search(button_id){
+
+      image_url = button_id.replace('reverse-image-search-button-', '')
+      console.log(image_url)
+      let csrftoken = "{{csrf_token}}"
+      var data_json = {'csrfmiddlewaretoken': csrftoken, 
+                        'itemName': document.getElementById("id_itemName").value,
+                        'service': 'gpt-title',
+                        'keywords': document.getElementById("keywords-insert").value, };
+
+      $.ajax({
+            method: 'POST',
+            url: "{% url 'inventory-item-search-similar-items' %}",
+            data: data_json,
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+
+
+    }
+
+    async function cj_get_access_token() {
+                let url = 'https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken';
+                let data = {
+                  email: "{{user.cjdropshipping_email}}",
+                  password: "{{user.cjdropshipping_api_key}}"
+                };
+                let auth_resp = await fetch(url, {
+                  method: 'POST',
+                  body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data)
+                  return data['data']['accessToken'];
+                })
+                .catch(error => {
+                  console.error(error);
+                });
+              }
+    
+    function calc_shipping(){
+        document.getElementById('shipping-options').innerHTML = ''
+
+        var ship_to = document.getElementById("calc-shipping-options").value;
+        const access_token = "{{cj_access_token}}"
+        variants_ids = document.getElementsByName('variant-id')
+        const vid = variants_ids[0].value
+        const url = 'https://developers.cjdropshipping.com/api2.0/v1/logistic/freightCalculate';
+        const data = { 
+                        "startCountryCode": "CN",
+                        "endCountryCode": ship_to,
+                        "products": [
+                                    {
+                                        "quantity": 1,
+                                        "vid": vid
+                                    }
+                                ]
+                            };
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers:{
+            'Content-Type': 'application/json',
+            "CJ-Access-Token": access_token,
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          var shipping_options = data['data']
+          var options_list = document.getElementById('shipping-options')
+          console.log(options_list)
+
+          if (shipping_options.length == 0){
+            options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><p>No shipping methods found for this destination.</p></li>'  
+          }else{
+            shipping_options.forEach((option) => {
+              options_list.innerHTML += '<li style="font-size: 15px;" class="list-group-item"><p><b>'+ option['logisticName'] + '</b></p><p>' + option['logisticAging'] + ' days / ' + option['logisticPrice'] +' $</p></li>'        
+            })
+          }
+          
+          /*
+          console.log(shipping_options)
+          for (option in shipping_options){
+            console.log(option["logisticAging"])
+          }*/
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    function open_modal(button_id){
+          //var action = document.getElementById("action-options").value;
+          //button_id
+          //var selected_items = document.getElementsByName("selected-items")[0].value
+          if (button_id == "OpenModalTitleGPT"){
+            document.getElementById('gpt-write-button').removeAttribute("hidden");
+            document.getElementById('generated-title').setAttribute("hidden", "hidden");
+            //hidden_el = document.getElementsByName('save-or-generate-title-div') //.setAttribute("hidden", "hidden");
+            document.getElementsByName('save-or-generate-title-div').forEach((el) => {
+            el.setAttribute("hidden", "hidden");
+            });
+            document.getElementById('keywords-insert').value = "";
+            document.getElementById('max-characters').value = "80";
+            let modal = document.getElementById("modal-write-title-gpt");
+            let close = document.getElementById("close-modal-write-title-gpt");
+            close.onclick = function() {
+                //reset_modals()
+                modal.style.display = "none";
+            }
+            modal.style.display = "block";
+          }
+          else if (button_id == "OpenModalDescriptionGPT"){
+            document.getElementById('gpt-write-description-button').removeAttribute("hidden");
+            document.getElementById('generated-description').setAttribute("hidden", "hidden");
+            document.getElementsByName('save-or-generate-description-div').forEach((el) => {
+            el.setAttribute("hidden", "hidden");
+            });
+            let modal = document.getElementById("modal-write-description-gpt");
+            let close = document.getElementById("close-modal-write-description-gpt");
+            close.onclick = function() {
+              modal.style.display = "none";
+            }
+            modal.style.display = "block";
+          }
+          else if (button_id == "open-searches-modal"){
+
+            let modal = document.getElementById("modal-searches");
+            let close = document.getElementById("close-modal-searches");
+            close.onclick = function() {
+              modal.style.display = "none";
+            }
+            modal.style.display = "block";
+          }
+          else if (button_id == "open-words-modal"){
+                let modal = document.getElementById("modal-words");
+                let close = document.getElementById("close-modal-words");
+                close.onclick = function() {
+                  modal.style.display = "none";
+                }
+                modal.style.display = "block";
+                }
+          
+        }
+    
+        function reset_modals(){
+
+        }
+    
+    function hide_keywords_insert() {
+        use_keywords_suggested_by_AI = document.getElementById("keywords-suggest-title").checked
+        if (use_keywords_suggested_by_AI == true){
+            document.getElementById('keywords-insert-div').setAttribute("hidden", "hidden");
+        }else{
+            document.getElementById('keywords-insert-div').removeAttribute("hidden");
+        }
+    }
+
+    function update_words(data){
+        let csrftoken = "{{csrf_token}}"
+        var data_json = {'tokens_used': data['usage']['completion_tokens'], 'csrfmiddlewaretoken': csrftoken};
+        console.log(data_json)
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'update-user-words' %}",
+            data: data_json,
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function cleanHtml(rawHtml) {
+        const cleaner = /<.*?>/g;
+        let cleanText = rawHtml.replace(cleaner, '');
+        cleanText = cleanText.slice(0, 600);
+        return cleanText;
+    }
+
+    function show_hide_variants(){
+        variants_div = document.getElementById('variants-div')
+        is_hidden = variants_div.hidden
+        if (is_hidden == true){
+            variants_div.removeAttribute('hidden')
+        }else {
+            variants_div.setAttribute('hidden','hidden')
+        }
+    }
+
+    function check_user_words(){
+      const user_words = "{{ user.words }}";
+      if (user_words <= 0){
+        return true
+      }else{
+        return false
+      }
+    }
+    async function gpt_write_title(){
+
+        let csrftoken = "{{csrf_token}}"
+        var data_json = {'csrfmiddlewaretoken': csrftoken, 
+                        'itemName': document.getElementById("id_itemName").value,
+                        'service': 'gpt-title',
+                        'keywords': document.getElementById("keywords-insert").value, };
+        console.log(data_json)
+
+
+        if (check_user_words() == true){
+          alert('Words finished')
+          let spinner_close = document.getElementById("loader-title")
+          spinner_close.setAttribute("hidden", "hidden")
+        }else{
+          $.ajax({
+            method: 'POST',
+            url: "{% url 'gpt-write' %}",
+            data: data_json,
+            beforeSend: function() {
+              let spinner = document.getElementById("loader-title")
+              spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+                let spinner_close = document.getElementById("loader-title")
+                spinner_close.setAttribute("hidden", "hidden")
+                document.getElementById('generated-title').value = data.replace(/["]+/g, '') //['choices'][0]['message']['content'].replace(/["]+/g, '')
+                document.getElementById('generated-title').removeAttribute("hidden");
+                document.getElementById('gpt-write-button').setAttribute("hidden", "hidden");
+                document.getElementsByName('save-or-generate-title-div').forEach((el) => {
+                el.removeAttribute("hidden");
+                });
+                
+            },
+            error: function (data) {
+                console.log(data);
+                let spinner_close = document.getElementById("loader-title")
+                spinner_close.setAttribute("hidden", "hidden")
+            }
+        });
+        }
+    }
+
+    async function gpt_write_description(){
+        let csrftoken = "{{csrf_token}}"
+        var data_json = {'csrfmiddlewaretoken': csrftoken,
+                          'service': 'gpt-description',
+                        'itemName': document.getElementById("id_itemName").value,
+                        'keywords': document.getElementById("keywords-insert").value,
+                       'description': description = document.getElementById("original-description").outerHTML,
+                      
+                      };
+        console.log(data_json)
+
+        if (check_user_words() == true){
+          alert('Words finished')
+          let spinner_close = document.getElementById("loader-description")
+          spinner_close.setAttribute("hidden", "hidden")
+        }else{
+          $.ajax({
+            method: 'POST',
+            url: "{% url 'gpt-write' %}",
+            data: data_json,
+            beforeSend: function() {
+              let spinner = document.getElementById("loader-description")
+              spinner.removeAttribute("hidden");
+            },
+            success: function (data) {
+                //this gets called when server returns an OK response
+                console.log(data);
+                let spinner_close = document.getElementById("loader-description")
+                spinner_close.setAttribute("hidden", "hidden")
+                document.getElementById('generated-description').value = data //['choices'][0]['message']['content'].replace(/["]+/g, '')
+                document.getElementById('generated-description').removeAttribute("hidden");
+                document.getElementById('gpt-write-description-button').setAttribute("hidden", "hidden");
+                document.getElementsByName('save-or-generate-description-div').forEach((el) => {
+                el.removeAttribute("hidden");
+                });
+                
+            },
+            error: function (data) {
+                console.log(data);
+                let spinner_close = document.getElementById("loader-title")
+                spinner_close.setAttribute("hidden", "hidden")
+            }
+        });
+        }
+    } 
+
+
+    async function gpt_suggest_keywords(){
+        const apiKey = "";
+        const url = "https://api.openai.com/v1/chat/completions";
+
+        let spinner = document.getElementById("loader-title")
+        spinner.removeAttribute("hidden");
+
+        let itemName = document.getElementById("id_itemName").value
+
+        let message_1 = 'Suggest kewyords for this product: ' + itemName +' .Write keywords in this format: keywords1, keyword2, keyword3, etc. Max 3 keywords'
+
+        const requestHeaders = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        };
+
+        const requestData = {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+                      {"role": "system", "content": "You are a SEO expert"},
+                      {"role": "user", "content": message_1},
+                    ],
+          "temperature": 0.7
+        };
+
+        await fetch(url, {
+          method: "POST",
+          headers: requestHeaders,
+          body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data)            
+            document.getElementById('keywords-insert').value = data['choices'][0]['message']['content']
+
+            update_words(data)
+            
+        })
+        .catch(error => console.error(error));
+
+        spinner.setAttribute("hidden", "hidden")
+    }
+
+</script>
+
+{% endblock %}

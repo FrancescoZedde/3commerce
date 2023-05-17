@@ -1,0 +1,21 @@
+{% extends 'main_app/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="standard-command-container">
+    <p>Interested? Join the whitelist.</p>
+    <form action="whitelist" method="post">
+        {% csrf_token %}
+        {{ whitelist_form | crispy}}
+        <div class="button" style="text-align: center; margin-top:2em">
+            <input class="standard-button" id='sendinquiry' type="submit" value="Join the whitelist" name="send-inquiry">
+        </div>
+    </form>
+    
+</div>
+
+{% endblock %}
