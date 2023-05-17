@@ -67,7 +67,7 @@ def registration(request):
             user.is_active = False
             user.username = registration_form.cleaned_data.get('email')
             user.save()
-            activateEmail(request, user, registration_form.cleaned_data.get('email'))
+            #activateEmail(request, user, registration_form.cleaned_data.get('email'))
             email = EmailMessage('User +1', 'daje', to=['francescozedde711@gmail.com'])
             email.send()
             #login(request, user)
