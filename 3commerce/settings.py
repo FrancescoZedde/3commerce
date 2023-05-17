@@ -174,7 +174,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 #CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-#SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = False
 
 # Emailing settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
